@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>テスト</title>
+	<script src="jquery-1.11.1.min.js"></script>
+	<script src="Moon.js"></script>
+	<script>
+		Moon();
+		window.onload = function(){
+			var chara = new ObjectController("test",
+			{name:"aska",picture:"test.png",sex:"female",display:false,tax:0.5,hoge:function(){return this.get("tax")*300;},character:[]});
+			chara.set("name","taro");
+			chara.set("character",[{name:"hitomi"},{name:"daigo"}]);
+			var chara2 = new ObjectController("test2",
+			{name:"pipopipo"})
+		}
+	</script>
+</head>
+<body>
+	<div data-id="test">
+		<ul>
+		{{#while character}}
+			<li>{{@name}}さん</li>
+		{{/while}}
+		</ul>
+		<br/>
+		<input value-binding="name">ちゃんの性別は{{sex}}	<br/>
+		<p>{{name}}</p>
+		<img src-binding="picture"/><br/>
+		<input value-binding="picture">
+		{{#while character}}
+			{{@name}}くん
+		{{/while}}
+	</div>
+	<div data-id="test">
+		{{#if display}}
+			{{name}}ちゃん助けて
+		{{/if}}
+		aaaaa
+	</div>
+	<div data-id="test">
+		{{tax}}*300={{hoge}}
+	</div>
+	<div data-id="test2">
+		<h1>test2</h1>
+		{{name}}
+	</div>
+</body>
+</html>
