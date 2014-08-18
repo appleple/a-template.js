@@ -1,5 +1,5 @@
 /*
-	Moon.js(MVCライブラリ開発中)
+	Moon.js(MVC)
 */
 (function(){
     String.prototype.replaceAll = function (org, dest){  
@@ -45,17 +45,16 @@
             }
         }
     };
-    $(document).on("input","[value-binding]",function(){
-        var id = $(this).data("binding");
+    $(document).on("input","input[value-binding]",function(){
+        var id = $(this).attr("value-binding");
         var ids = id.split("_");
         var obj = Moon.find(ids[0]);
         obj.set(ids[1],$(this).val(),true);
     });
-    $(document).on("click","[data-action-binding]",function(){
-        var id = $(this).data("action-binding");
+    $(document).on("click","[action-binding]",function(){
+        var id = $(this).attr("action-binding");
         var ids = id.split("_");
         var obj = Moon.find(ids[0]);
-        //console.log(obj.data.actions[ids[1]]);
         obj.data.actions[ids[1]].apply(obj);
     });
     Moon.ObjectController = Moon.createClass({
@@ -78,22 +77,29 @@
                     html = html.replaceAll("{{@"+key+"}}","<span data-id='_"+id+"_"+key+"'></span>");
                     /*ifブロックをdomに変換*/
                     html = html.replaceAll("{{#if "+key+"}}","<span data-if='"+id+"_"+key+"'>");
-                    
                     html = html.replaceAll("{{#unless "+key+"}}","<span data-unless='"+id+"_"+key+"'>");
                 }
                 $(this).html(html);
-                /*input要素のvalueの値を変数に*/
-                for(var key in obj){
-                    $("[data-id='"+id+"'] [value-binding="+key+"]").attr("data-binding",id+"_"+key);
-                    $("[data-id='"+id+"'] [src-binding="+key+"]").attr("src-binding",id+"_"+key);
-                    $("[data-id='"+id+"'] [data-while="+key+"]").attr("data-while",id+"_"+key);
-                               html = html.replaceAll("{{#while "+key+"}}","<span data-while='"+id+"_"+key+"'>");
-                    if(key == "actions"){
-                        for(var key2 in obj.actions){
-                            $("[data-id='"+id+"'] [action-binding="+key2+"]").attr("data-action-binding",id+"_"+key2);
-                        }
-                    }
-                }
+            });
+            $("[value-binding]").each(function(){
+                var attr = $(this).attr("value-binding");
+                $(this).attr("value-binding",id+"_"+attr);
+            });
+            $("[src-binding]").each(function(){
+                var attr = $(this).attr("src-binding");
+                $(this).attr("src-binding",id+"_"+attr);
+            });
+            $("[option-binding]").each(function(){
+                var attr = $(this).attr("option-binding");
+                $(this).attr("option-binding",id+"_"+attr);
+            });
+            $("[action-binding]").each(function(){
+                var attr = $(this).attr("action-binding");
+                $(this).attr("action-binding",id+"_"+attr)
+            });
+            $("[data-while]").each(function(){
+                var attr = $(this).attr("data-while");
+                $(this).attr("data-while",id+"_"+attr);
             });
             var i = 0;
             var that = this;
@@ -168,9 +174,16 @@
                         }
                     });
                 }
+                /*optionバインディングの配列格納*/
+                var $option = $("[option-binding="+id+"_"+key+"]");
+                var val = $option.attr("value-binding");
+                var contents = data[key];
+                for(var i = 0,n = contents.length; i < n; i++){
+                    $option.append("<option>"+contents[i][val]+"</option>");
+                }
                 /*属性のBinding*/
                 if(!input){
-                    $("[data-binding="+id+"_"+key+"]").val(value);
+                    $("[value-binding="+id+"_"+key+"]").val(value);
                 }
                 $("[src-binding="+id+"_"+key+"]").attr("src",value);
             }
