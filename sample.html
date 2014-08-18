@@ -18,19 +18,14 @@
 </head>
 <body>
 	<div data-id="test">
-		<ul>
-		{{#while character}}
+		<ul data-while="character">
 			<li>{{@name}}さん</li>
-		{{/while}}
 		</ul>
 		<br/>
 		<input value-binding="name">ちゃんの性別は{{sex}}	<br/>
 		<p>{{name}}</p>
 		<img src-binding="picture"/><br/>
 		<input value-binding="picture">
-		{{#while character}}
-			{{@name}}くん
-		{{/while}}
 	</div>
 	<div data-id="test">
 		{{#if display}}

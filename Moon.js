@@ -70,7 +70,6 @@
             };
             this.$.each(function(){
                 var html = $(this).html();
-                html = html.replaceAll("{{/while}}","</span>");
                 html = html.replaceAll("{{/unless}}","</span>");
                 html = html.replaceAll("{{/if}}","</span>");
                 /*変数をdomに変換*/
@@ -81,14 +80,14 @@
                     html = html.replaceAll("{{#if "+key+"}}","<span data-if='"+id+"_"+key+"'>");
                     
                     html = html.replaceAll("{{#unless "+key+"}}","<span data-unless='"+id+"_"+key+"'>");
-                    
-                    html = html.replaceAll("{{#while "+key+"}}","<span data-while='"+id+"_"+key+"'>");
                 }
                 $(this).html(html);
                 /*input要素のvalueの値を変数に*/
                 for(var key in obj){
                     $("[data-id='"+id+"'] [value-binding="+key+"]").attr("data-binding",id+"_"+key);
                     $("[data-id='"+id+"'] [src-binding="+key+"]").attr("src-binding",id+"_"+key);
+                    $("[data-id='"+id+"'] [data-while="+key+"]").attr("data-while",id+"_"+key);
+                               html = html.replaceAll("{{#while "+key+"}}","<span data-while='"+id+"_"+key+"'>");
                     if(key == "actions"){
                         for(var key2 in obj.actions){
                             $("[data-id='"+id+"'] [action-binding="+key2+"]").attr("data-action-binding",id+"_"+key2);
