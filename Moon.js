@@ -81,29 +81,29 @@
                 }
                 $(this).html(html);
             });
-            $("[value-binding]").each(function(){
+            this.$.find("[value-binding]").each(function(){
                 var attr = $(this).attr("value-binding");
                 $(this).attr("value-binding",id+"_"+attr);
             });
-            $("[src-binding]").each(function(){
+            this.$.find("[src-binding]").each(function(){
                 var attr = $(this).attr("src-binding");
                 $(this).attr("src-binding",id+"_"+attr);
             });
-            $("[option-binding]").each(function(){
+            this.$.find("[option-binding]").each(function(){
                 var attr = $(this).attr("option-binding");
                 $(this).attr("option-binding",id+"_"+attr);
             });
-            $("[action-binding]").each(function(){
+            this.$.find("[action-binding]").each(function(){
                 var attr = $(this).attr("action-binding");
                 $(this).attr("action-binding",id+"_"+attr)
             });
-            $("[data-while]").each(function(){
+            this.$.find("[data-while]").each(function(){
                 var attr = $(this).attr("data-while");
                 $(this).attr("data-while",id+"_"+attr);
             });
             var i = 0;
             var that = this;
-            that.$.find("[data-while]").each(function(){
+            this.$.find("[data-while]").each(function(){
                 $(this).attr("data-index",i);
                 that.whileHtml.push({id:i,html:$(this).html()});
                 i++;
