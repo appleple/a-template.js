@@ -161,6 +161,7 @@
                 var key = ids[1];
                 $(this).empty();
                 for(var i = 0,n = content.length; i < n; i++){
+                    console.log(content[i]);
                     $(this).append("<option>"+content[i][key]+"<option>");
                 }
             });

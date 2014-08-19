@@ -3,18 +3,19 @@
 <head>
 	<title>テスト</title>
 	<script src="jquery-1.11.1.min.js"></script>
-	<script src="Moon2.js"></script>
+	<script src="Moon.js"></script>
 	<script>
 		$(function(){
 			Moon();
 			var chara = new ObjectController("test",
-			{name:"",character:[{name:"hitomi"},{name:"daigo"}]});
+			{name:"hitomi",character:[{name:"hitomi"},{name:"daigo"}]});
 		});
 	</script>
 </head>
 <body>
 	<div data-id="test">
-		<select option-binding="character@name">
+		わたしのなまえは{{name}}<br/>
+		<select option-binding="character@name" value-binding="name">
 		</select>
 	</div>
 </body>

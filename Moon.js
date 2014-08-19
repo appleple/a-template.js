@@ -161,7 +161,8 @@
                 var key = ids[1];
                 $(this).empty();
                 for(var i = 0,n = content.length; i < n; i++){
-                    $(this).append("<option>"+content[i][key]+"<option>");
+                    console.log(content[i]);
+                    $(this).append("<option>"+content[i][key]+"</option>");
                 }
             });
             this.$.find("[src-binding]").each(function(){
@@ -171,9 +172,11 @@
             });
             /*属性のBinding*/
             if(!input){
-                var id = $(this).attr("value-binding");
-                var value = that.getValue(data[id]);
-                $(this).val(value);
+                this.$.find("[value-binding]").each(function(){
+                    var id = $(this).attr("value-binding");
+                    var value = that.getValue(data[id]);
+                    $(this).val(value);
+                });
             }
         },
         set:function(key,value,input){
