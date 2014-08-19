@@ -146,6 +146,9 @@
                 var length = contents.length;
                 var index = $(this).data("index");
                 var html = that.getHtmlFromIndex(index);
+                for(var i = 0; i < length - 1; i++){
+                    html += html;
+                }
                 $(this).html(html);
                 for(var i = 0; i < length; i++){
                     var content = contents[i];
