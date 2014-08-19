@@ -15,6 +15,9 @@
 				addCharacter:function(){
 					var name = this.get("name");
 					this.add("character",{name:name});
+				},
+				deleteCharacter:function(chara){
+					this.remove("character",chara);
 				}
 			}
 			});
@@ -24,7 +27,7 @@
 <body>
 	<div data-id="test">
 		<ul data-while="character">
-			<li>{{@name}}</li>
+			<li>{{@name}}<button action-binding="deleteCharacter">削除</button></li>
 		</ul>
 		<input value-binding="name"/>
 		<button action-binding="addCharacter">追加</button>

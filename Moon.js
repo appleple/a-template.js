@@ -58,7 +58,7 @@
         var id = $(this).attr("action-binding");
         var parent = $(this).data("parent");
         var obj = Moon.find(parent);
-        obj.data.actions[id].apply(obj,this);
+        obj.data.actions[id].call(obj,this);
     });
     Moon.ObjectController = Moon.createClass({
         initialize:function(id,obj){
@@ -189,6 +189,13 @@
         add:function(key,value){
             var array = this.data[key];
             array.push(value);
+            this.update();
+        },
+        remove:function(key,item){
+            var array = this.data[key];
+            var index = $(item).index();
+            console.log(item);
+            array.splice(index-1,1);
             this.update();
         },
         get:function(key){
