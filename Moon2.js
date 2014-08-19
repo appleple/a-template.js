@@ -1,16 +1,16 @@
 /*
-    Moon.js(MVC)
+	Moon.js(MVC)
 */
 (function(){
     String.prototype.replaceAll = function (org, dest){  
         return this.split(org).join(dest);  
     }  
-    window.Moon = function(){
-        for(var key in Moon){
-            window[key] = Moon[key];
-        }
-    };
-    Moon.createClass = function (superClass, obj) {
+	window.Moon = function(){
+		for(var key in Moon){
+			window[key] = Moon[key];
+		}
+	};
+	Moon.createClass = function (superClass, obj) {
         var newClass = function () {
             this.initialize.apply(this, arguments);
         };
@@ -62,14 +62,14 @@
         obj.data.actions[id].apply(obj);
     });
     Moon.ObjectController = Moon.createClass({
-        initialize:function(id,obj){
-            /*このコントローラーを適応するセレクタを指定*/
-            this.$ = $("[data-id="+id+"]");
-            /*テンプレートに使用する変数をdataオブジェクトに保存*/
-            this.data = {};
+    	initialize:function(id,obj){
+    		/*このコントローラーを適応するセレクタを指定*/
+    		this.$ = $("[data-id="+id+"]");
+    		/*テンプレートに使用する変数をdataオブジェクトに保存*/
+    		this.data = {};
             this.whileHtml = [];
-            for(var key in obj){
-                this.data[key] = obj[key];
+    		for(var key in obj){
+    			this.data[key] = obj[key];
             };
             this.$.each(function(){
                 var html = $(this).html();
@@ -97,7 +97,7 @@
             });
             this.update();
             Moon.objs.push(this);
-        },
+    	},
         getHtmlFromIndex:function(i){
             i = Number(i);
             return this.whileHtml[i].html;
@@ -176,13 +176,13 @@
                 $(this).val(value);
             }
         },
-        set:function(key,value,input){
-            this.data[key] = value;
-            this.update(input);
-        },
-        get:function(key){
-            return this.data[key];
-        },
+    	set:function(key,value,input){
+    		this.data[key] = value;
+    		this.update(input);
+    	},
+    	get:function(key){
+    		return this.data[key];
+    	},
         getJson:function(){
             return this.data;
         }
