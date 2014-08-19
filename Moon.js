@@ -51,7 +51,6 @@
         var parent = $(this).data("parent");
         var obj = Moon.find(parent);
         obj.data[id] = $(this).val();
-        console.log(obj);
         obj.update();
     });
     /*action binding*/
@@ -59,7 +58,7 @@
         var id = $(this).attr("action-binding");
         var parent = $(this).data("parent");
         var obj = Moon.find(parent);
-        obj.data.actions[id].apply(obj);
+        obj.data.actions[id].apply(obj,this);
     });
     Moon.ObjectController = Moon.createClass({
         initialize:function(id,obj){
@@ -146,10 +145,11 @@
                 var length = contents.length;
                 var index = $(this).data("index");
                 var html = that.getHtmlFromIndex(index);
+                var render = html;
                 for(var i = 0; i < length - 1; i++){
-                    html += html;
+                    render += html;
                 }
-                $(this).html(html);
+                $(this).html(render);
                 for(var i = 0; i < length; i++){
                     var content = contents[i];
                     for(var key in content){
@@ -185,6 +185,11 @@
         set:function(key,value,input){
             this.data[key] = value;
             this.update(input);
+        },
+        add:function(key,value){
+            var array = this.data[key];
+            array.push(value);
+            this.update();
         },
         get:function(key){
             return this.data[key];
