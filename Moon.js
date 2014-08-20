@@ -51,7 +51,8 @@
         var splits = id.split(".");
         var parentId = splits[0];
         var obj = Moon.find(parentId);
-        obj.data[splits[1]] = $(this).val();
+        var path = obj.getPathFromId(id);
+        obj.updateDataByString(path,$(this).val());
         obj.update();
     });
     /*action binding*/
@@ -131,7 +132,7 @@
             this.removeDataByString(id);
             this.update();
         },
-        updateDataByString:function(path){
+        updateDataByString:function(path,newValue){
             var object = this.data;
             var stack = path.split('.');
             while(stack.length>1){
