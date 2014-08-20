@@ -11,14 +11,12 @@
 			new ObjectController("test",
 			{name:"hitomi",
 			character:[{name:"hitomi"},{name:"daigo"}],
-			actions:{
-				addCharacter:function(){
-					var name = this.get("name");
-					this.add("character",{name:name});
-				},
-				deleteCharacter:function(chara){
-					this.remove("character",chara);
-				}
+			addCharacter:function(){
+				var name = this.get("name");
+				this.add("character",{name:name});
+			},
+			deleteCharacter:function(chara){
+				this.remove(chara);
 			}
 			});
 		});
