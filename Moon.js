@@ -98,6 +98,8 @@
             var that = this;
             this.$.find("[data-while]").each(function(){
                 $(this).attr("data-index",i);
+                var key = $(this).data("while");
+                $(this).attr("data-id",id+"."+key);
                 that.whileHtml.push({id:i,html:$(this).html()});
                 i++;
             });
@@ -214,7 +216,6 @@
                     for(var key in content){
                         var $item = $(this).find("[data-id='"+parentID+"."+id+"."+i+"."+key+"']");
                         $item.html(that.getValue(content[key]));
-                        $item.attr("data-index",i);
                     }
                 }
             });
