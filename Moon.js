@@ -1,5 +1,6 @@
 /*
     Moon.js(MVC)
+    updateの際に何に関する変更かを引き数にいれればwhile文もうまく制御できそう
 */
 (function(){
     String.prototype.replaceAll = function (org, dest){  
@@ -53,7 +54,7 @@
         var obj = Moon.find(parentId);
         var path = obj.getPathFromId(id);
         obj.updateDataByString(path,$(this).val());
-        obj.update();
+        obj.update("value-binding");
     });
     /*action binding*/
     $(document).on("click","[action-binding]",function(){
@@ -86,7 +87,12 @@
             });
             this.$.find("[value-binding]").each(function(){
                 var childId = $(this).attr("value-binding");
-                $(this).attr("data-id",id+"."+childId);
+                if(childId.substring(0,1) == "@"){
+                    childId = childId.replace("@","");
+                    $(this).attr("data-id",id+'[].'+childId);
+                }else{
+                    $(this).attr("data-id",id+'.'+childId);
+                }
             });
             this.$.find("[action-binding]").each(function(){
                 var childID = $(this).attr("action-binding");
@@ -165,16 +171,18 @@
             }
             return data;
         },
-        update:function(input){
+        update:function(kind){
             var parentID = this.getId();
             var data = this.data;
             var that = this;
             this.$.find("[data-id]").each(function(){
-                var id = $(this).data("id");
-                id = id.replace(parentID+".","");
-                var data = that.getDataByString(id);
-                var value = that.getValue(data);
-                $(this).html(value);
+                if(!$(this).data("while") && !$(this).data("action-id")){
+                    var id = $(this).data("id");
+                    id = id.replace(parentID+".","");
+                    var data = that.getDataByString(id);
+                    var value = that.getValue(data);
+                    $(this).html(value);
+                }
             });
             this.$.find("[data-if]").each(function(){
                 var id = $(this).data("if");
@@ -198,28 +206,30 @@
                     $(this).show();
                 }
             });
-            this.$.find("[data-while]").each(function(){
-                var id = $(this).data("while");
-                id = id.replace(parentID+".","");
-                var contents = data[id];
-                var length = contents.length;
-                var index = $(this).data("index");
-                var html = that.getHtmlFromIndex(index);
-                var render = "";
-                for(var i = 0; i < length; i++){
-                    var temp = html.replace("[]","."+id+"."+i);
-                    temp = temp.replace("data-action-id","data-id='"+parentID+"."+id+"."+i+"' data-action-id");
-                    render += temp;
-                }
-                $(this).html(render);
-                for(var i = 0; i < length; i++){
-                    var content = contents[i];
-                    for(var key in content){
-                        var $item = $(this).find("[data-id='"+parentID+"."+id+"."+i+"."+key+"']");
-                        $item.html(that.getValue(content[key]));
+            if(kind != "value-binding"){
+                this.$.find("[data-while]").each(function(){
+                    var id = $(this).data("while");
+                    id = id.replace(parentID+".","");
+                    var contents = data[id];
+                    var length = contents.length;
+                    var index = $(this).data("index");
+                    var html = that.getHtmlFromIndex(index);
+                    var render = "";
+                    for(var i = 0; i < length; i++){
+                        var temp = html.replaceAll("[]","."+id+"."+i);
+                        temp = temp.replaceAll("data-action-id","data-id='"+parentID+"."+id+"."+i+"' data-action-id");
+                        render += temp;
                     }
-                }
-            });
+                    $(this).html(render);
+                    for(var i = 0; i < length; i++){
+                        var content = contents[i];
+                        for(var key in content){
+                            var $item = $(this).find("[data-id='"+parentID+"."+id+"."+i+"."+key+"']");
+                            $item.html(that.getValue(content[key]));
+                        }
+                    }
+                });
+            }
             this.$.find("[option-binding]").each(function(){
                 var id = $(this).attr("option-binding");
                 var ids = id.split("@");
@@ -227,7 +237,6 @@
                 var key = ids[1];
                 $(this).empty();
                 for(var i = 0,n = content.length; i < n; i++){
-                    console.log(content[i]);
                     $(this).append("<option>"+content[i][key]+"</option>");
                 }
             });
@@ -237,7 +246,7 @@
                 $(this).attr("src",value);
             });
             /*属性のBinding*/
-            if(!input){
+            if(kind != "value-binding"){
                 this.$.find("[value-binding]").each(function(){
                     var id = $(this).attr("value-binding");
                     var value = that.getValue(data[id]);
@@ -245,9 +254,9 @@
                 });
             }
         },
-        set:function(key,value,input){
+        set:function(key,value){
             this.data[key] = value;
-            this.update(input);
+            this.update();
         },
         add:function(key,value){
             var array = this.data[key];
