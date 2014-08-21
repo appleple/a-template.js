@@ -9,7 +9,7 @@
 			Moon();
 			var chara = 
 			new ObjectController("test",
-			{name:"hitomi",
+			{name:"hitomi",waza:{name:"hikkaku"},
 			character:[{name:"hitomi"},{name:"daigo"}],
 			addCharacter:function(){
 				var name = this.get("name");
@@ -24,8 +24,9 @@
 </head>
 <body>
 	<div data-id="test">
+		{{waza.name}}
 		<ul data-while="character">
-			<li>{{@name}}<button action-binding="deleteCharacter">削除</button></li>
+			<li>{{@name}}<input value-binding="@name"/><button action-binding="deleteCharacter">削除</button></li>
 		</ul>
 		<input value-binding="name"/>
 		<button action-binding="addCharacter">追加</button>

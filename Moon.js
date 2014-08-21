@@ -77,14 +77,11 @@
                 var html = $(this).html();
                 html = html.replaceAll("{{/unless}}","</span>");
                 html = html.replaceAll("{{/if}}","</span>");
-                /*変数をdomに変換*/
-                for(var key in obj){
-                    html = html.replaceAll("{{"+key+"}}","<span data-id='"+id+"."+key+"'></span>");
-                    html = html.replaceAll("{{@"+key+"}}","<span data-id='"+id+"[]."+key+"'></span>");
-                    /*ifブロックをdomに変換*/
-                    html = html.replaceAll("{{#if "+key+"}}","<span data-if='"+id+"."+key+"'>");
-                    html = html.replaceAll("{{#unless "+key+"}}","<span data-unless='"+id+"."+key+"'>");
-                }
+                html = html.replaceAll('{{@','<span data-id="'+id+'[].');
+                html = html.replaceAll('{{#if','<span data-if="'+id+'.');
+                html = html.replaceAll('{{#unless','<span data-unless="'+id+'.');
+                html = html.replaceAll('{{','<span data-id="'+id+'.');
+                html = html.replaceAll('}}','"></span>');
                 $(this).html(html);
             });
             this.$.find("[value-binding]").each(function(){
@@ -175,13 +172,15 @@
             this.$.find("[data-id]").each(function(){
                 var id = $(this).data("id");
                 id = id.replace(parentID+".","");
-                var value = that.getValue(data[id]);
+                var data = that.getDataByString(id);
+                var value = that.getValue(data);
                 $(this).html(value);
             });
             this.$.find("[data-if]").each(function(){
                 var id = $(this).data("if");
                 id = id.replace(parentID+".");
-                var value = that.getValue(data[id]);
+                var data = that.getDataByString(id);
+                var value = that.getValue(data);
                 if(value){
                     $(this).show();
                 }else{
@@ -191,7 +190,8 @@
             this.$.find("[data-unless]").each(function(){
                 var id = $(this).data("unless");
                 id = id.remove(parentID+".","");
-                var value = that.getValue(data[id]);
+                var data = that.getDataByString(id);
+                var value = that.getValue(data);
                 if(value){
                     $(this).hide();
                 }else{
