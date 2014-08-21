@@ -248,8 +248,10 @@
             /*属性のBinding*/
             if(kind != "value-binding"){
                 this.$.find("[value-binding]").each(function(){
-                    var id = $(this).attr("value-binding");
-                    var value = that.getValue(data[id]);
+                    var id = $(this).data("id");
+                    id = id.replace(parentID+".","");
+                    var data = that.getDataByString(id);
+                    var value = that.getValue(data);
                     $(this).val(value);
                 });
             }
