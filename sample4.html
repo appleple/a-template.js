@@ -4,6 +4,7 @@
 	<title>テスト</title>
 	<script src="jquery-1.11.1.min.js"></script>
 	<script src="Moon.js"></script>
+	<!-- data-parent-idを用意する -->
 	<script>
 		$(function(){
 			Moon();
@@ -26,7 +27,8 @@
 	<div data-id="test">
 		{{waza.name}}
 		<ul data-while="character">
-			<li>{{@name}}<input value-binding="@name"/><button action-binding="deleteCharacter">削除</button></li>
+			<li>{{character.@.name}}<input value-binding="character.@.name"/><button action-binding="deleteCharacter(character.@)">削除</button></li>
+			<!-- deleteCharacter から deleteCharacter(@name)にしたい -->
 		</ul>
 		<input value-binding="name"/>
 		<button action-binding="addCharacter">追加</button>

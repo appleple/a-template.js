@@ -78,7 +78,6 @@
                 var html = $(this).html();
                 html = html.replaceAll("{{/unless}}","</span>");
                 html = html.replaceAll("{{/if}}","</span>");
-                html = html.replaceAll('{{@','<span data-id="'+id+'[].');
                 html = html.replaceAll('{{#if','<span data-if="'+id+'.');
                 html = html.replaceAll('{{#unless','<span data-unless="'+id+'.');
                 html = html.replaceAll('{{','<span data-id="'+id+'.');
@@ -216,8 +215,8 @@
                     var html = that.getHtmlFromIndex(index);
                     var render = "";
                     for(var i = 0; i < length; i++){
-                        var temp = html.replaceAll("[]","."+id+"."+i);
-                        temp = temp.replaceAll("data-action-id","data-id='"+parentID+"."+id+"."+i+"' data-action-id");
+                        var temp = html.replaceAll("@",i);
+                        //temp = temp.replaceAll("data-action-id","data-id='"+parentID+"."+id+"."+i+"' data-action-id");
                         render += temp;
                     }
                     $(this).html(render);
