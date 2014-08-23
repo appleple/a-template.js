@@ -61,11 +61,18 @@
         var id = $(this).data("action-id");
         var parentId = id.split(".")[0];
         id = id.replace(parentId+".","");
-        var data = id.match(/\((.+)\)/)[1];
-        // data = parentId+"."+data;
+        var match = id.match(/\((.+)\)/);
+        if(match)
+            var data = match[1];
+        else
+            data = null;
         var obj = Moon.find(parentId);
         var func = id.split("(")[0];
-        obj.getDataByString(func).call(obj,data);
+        if(data){/*引き数があれば*/
+            obj.getDataByString(func).call(obj,data);
+        }else{/*引き数がなければ*/
+            obj.getDataByString(func).call(obj);
+        }
     });
     Moon.ObjectController = Moon.createClass({
         initialize:function(id,obj){
