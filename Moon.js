@@ -59,10 +59,13 @@
     /*action binding*/
     $(document).on("click","[action-binding]",function(){
         var id = $(this).data("action-id");
-        var splits = id.split(".");
-        var parentId = splits[0];
+        var parentId = id.split(".")[0];
+        id = id.replace(parentId+".","");
+        var data = id.match(/\((.+)\)/)[1];
+        // data = parentId+"."+data;
         var obj = Moon.find(parentId);
-        obj.getDataByString(obj.getPathFromId(id)).call(obj,this);
+        var func = id.split("(")[0];
+        obj.getDataByString(func).call(obj,data);
     });
     Moon.ObjectController = Moon.createClass({
         initialize:function(id,obj){
@@ -129,9 +132,7 @@
             return o;
         },
         remove:function(data){
-            var id = $(data).data("id") || $(data).data("action-id");
-            id = this.getPathFromId(id);
-            this.removeDataByString(id);
+            this.removeDataByString(data);
             this.update();
         },
         updateDataByString:function(path,newValue){
