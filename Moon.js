@@ -69,9 +69,9 @@
         var obj = Moon.find(parentId);
         var func = id.split("(")[0];
         if(data){/*引き数があれば*/
-            obj.getDataByString(func).call(obj,data);
+            obj.get(func).call(obj,data);
         }else{/*引き数がなければ*/
-            obj.getDataByString(func).call(obj);
+            obj.get(func).call(obj);
         }
     });
     Moon.ObjectController = Moon.createClass({
@@ -123,7 +123,7 @@
             i = Number(i);
             return this.whileHtml[i].html;
         },
-        getDataByString:function(s){
+        get:function(s){
             var o = this.data;
             s = s.replace(/\[(\w+)\]/g, '.$1');  // convert indexes to properties
             s = s.replace(/^\./, ''); // strip leading dot
@@ -186,7 +186,7 @@
                 if(!$(this).data("while") && !$(this).data("action-id")){
                     var id = $(this).data("id");
                     id = id.replace(parentID+".","");
-                    var data = that.getDataByString(id);
+                    var data = that.get(id);
                     var value = that.getValue(data);
                     $(this).html(value);
                 }
@@ -194,7 +194,7 @@
             this.$.find("[data-if]").each(function(){
                 var id = $(this).data("if");
                 id = id.replace(parentID+".");
-                var data = that.getDataByString(id);
+                var data = that.get(id);
                 var value = that.getValue(data);
                 if(value){
                     $(this).show();
@@ -205,7 +205,7 @@
             this.$.find("[data-unless]").each(function(){
                 var id = $(this).data("unless");
                 id = id.remove(parentID+".","");
-                var data = that.getDataByString(id);
+                var data = that.get(id);
                 var value = that.getValue(data);
                 if(value){
                     $(this).hide();
@@ -250,7 +250,7 @@
             this.$.find("[src-binding]").each(function(){
                 var id = $(this).attr("src-binding");
                 id = id.replace(parentID+".","");
-                var data = that.getDataByString(id);
+                var data = that.get(id);
                 var value = that.getValue(data);
                 $(this).attr("src",value);
             });
@@ -259,7 +259,7 @@
                 this.$.find("[value-binding]").each(function(){
                     var id = $(this).data("id");
                     id = id.replace(parentID+".","");
-                    var data = that.getDataByString(id);
+                    var data = that.get(id);
                     var value = that.getValue(data);
                     $(this).val(value);
                 });
@@ -269,13 +269,10 @@
             this.updateDataByString(key,value);
             this.update();
         },
-        add:function(key,value){/*ここを考えないと*/
-            var array = this.data[key];
-            array.push(value);
+        add:function(key,value){
+            var array = this.get(key);
+            array.push(value)
             this.update();
-        },
-        get:function(key){
-            return this.data[key];
         },
         getJson:function(){
             return this.data;
