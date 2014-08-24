@@ -275,7 +275,14 @@
             this.update();
         },
         getJson:function(){
-            return this.data;
+            var data = this.data;
+            var ret = {};
+            for(var i in data){
+                if(typeof data[i] != "function"){
+                    ret[i] = data[i];
+                }
+            }
+            return ret;
         }
     });
 })();
