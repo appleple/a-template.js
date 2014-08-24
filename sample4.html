@@ -17,7 +17,6 @@
 				this.add("character",{name:name});
 			},
 			deleteCharacter:function(chara){
-				console.log(chara);
 				this.remove(chara);
 			}
 			});
@@ -29,7 +28,6 @@
 		{{waza.name}}
 		<ul data-while="character">
 			<li>{{character.@.name}}<input value-binding="character.@.name"/><button action-binding="deleteCharacter(character.@)">削除</button></li>
-			<!-- deleteCharacter から deleteCharacter(@name)にしたい -->
 		</ul>
 		<input value-binding="name"/>
 		<button action-binding="addCharacter">追加</button>

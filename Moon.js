@@ -249,7 +249,9 @@
             });
             this.$.find("[src-binding]").each(function(){
                 var id = $(this).attr("src-binding");
-                var value = that.getValue(data[id]);
+                id = id.replace(parentID+".","");
+                var data = that.getDataByString(id);
+                var value = that.getValue(data);
                 $(this).attr("src",value);
             });
             /*属性のBinding*/
@@ -264,10 +266,10 @@
             }
         },
         set:function(key,value){
-            this.data[key] = value;
+            this.updateDataByString(key,value);
             this.update();
         },
-        add:function(key,value){
+        add:function(key,value){/*ここを考えないと*/
             var array = this.data[key];
             array.push(value);
             this.update();
