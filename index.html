@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>view.js test</title>
+	<link rel="stylesheet" href="google-code-prettify/prettify.css" />
+</head>
+<body>
+<script type="template" id="type_select">
+<select id="type" data-bind="type" data-action="refresh">
+	<option value=""></option>
+	<option value="text">テキスト</option>
+	<option value="select">セレクト</option>
+	<option value="radio">ラジオ</option>
+	<option value="checkbox">チェックボックス</option>
+	<option value="textarea">テキストエリア</option>
+	<option value="image">画像</option>
+	<!-- BEGIN kind:touch#generator -->
+	<option value="group">グループ</option>
+	<option value="imagegroup">画像グループ</option>
+	<!-- END kind:touch#generator -->
+</select>
+</script>
+<script type="template" id="title_name">
+	<p>タイトル</p>
+	<p><input type="text" value="" data-bind="title"></p>
+	<p>name属性</p>
+	<p><input type="text" value="" data-bind="name"></p>
+</script>
+<script type="template" id="option">
+<!-- BEGIN option:loop -->
+	<p>
+		label<input type="text" value="" data-bind="option.{i}.label">
+		value<input type="text" value="" data-bind="option.{i}.value">
+	</p>
+<!-- END option:loop -->
+<p><button data-action="addOption">追加</button></p>
+</script>
+<script type="template" id="make">
+	<p><button data-action="submit">生成</button></p>
+</script>
+<script type="template" id="image">
+表示する画像
+<select data-bind="path">
+	<option value="path">通常画像</option>
+	<option value="tinyPath">tiny画像</option>
+	<option value="largePath">large画像</option>
+	<option value="squarePath">square画像</option>
+</select>
+<div class="acms-form-group">
+	<label class="control-label">サイズ指定</label>
+	<div class="controls">
+		<select name="normal" data-bind="normal">
+			<option value="size">size</option>
+			<option value="width">width</option>
+			<option value="height">height</option>
+		</select>
+		<span class="input-append">
+			<input type="text" autocomplete="off" name="normalSize" data-bind="normalSize" /><span class="add-on"> px</span>
+		</span>
+	</div>
+</div>
+<div class="acms-form-group">
+	<label class="control-label acms-form-checkbox">
+		<span class="controls">
+			<input type="checkbox" value="check" data-check-bind="alt"/>
+			<i class="acms-ico-checkbox"></i> alt表示する
+		</span>
+	</label>
+</div>
+<div class="acms-form-group">
+	<label class="control-label">tiny生成</label>
+	<div class="controls">
+		<select name="tiny" data-bind="tiny">
+			<option value="">つくらない</option>
+			<option value="tinyWidth">width</option>
+			<option value="tinyHeight">height</option>
+		</select>
+		<span class="input-append">
+			<input type="text" autocomplete="off" name="tinySize" data-bind="tinySize" /><span class="add-on"> px</span>
+		</span>
+	</div>
+</div>
+<div class="acms-form-group">
+	<label class="control-label">large生成</label>
+	<div class="controls">
+		<select name="large" data-bind="large">
+			<option value="">つくらない</option>
+			<option value="largeWidth">width</option>
+			<option value="largeHeight">height</option>
+		</select>
+		<span class="input-append">
+			<input type="text" autocomplete="off" name="largeSize" data-bind="largeSize" class="span1" /><span class="add-on"> px</span>
+		</span>
+	</div>
+</div>
+<div class="acms-form-group">
+	<label class="control-label">square生成</label>
+	<div class="controls">
+		<select name="square" data-bind="square">
+			<option value="">つくらない</option>
+			<option value="squareWidth">width</option>
+			<option value="squareHeight">height</option>
+		</select>
+		<span class="input-append">
+			<input type="text" autocomplete="off" name="squareSize" data-bind="squareSize" /><span class="add-on"> px</span>
+		</span>
+	</div>
+</div>
+</script>
+
+<script type="template" id="group">
+	<p>type</p>
+	<!-- #include id="type_select" -->
+	<!-- テキストのとき -->
+	<!-- BEGIN type:touch#text -->
+	<!-- #include id="title_name" -->
+	<!-- END type:touch#text -->
+
+	<!-- セレクトのとき -->
+	<!-- BEGIN type:touch#select -->
+	<!-- #include id="title_name" -->
+	<p>option要素</p>
+	<!-- #include id="option" -->
+	<!-- END type:touch#select -->
+
+	<!-- ラジオボタンのとき -->
+	<!-- BEGIN type:touch#radio -->
+	<!-- #include id="title_name" -->
+	<p>input要素</p>
+	<!-- #include id="option" -->
+	<!-- END type:touch#radio -->
+
+	<!-- テキストエリアのとき --->
+	<!-- BEGIN type:touch#textarea -->
+	<!-- #include id="title_name" -->
+	<!-- END type:touch#textarea -->
+
+	<!-- チェックボックスのとき -->
+	<!-- BEGIN type:touch#checkbox -->
+	<!-- #include id="title_name" -->
+	<p>input要素</p>
+	<!-- #include id="option" -->
+	<!-- END type:touch#checkbox -->
+
+	<!-- 画像のとき -->
+	<!-- BEGIN type:touch#image -->
+	<!-- #include id="title_name" -->
+	<!-- #include id="image" -->
+	<!-- END type:touch#image -->
+</script>
+
+<script type="template" id="generator">
+	<p>type</p>
+	<!-- #include id="type_select" -->
+
+	<!-- テキストのとき -->
+	<!-- BEGIN type:touch#text -->
+	<!-- #include id="title_name" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#text -->
+
+	<!-- セレクトのとき -->
+	<!-- BEGIN type:touch#select -->
+	<!-- #include id="title_name" -->
+	<p>option要素</p>
+	<!-- #include id="option" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#select -->
+
+	<!-- ラジオボタンのとき -->
+	<!-- BEGIN type:touch#radio -->
+	<!-- #include id="title_name" -->
+	<p>input要素</p>
+	<!-- #include id="option" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#radio -->
+
+	<!-- テキストエリアのとき --->
+	<!-- BEGIN type:touch#textarea -->
+	<!-- #include id="title_name" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#textarea -->
+
+	<!-- チェックボックスのとき -->
+	<!-- BEGIN type:touch#checkbox -->
+	<!-- #include id="title_name" -->
+	<p>input要素</p>
+	<!-- #include id="option" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#checkbox -->
+
+	<!-- 画像のとき -->
+	<!-- BEGIN type:touch#image -->
+	<!-- #include id="title_name" -->
+	<!-- #include id="image" -->
+	<!-- #include id="make" -->
+	<!-- END type:touch#image -->
+
+	<!-- グループのとき -->
+	<!-- BEGIN type:touch#group -->
+	<p>groupタイトル</p>
+	<p><input type="text" value="" data-bind="title"></p>
+	<p>group名</p>
+	<p><input type="text" value="" data-bind="name"></p>
+	<div data-id="group"></div>
+	<button data-action="submit">グループ生成</button>
+	<button data-action="addItem">追加</button>
+	<button data-action="clearItems">グループ履歴クリア</button>
+	</p>
+	<!-- END type:touch#group -->
+</script>
+
+<div data-id="generator"></div>
+
+	<pre class="prettyprint lang-html linenums" data-id="main"></pre>
+	<script type="template" id="main">
+<!-- BEGIN item:loop -->
+<!-- BEGIN type:touch#text -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<input type="text" name="{name}" name="{{name}}" />
+		<input type="hidden" value="field[]" name="{name}" />
+	</td>
+</tr>
+<!-- END type:touch#text -->
+<!-- BEGIN type:touch#textarea -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<textarea name="{name}">{{name}}</textarea>
+		<input type="hidden" value="field[]" name="{name}" />
+	</td>
+</tr>			
+<!-- END type:touch#textarea -->
+<!-- BEGIN type:touch#select -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<select name="{name}">
+			<option value=""></option>
+			<!-- \BEGIN item.{i}.option:loop -->
+			<option value="\{value\}"{{name}:selected#\{value\}}>\{label\}</option>
+			<!-- \END item.{i}.option:loop -->
+		</select>
+		<input type="hidden" name="field[]" value="{name}" />
+	</td>
+</tr>
+<!-- END type:touch#select -->
+<!-- BEGIN type:touch#radio -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<!-- \BEGIN item.{i}.option:loop -->
+		<label class="acms-form-radio"><input type="radio" name="{name}" value="\{value\}"{{name}:checked#\{value\}} /><i class="acms-ico-radio"></i>\{label\}</label>
+		<!-- \END item.{i}.option:loop -->
+		<input type="hidden" name="field[]" value="{name}" />
+	</td>
+</tr>
+<!-- END type:touch#radio -->
+<!-- BEGIN type:touch#checkbox -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<!-- \BEGIN item.{i}.option:loop -->
+		<label class="acms-form-checkbox" for="input-{name}-\{value\}">
+			<input type="checkbox" name="{name}[]" value="\{value\}" id="input-{name}-\{value\}"{{name}:checked#\{value\}} />
+			<i class="acms-ico-checkbox"></i>\{label\}
+		</label>
+		<!-- \END item.{i}.option:loop -->
+		<input type="hidden" name="field[]" value="{name}" />
+	</td>
+</tr>
+<!-- END type:touch#checkbox -->
+
+
+<!-- BEGIN type:touch#image -->
+<tr>
+	<th>{title}</th>
+	<td>
+		<!-- BEGIN\ {name}@path:veil -->
+		<img src="%{ARCHIVES_DIR}{{name}@{path}}" />
+		<input type="hidden" name="{name}@old" value="{{name}@path}" /><br />
+		<label class="acms-form-checkbox">
+			<input type="checkbox" name="{name}@edit" value="delete" />
+			<i class="acms-ico-checkbox"></i> 削除
+		</label>
+		<!-- END\ {name}@path:veil -->
+		<input type="file" name="{name}" size="20" /><br />
+		<!-- BEGIN alt:veil -->
+		代替テキスト:<input type="text" name="{name}@alt" value="{{name}@alt}" size="40" />
+		<!-- END alt:veil -->
+		<input type="hidden" name="field[]" value="{name}" />
+		<input type="hidden" name="{name}:extension" value="{name}" />
+		<!-- BEGIN width:veil -->
+		<input type="hidden" name="{name}@{normal}" value="{normalSize}" />
+		<!-- END width:veil -->
+		<!-- BEGIN tiny:veil -->
+		<input type="hidden" name="{name}@{tiny}" value="{tinySize}" />
+		<!-- END tiny:veil -->
+
+		<!-- BEGIN large:veil -->
+		<input type="hidden" name="{name}@{large}" value="{largeSize}" />
+		<!-- END large:veil -->
+
+		<!-- BEGIN square:veil -->
+		<input type="hidden" name="{name}@{square}" value="{squareSize}" />
+		<!-- END square:veil -->
+
+		<input type="hidden" name="{name}@filename" value="" />
+	</td>
+</tr>
+<!-- END type:touch#image -->
+<!-- BEGIN type:touch#group -->
+<h2>{title}</h2>
+<table class="js-fieldgroup-sortable">
+	<tr>
+		<td><input type="button" class="item-insert acms-btn-admin" value="追加" /></td>
+		<!-- BEGIN\ item.{i}.group:loop -->
+		<th>\{title\}</th>
+		<!-- END\ item.{i}.group:loop -->
+		<td>削除</td>
+	</tr>
+	<!-- BEGIN\\ {name}:loop -->
+	<tr class="sortable-item">
+		<td class="item-handle"><i class="acms-icon-sort"></i></td>
+		<!-- BEGIN\ item.{i}.group:loop -->
+		<!-- BEGIN\ type:touch#text -->
+		<td>
+			<input type="text" name="\{name\}[\\\{i\\\}]" value="\\{\{name\}\\}" />
+		</td>
+		<!-- END\ type:touch#text -->
+		<!-- BEGIN\ type:touch#textarea -->
+		<td>
+			<textarea name="\{name\}[\\\{i\\\}]">\\{\{name\}\\}</textarea>
+		</td>
+		<!-- END\ type:touch#textarea -->
+		<!-- BEGIN\ type:touch#select -->
+		<td>
+			<select name="\{name\}[\\\{i\\\}]">
+				<option value=""></option>
+				<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+				<option value="\\{value\\}"\\\{\{name\}:selected#\{value}\\\}>\\{label\\}</option>
+				<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+			</select>
+		</td>
+		<!-- END\ type:touch#select -->
+		<!-- BEGIN\ type:touch#radio -->
+		<td>
+			<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+			<label class="acms-form-radio"><input type="radio" name="\{name\}[\\\\{i\\\\}]" value="\\{value\\}" \\\{\{name\}:checked#\{value\}\\\}/>
+				<i class="acms-ico-radio"></i>\{label\}</label>
+			<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+		</td>
+		<!-- END\ type:touch#radio -->
+		<!-- BEGIN\ type:touch#checkbox -->
+		<td>
+			<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+			<label class="acms-form-checkbox">
+				<input type="checkbox" name="\{name\}[\\\\{i\\\\}]" value="\\{value\\}"\\\{\{name\}:checked#\{value\}\\\} />
+				<i class="acms-ico-checkbox"></i>\{label\}
+			</label>
+			<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+		</td>
+		<!-- END\ type:touch#checkbox -->
+		<!-- BEGIN\ type:touch#image -->
+		<td>
+			<!-- BEGIN\ \{name\}@path:veil -->
+			<img src="%{ARCHIVES_DIR}\{\{name\}@\{path\}\}" />
+			<input type="hidden" name="\{name\}@old" value="\{\{name\}@path\}" /><br />
+			<label class="acms-form-checkbox">
+				<input type="checkbox" name="\{name\}@edit" value="delete" />
+				<i class="acms-ico-checkbox"></i> 削除
+			</label>
+			<!-- END\ \{name\}@path:veil -->
+			<input type="file" name="\{name\}[\\\{i\\\}]"/><br />
+			<!-- BEGIN\ alt:veil -->
+			代替テキスト:<input type="text" name="\{name\}@alt[\\\{i\\\}]" value="\{\{name\}@alt\}" size="40" />
+			<!-- END\ alt:veil -->
+			<!-- BEGIN\ normal:veil -->
+			<input type="hidden" name="\{name\}@\{normal\}[\\\{i\\\}]" value="\{normalSize\}" />
+			<!-- END\ normal:veil -->
+			<!-- BEGIN\ tiny:veil -->
+			<input type="hidden" name="\{name\}@\{tiny\}[\\\{i\\\}]" value="\{tinySize\}" />
+			<!-- END\ tiny:veil -->
+			<!-- BEGIN\ large:veil -->
+			<input type="hidden" name="\{name\}@\{large\}[\\\{i\\\}]" value="\{largeSize\}" />
+			<!-- END\ large:veil -->
+			<!-- BEGIN\ square:veil -->
+			<input type="hidden" name="\{name\}@\{square\}[\\\{i\\\}]" value="\{squareSize\}" />
+			<!-- END\ square:veil -->
+		</td>	
+		<!-- END\ type:touch#image -->
+		<!-- END\ item.{i}.group:loop -->
+	<td><input type="button" class="item-delete acms-btn-admin acms-btn-admin-danger" value="削除" /></td>
+	</tr>
+	<!-- END\\ {name}:loop -->
+	<tr class="sortable-item item-template">
+		<td class="item-handle"><i class="acms-icon-sort"></i></td>
+		<!-- BEGIN\ item.{i}.group:loop -->
+		<!-- BEGIN\ type:touch#text -->
+		<td>
+			<input type="text" name="\{name\}[]" value="" />
+		</td>
+		<!-- END\ type:touch#text -->
+		<!-- BEGIN\ type:touch#textarea -->
+		<td>
+			<textarea name="\{name\}[]"></textarea>
+		</td>
+		<!-- END\ type:touch#textarea -->
+		<!-- BEGIN\ type:touch#select -->
+		<td>
+			<select name="\{name\}[]">
+				<option value=""></option>
+				<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+				<option value="\\{value\\}">\\{label\\}</option>
+				<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+			</select>
+		</td>
+		<!-- END\ type:touch#select -->
+		<!-- BEGIN\ type:touch#radio -->
+		<td>
+			<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+			<label class="acms-form-radio"><input type="radio" name="\{name\}[]" value="\\{value\\}" />
+				<i class="acms-ico-radio"></i>\{label\}</label>
+			<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+		</td>
+		<!-- END\ type:touch#radio -->
+		<!-- BEGIN\ type:touch#checkbox -->
+		<td>
+			<!-- BEGIN\\ item.{i}.group.\{i\}.option:loop -->
+			<label class="acms-form-checkbox">
+				<input type="checkbox" name="\{name\}[]" value="\\{value\\}"/>
+				<i class="acms-ico-checkbox"></i>\{label\}
+			</label>
+			<!-- END\\ item.{i}.group.\{i\}.option:loop -->
+		</td>
+		<!-- END\ type:touch#checkbox -->
+		<!-- BEGIN\ type:touch#image -->
+		<td>
+			<input type="file" name="\{name\}[]"/><br />
+			<!-- BEGIN\ alt:veil -->
+			代替テキスト:<input type="text" name="\{name\}@alt[]" value="\{\{name\}@alt\}" size="40" />
+			<!-- END\ alt:veil -->
+			<!-- BEGIN\ normal:veil -->
+			<input type="hidden" name="\{name\}@\{normal\}[]" value="\{normalSize\}" />
+			<!-- END\ normal:veil -->
+			<!-- BEGIN\ tiny:veil -->
+			<input type="hidden" name="\{name\}@\{tiny\}[]" value="\{tinySize\}" />
+			<!-- END\ tiny:veil -->
+			<!-- BEGIN\ large:veil -->
+			<input type="hidden" name="\{name\}@\{large\}[]" value="\{largeSize\}" />
+			<!-- END\ large:veil -->
+			<!-- BEGIN\ square:veil -->
+			<input type="hidden" name="\{name\}@\{square\}[]" value="\{squareSize\}" />
+			<!-- END\ square:veil -->
+		</td>
+		<!-- END\ type:touch#image -->
+
+		<!-- END\ item.{i}.group:loop -->
+		<td><input type="button" class="item-delete acms-btn-admin acms-btn-admin-danger" value="削除" /></td>
+	</tr>
+</table>
+<!-- BEGIN\ item.{i}.group:loop -->
+<input type="hidden" name="@{name}[]" value="\{name\}" />
+<input type="hidden" name="field[]" value="\{name\}" />
+<input type="hidden" name="\{name\}:extension" value="image" />
+<!-- BEGIN\ square:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@squarePath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareY" />
+<!-- END\ square:veil -->
+<!-- BEGIN\ large:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@largePath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeY" />
+<!-- END\ large:veil -->
+<!-- BEGIN\ tiny:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyPath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyY" />
+<!-- END\ tiny:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@alt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@path" />
+<input type="hidden" name="@{name}[]" value="\{name\}@x" />
+<input type="hidden" name="@{name}[]" value="\{name\}@y" />
+<input type="hidden" name="@{name}[]" value="\{name\}@edit" />
+<input type="hidden" name="@{name}[]" value="\{name\}@old" />
+<!-- END\ item.{i}.group:loop -->
+<input type="hidden" name="field[]" value="@{name}" />
+<!-- END type:touch#group -->
+<!-- END item:loop -->
+	</script>
+	<script src="jquery.js"></script>
+	<script src="google-code-prettify/prettify.js"></script>
+	<script src="view.js"></script>
+	<script src="customfield.js"></script>
+</body>
+</html>
