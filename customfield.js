@@ -41,6 +41,7 @@ $(function(){
             submit:function(){
                 main.data.item.push(this.getData());
                 main.update("text");
+                prettyPrint();
             },
             refresh:function(){
                 this.data.title = "";
@@ -53,10 +54,7 @@ $(function(){
                     group.update();
                 }
             },
-            addOption:function(){
-                this.data.option.push({value:"",label:""});
-                this.update();
-            },
+            addOption:group.method.addOption,
             addItem:function(){
                 this.data.group.push(group.getData());
                 main.data.item.pop();
