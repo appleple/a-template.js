@@ -12,17 +12,32 @@ $(function(){
             title:"",
             path:"path",
             option:[{value:"",label:""}],
+            openValidator:false,
+            validator:[{option:"",value:"",message:""}],
         },
         method:{
             refresh:function(){
-                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt"]);
+                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt","openValidator"]);
                 this.data.option = [{value:"",label:""}];
+                this.data.validator = [{option:"",value:"",message:""}];
                 this.update();
             },
             addOption:function(){
                 this.data.option.push({value:"",label:""});
                 this.update();
             },
+            toggleValidator:function(target){
+                if(this.data.openValidator === false){
+                    this.data.openValidator = true;
+                }else{
+                    this.data.openValidator = false;
+                }
+                this.update();
+            },
+            addValidator:function(){
+                this.data.validator.push({option:"",value:"",message:""});
+                this.update();
+            }
         }
     });
     var generator = new Moon.View({
@@ -33,6 +48,7 @@ $(function(){
             title:"",
             path:"path",
             option:[{value:"",label:""}],
+            validator:[{option:"",value:"",message:""}],
             group:[]
         },
         method:{
@@ -43,8 +59,9 @@ $(function(){
                 prettyPrint();
             },
             refresh:function(){
-                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt"]);
+                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt","openValidator"]);
                 this.data.option = [{value:"",label:""}];
+                this.data.validator = [{option:"",value:"",message:""}];
                 this.data.group = [];
                 this.update();
                 if(this.data.type == "group"){
@@ -57,6 +74,8 @@ $(function(){
                 main.saveData("customField");
             },
             addOption:group.method.addOption,
+            toggleValidator:group.method.toggleValidator,
+            addValidator:group.method.addValidator,
             addItem:function(){
                 this.data.group.push(group.getData());
                 main.data.item.pop();

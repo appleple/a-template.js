@@ -36,6 +36,34 @@
 <!-- END option:loop -->
 <p><button data-action="addOption">追加</button></p>
 </script>
+<script type="template" id="validator">
+	<p data-action="toggleValidator" style="cursor:pointer">入力チェック</p>
+	<!-- BEGIN openValidator:veil -->
+	<table>
+		<tr>
+			<th>オプション</th>
+			<th>値</th>
+			<th>メッセージ</th>
+		</tr>
+		<!-- BEGIN validator:loop -->
+		<tr>
+			<td>
+				<select data-bind="validator.{i}.option">
+					<option></option>
+				</select>
+			</td>
+			<td>
+				<input type="text" data-bind="validator.{i}.value">
+			</td>
+			<td>
+				<input type="text" data-bind="validator.{i}.message">
+			</td>
+		</tr>
+		<!-- END validator:loop -->
+	</table>
+	<button data-action="addValidator">バリデータを追加</button>
+	<!-- END openValidator:veil -->
+</script>
 <script type="template" id="make">
 	<p>
 		<button data-action="submit">生成</button>
@@ -161,6 +189,7 @@
 	<!-- テキストのとき -->
 	<!-- BEGIN type:touch#text -->
 	<!-- #include id="title_name" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#text -->
 
@@ -169,6 +198,7 @@
 	<!-- #include id="title_name" -->
 	<p>option要素</p>
 	<!-- #include id="option" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#select -->
 
@@ -177,12 +207,14 @@
 	<!-- #include id="title_name" -->
 	<p>input要素</p>
 	<!-- #include id="option" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#radio -->
 
 	<!-- テキストエリアのとき --->
 	<!-- BEGIN type:touch#textarea -->
 	<!-- #include id="title_name" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#textarea -->
 
@@ -191,6 +223,7 @@
 	<!-- #include id="title_name" -->
 	<p>input要素</p>
 	<!-- #include id="option" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#checkbox -->
 
@@ -198,6 +231,7 @@
 	<!-- BEGIN type:touch#image -->
 	<!-- #include id="title_name" -->
 	<!-- #include id="image" -->
+	<!-- #include id="validator" -->
 	<!-- #include id="make" -->
 	<!-- END type:touch#image -->
 
@@ -277,8 +311,6 @@
 	</td>
 </tr>
 <!-- END type:touch#checkbox -->
-
-
 <!-- BEGIN type:touch#image -->
 <tr>
 	<th>{title}</th>
