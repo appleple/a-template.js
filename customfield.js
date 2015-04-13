@@ -15,15 +15,9 @@ $(function(){
         },
         method:{
             refresh:function(){
-                this.data.title = "";
-                this.data.name = "";
-                this.data.path = "";
+                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt"]);
                 this.data.option = [{value:"",label:""}];
                 this.update();
-            },
-            clear:function(){
-                this.removeData(["title","name","path","tiny","tinySize","square","squareSize"]);
-                this.data.option = [{value:"",label:""}];
             },
             addOption:function(){
                 this.data.option.push({value:"",label:""});
@@ -48,9 +42,7 @@ $(function(){
                 prettyPrint();
             },
             refresh:function(){
-                this.data.title = "";
-                this.data.name = "";
-                this.data.path = "";
+                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt"]);
                 this.data.option = [{value:"",label:""}];
                 this.data.group = [];
                 this.update();
@@ -58,12 +50,15 @@ $(function(){
                     group.update();
                 }
             },
+            historyClear:function(){
+                main.data = {item:[]};
+                main.update("text");
+            },
             addOption:group.method.addOption,
             addItem:function(){
                 this.data.group.push(group.getData());
                 main.data.item.pop();
                 main.data.item.push(this.getData());
-                console.log(main.data.item);
                 main.update("text");
             },
             clearItems:function(){

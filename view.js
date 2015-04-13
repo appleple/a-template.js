@@ -265,11 +265,11 @@
             });
             return html;
         },
-        removeDataExcept: function(arr){
+        removeData: function(arr){
             var data = this.data;
             for(var i in data){
                 for(var t = 0,n = arr.length; t < n; t++){
-                    if(i == arr[t]){
+                    if(i === arr[t]){
                         delete data[i];
                     }
                 }
