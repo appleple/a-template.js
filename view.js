@@ -52,7 +52,11 @@
         var val = $(this).val();
         var id = $(this).parents("[data-id]").data("id");
         var obj = Moon.getObjectById(id);
-        
+        if($(this).is(":checked")){
+            obj.updateDataByString(data,val);
+        }else{
+            obj.updateDataByString(data,'');
+        }
     });
     $(document).on("input click","[data-action]",function(e){
         if(e.type == "click" && $(e.target).is("select")){
