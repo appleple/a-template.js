@@ -39,6 +39,7 @@ $(function(){
             submit:function(){
                 main.data.item.push(this.getData());
                 main.update("text");
+                main.saveData("customField");
                 prettyPrint();
             },
             refresh:function(){
@@ -53,6 +54,7 @@ $(function(){
             historyClear:function(){
                 main.data = {item:[]};
                 main.update("text");
+                main.saveData("customField");
             },
             addOption:group.method.addOption,
             addItem:function(){
@@ -60,16 +62,20 @@ $(function(){
                 main.data.item.pop();
                 main.data.item.push(this.getData());
                 main.update("text");
+                main.saveData("customField");
+                prettyPrint();
             },
             clearItems:function(){
                 this.data.group = [];
                 main.data.item.pop();
                 main.data.item.push(this.getData());
                 main.update("text");
+                main.saveData("customField");
             }
         }
     });
     generator.update();
+    main.loadData("customField");
     main.update("text");
     prettyPrint(); 
 });

@@ -124,7 +124,6 @@
             }
         },
         sortProperties:function(name,opt){
-
         }
     });
     Moon.View = Moon.createClass({
@@ -137,6 +136,17 @@
         },
         getData:function(){
             return JSON.parse(JSON.stringify(this.data));
+        },
+        saveData:function(key){
+            var data = JSON.stringify(this.data);
+            localStorage.setItem(key,data);
+        },
+        loadData:function(key){
+            var data = JSON.parse(localStorage.getItem(key));
+            if(data){
+                console.log(data);
+                this.data = data;
+            }
         },
         getRand: function (a, b) {
             return ~~(Math.random() * (b - a + 1)) + a;
