@@ -62,11 +62,14 @@
         if(e.type == "click" && $(e.target).is("select")){
             return;
         }
-        var action = $(this).data("action");
+        var string = $(this).data("action");
+        var action = string.replace(/\(.*?\);?/,"");
+        var parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
+        var pts = parameter.split(",");//引き数
         var id = $(this).parents("[data-id]").data("id");
         var obj = Moon.getObjectById(id);
         if(obj.method[action]){
-            obj.method[action].apply(obj,[this]);
+            obj.method[action].apply(obj,pts);
         }
     });
     Moon.ObjectController = Moon.createClass({
@@ -199,6 +202,19 @@
                 object = object[stack.shift()];
             }
             object[stack.shift()] = newValue;
+        },
+        removeDataByString:function(path){
+            var object = this.data;
+            var stack = path.split('.');
+            while(stack.length>1){
+                object = object[stack.shift()];
+            }
+            var shift = stack.shift();
+            if(shift.match(/^\d+$/)){
+                object.splice(Number(shift),1);
+            }else{
+                delete object[shift];
+            }
         },
         resolveBlock:function(html,item,i){
             var touch = /<!-- BEGIN (\w+):touch#(\w+) -->(([\n\r\t]|.)*?)<!-- END (\w+):touch#(\w+) -->/g;

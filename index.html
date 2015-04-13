@@ -36,6 +36,18 @@
 <!-- END option:loop -->
 <p><button data-action="addOption">追加</button></p>
 </script>
+<script type="template" id="validatorTmp">
+	<!-- BEGIN openValidator:veil -->
+	<!-- \BEGIN item.{i}.validator:loop -->
+		<input type="hidden" name="{name}:v#\{option\}"<!-- BEGIN\ value:veil --> value="\{value\}"<!-- END\ value:veil -->/>
+		<!-- BEGIN\ message:veil -->
+		<!-- \\BEGIN {name}:validator#\{option\} -->
+		<p class="acms-text-error">\{message\}</p>
+		<!-- \\END {name}:validator#\{option\} -->
+		<!-- END\ message:veil -->
+	<!-- \END item.{i}.validator:loop -->
+	<!-- END openValidator:veil -->
+</script>
 <script type="template" id="validator">
 	<p data-action="toggleValidator" style="cursor:pointer">入力チェック</p>
 	<!-- BEGIN openValidator:veil -->
@@ -44,12 +56,32 @@
 			<th>オプション</th>
 			<th>値</th>
 			<th>メッセージ</th>
+			<th>削除</th>
 		</tr>
 		<!-- BEGIN validator:loop -->
 		<tr>
 			<td>
 				<select data-bind="validator.{i}.option">
-					<option></option>
+					<option value="">▼ オプションを選択</option>
+					<optgroup label="入力値の制限">
+						<option value="required">必須 ( required )</option>
+						<option value="minLength">最小文字数 ( minLength )</option>
+						<option value="maxLength">最大文字数 ( maxLength )</option>
+						<option value="min">下限値 ( min )</option>
+						<option value="max">上限値 ( max )</option>
+					</optgroup>
+					<optgroup label="形式チェック">
+						<option value="digits">数字チェック ( digits )</option>
+						<option value="email">メールアドレスチェック ( email )</option>
+						<option value="url">URLチェック ( url )</option>
+						<option value="dates">日付チェック ( dates )</option>
+						<option value="times">時間チェック ( times )</option>
+						<option value="regex">正規表現マッチ ( regex )</option>
+					</optgroup>
+					<optgroup label="その他">
+						<option value="converter">入力の変換 ( converter )</option>
+						<option value="duplication">アドレスの重複禁止 ( duplication )</option>
+					</optgroup>
 				</select>
 			</td>
 			<td>
@@ -57,6 +89,9 @@
 			</td>
 			<td>
 				<input type="text" data-bind="validator.{i}.message">
+			</td>
+			<td>
+				<button data-action="removeValidator(validator.{i});">削除</button>
 			</td>
 		</tr>
 		<!-- END validator:loop -->
@@ -258,8 +293,9 @@
 <tr>
 	<th>{title}</th>
 	<td>
-		<input type="text" name="{name}" name="{{name}}" />
-		<input type="hidden" value="field[]" name="{name}" />
+		<input type="text" name="{name}" value="{{name}}" />
+		<input type="hidden" name="field[]" value="{name}" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>
 <!-- END type:touch#text -->
@@ -268,7 +304,8 @@
 	<th>{title}</th>
 	<td>
 		<textarea name="{name}">{{name}}</textarea>
-		<input type="hidden" value="field[]" name="{name}" />
+		<input type="hidden" name="field[]" value="{name}" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>			
 <!-- END type:touch#textarea -->
@@ -283,6 +320,7 @@
 			<!-- \END item.{i}.option:loop -->
 		</select>
 		<input type="hidden" name="field[]" value="{name}" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>
 <!-- END type:touch#select -->
@@ -294,6 +332,7 @@
 		<label class="acms-form-radio"><input type="radio" name="{name}" value="\{value\}"{{name}:checked#\{value\}} /><i class="acms-ico-radio"></i>\{label\}</label>
 		<!-- \END item.{i}.option:loop -->
 		<input type="hidden" name="field[]" value="{name}" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>
 <!-- END type:touch#radio -->
@@ -308,6 +347,7 @@
 		</label>
 		<!-- \END item.{i}.option:loop -->
 		<input type="hidden" name="field[]" value="{name}" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>
 <!-- END type:touch#checkbox -->
@@ -345,6 +385,7 @@
 		<!-- END square:veil -->
 
 		<input type="hidden" name="{name}@filename" value="" />
+		<!-- #include id="validatorTmp" -->
 	</td>
 </tr>
 <!-- END type:touch#image -->

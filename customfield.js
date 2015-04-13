@@ -26,8 +26,8 @@ $(function(){
                 this.data.option.push({value:"",label:""});
                 this.update();
             },
-            toggleValidator:function(target){
-                if(this.data.openValidator === false){
+            toggleValidator:function(){
+                if(!this.data.openValidator){
                     this.data.openValidator = true;
                 }else{
                     this.data.openValidator = false;
@@ -36,6 +36,10 @@ $(function(){
             },
             addValidator:function(){
                 this.data.validator.push({option:"",value:"",message:""});
+                this.update();
+            },
+            removeValidator:function(string){
+                this.removeDataByString(string);
                 this.update();
             }
         }
@@ -48,6 +52,7 @@ $(function(){
             title:"",
             path:"path",
             option:[{value:"",label:""}],
+            openValidator:false,
             validator:[{option:"",value:"",message:""}],
             group:[]
         },
@@ -76,6 +81,7 @@ $(function(){
             addOption:group.method.addOption,
             toggleValidator:group.method.toggleValidator,
             addValidator:group.method.addValidator,
+            removeValidator:group.method.removeValidator,
             addItem:function(){
                 this.data.group.push(group.getData());
                 main.data.item.pop();
