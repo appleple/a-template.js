@@ -22,7 +22,7 @@ $(function(){
                 this.update();
             },
             clear:function(){
-
+                this.removeDataExcept(["kind","type","title","path","option"]);
             },
             addOption:function(){
                 this.data.option.push({value:"",label:""});

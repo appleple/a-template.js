@@ -40,7 +40,7 @@
         }
         return null;
     }
-    $(document).on("input","[data-bind]",function(){
+    $(document).on("input change","[data-bind]",function(){
         var data = $(this).data("bind");
         var val = $(this).val();
         var id = $(this).parents("[data-id]").data("id");
@@ -264,6 +264,16 @@
                 return ret;
             });
             return html;
+        },
+        removeDataExcept: function(arr){
+            var data = this.data;
+            for(var i in data){
+                for(var t = 0,n = arr.length; t < n; t++){
+                    if(i == arr[t]){
+                        delete data[i];
+                    }
+                }
+            }
         },
         hasLoop:function(txt){
             var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
