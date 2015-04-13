@@ -367,12 +367,12 @@
 		<td>
 			<!-- BEGIN\ \{name\}@path:veil -->
 			<img src="%{ARCHIVES_DIR}\{\{name\}@\{path\}\}" />
-			<input type="hidden" name="\{name\}@old" value="\{\{name\}@path\}" /><br />
 			<label class="acms-form-checkbox">
 				<input type="checkbox" name="\{name\}@edit" value="delete" />
 				<i class="acms-ico-checkbox"></i> 削除
 			</label>
 			<!-- END\ \{name\}@path:veil -->
+			<input type="hidden" name="\{name\}@old[\\\{i\\\}]" value="\{\{name\}@path\}" />
 			<input type="file" name="\{name\}[\\\{i\\\}]"/><br />
 			<!-- BEGIN\ alt:veil -->
 			代替テキスト:<input type="text" name="\{name\}@alt[\\\{i\\\}]" value="\{\{name\}@alt\}" size="40" />
@@ -481,13 +481,13 @@
 <input type="hidden" name="@{name}[]" value="\{name\}@tinyY" />
 <!-- END\ tiny:veil -->
 <!-- BEGIN\ type:touch#image -->
-<input type="hidden" name="\{name\}:extension" value="image" />
 <input type="hidden" name="@{name}[]" value="\{name\}@alt" />
 <input type="hidden" name="@{name}[]" value="\{name\}@path" />
 <input type="hidden" name="@{name}[]" value="\{name\}@x" />
 <input type="hidden" name="@{name}[]" value="\{name\}@y" />
 <input type="hidden" name="@{name}[]" value="\{name\}@edit" />
 <input type="hidden" name="@{name}[]" value="\{name\}@old" />
+<input type="hidden" name="\{name\}:extension" value="image" />
 <!-- END\ type:touch#image -->
 <input type="hidden" name="field[]" value="\{name\}" />
 <!-- END\ item.{i}.group:loop -->

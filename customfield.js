@@ -15,6 +15,10 @@ $(function(){
         },
         method:{
             refresh:function(){
+                this.data.title = "";
+                this.data.name = "";
+                this.data.path = "";
+                this.data.option = [{value:"",label:""}];
                 this.update();
             },
             addOption:function(){
@@ -39,6 +43,11 @@ $(function(){
                 main.update("text");
             },
             refresh:function(){
+                this.data.title = "";
+                this.data.name = "";
+                this.data.path = "";
+                this.data.option = [{value:"",label:""}];
+                this.data.group = [];
                 this.update();
                 if(this.data.type == "group"){
                     group.update();
