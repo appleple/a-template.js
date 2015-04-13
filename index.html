@@ -440,7 +440,7 @@
 		<td>
 			<input type="file" name="\{name\}[]"/><br />
 			<!-- BEGIN\ alt:veil -->
-			代替テキスト:<input type="text" name="\{name\}@alt[]" value="\{\{name\}@alt\}" size="40" />
+			代替テキスト:<input type="text" name="\{name\}@alt[]" value="" size="40" />
 			<!-- END\ alt:veil -->
 			<!-- BEGIN\ normal:veil -->
 			<input type="hidden" name="\{name\}@\{normal\}[]" value="\{normalSize\}" />
@@ -462,9 +462,6 @@
 	</tr>
 </table>
 <!-- BEGIN\ item.{i}.group:loop -->
-<input type="hidden" name="@{name}[]" value="\{name\}" />
-<input type="hidden" name="field[]" value="\{name\}" />
-<input type="hidden" name="\{name\}:extension" value="image" />
 <!-- BEGIN\ square:veil -->
 <input type="hidden" name="@{name}[]" value="\{name\}@squarePath" />
 <input type="hidden" name="@{name}[]" value="\{name\}@squareAlt" />
@@ -483,12 +480,16 @@
 <input type="hidden" name="@{name}[]" value="\{name\}@tinyX" />
 <input type="hidden" name="@{name}[]" value="\{name\}@tinyY" />
 <!-- END\ tiny:veil -->
+<!-- BEGIN\ type:touch#image -->
+<input type="hidden" name="\{name\}:extension" value="image" />
 <input type="hidden" name="@{name}[]" value="\{name\}@alt" />
 <input type="hidden" name="@{name}[]" value="\{name\}@path" />
 <input type="hidden" name="@{name}[]" value="\{name\}@x" />
 <input type="hidden" name="@{name}[]" value="\{name\}@y" />
 <input type="hidden" name="@{name}[]" value="\{name\}@edit" />
 <input type="hidden" name="@{name}[]" value="\{name\}@old" />
+<!-- END\ type:touch#image -->
+<input type="hidden" name="field[]" value="\{name\}" />
 <!-- END\ item.{i}.group:loop -->
 <input type="hidden" name="field[]" value="@{name}" />
 <!-- END type:touch#group -->
