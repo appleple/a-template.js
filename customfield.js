@@ -21,6 +21,9 @@ $(function(){
                 this.data.option = [{value:"",label:""}];
                 this.update();
             },
+            clear:function(){
+
+            },
             addOption:function(){
                 this.data.option.push({value:"",label:""});
                 this.update();

@@ -71,8 +71,16 @@
     });
     Moon.ObjectController = Moon.createClass({
         initialize:function(opt){
-            for(var i in opt){
-                this[i] = opt[i];
+            if(typeof opt !== "undefined"){
+                for(var i in opt){
+                    this[i] = opt[i];
+                }
+                if(opt.method){
+                    var method = opt.method;
+                    for(var i in method){
+                        this.prototype[i] = method[i];
+                    }
+                }
             }
         },
         findProperties:function(name,opt){
