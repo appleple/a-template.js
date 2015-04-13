@@ -282,7 +282,7 @@
             /*エスケープ削除*/
             html = html.replace(/\\([^\\])/g,"$1");
             /*空行削除*/
-           return html.replace(/^([\t ].)*\n/gm,"");
+           return html.replace(/^([\t ])*\n/gm,"");
         },
         update:function(txt){
             var html = this.getHtml();
