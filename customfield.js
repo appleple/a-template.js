@@ -22,7 +22,8 @@ $(function(){
                 this.update();
             },
             clear:function(){
-                this.removeDataExcept(["kind","type","title","path","option"]);
+                this.removeData(["title","name","path","tiny","tinySize","square","squareSize"]);
+                this.data.option = [{value:"",label:""}];
             },
             addOption:function(){
                 this.data.option.push({value:"",label:""});
