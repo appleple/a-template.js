@@ -39,12 +39,17 @@
 <script type="template" id="validatorTmp">
 	<!-- BEGIN openValidator:veil -->
 	<!-- \BEGIN item.{i}.validator:loop -->
+		<!-- BEGIN\ option:touchnot#converter -->
 		<input type="hidden" name="{name}:v#\{option\}"<!-- BEGIN\ value:veil --> value="\{value\}"<!-- END\ value:veil -->/>
 		<!-- BEGIN\ message:veil -->
 		<!-- \\BEGIN {name}:validator#\{option\} -->
 		<p class="acms-text-error">\{message\}</p>
 		<!-- \\END {name}:validator#\{option\} -->
 		<!-- END\ message:veil -->
+		<!-- END\ option:touchnot#converter -->
+		<!-- BEGIN\ option:touch#converter -->
+		<input type="hidden" name="{name}:c#\{value\}"/>
+		<!-- END\ option:touch#converter -->
 	<!-- \END item.{i}.validator:loop -->
 	<!-- END openValidator:veil -->
 </script>

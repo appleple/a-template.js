@@ -218,6 +218,7 @@
         },
         resolveBlock:function(html,item,i){
             var touch = /<!-- BEGIN (\w+):touch#(\w+) -->(([\n\r\t]|.)*?)<!-- END (\w+):touch#(\w+) -->/g;
+            var touchnot = /<!-- BEGIN (\w+):touchnot#(\w+) -->(([\n\r\t]|.)*?)<!-- END (\w+):touchnot#(\w+) -->/g;
             var veil = /<!-- BEGIN (\w+):veil -->(([\n\r\t]|.)*?)<!-- END (\w+):veil -->/g;
             var empty = /<!-- BEGIN (\w+):empty -->(([\n\r\t]|.)*?)<!-- END (\w+):empty -->/g;
             /*タッチブロック解決*/
@@ -228,8 +229,16 @@
                     return "";
                 }
             });
+            /*タッチノットブロック解決*/
+            html = html.replace(touchnot,function(m,key2,val,next){
+                if(item[key2] != val){
+                    return next;
+                }else{
+                    return "";
+                }
+            });
             /*ベイルブロック解決*/
-            var html = html.replace(veil,function(m,key2,next){
+            html = html.replace(veil,function(m,key2,next){
                 if(item[key2]){
                     return next;
                 }else{
@@ -237,7 +246,7 @@
                 }
             });
             /*エンプティプロック解決*/
-            var html = html.replace(empty,function(m,key2,next){
+            html = html.replace(empty,function(m,key2,next){
                 if(!item[key2]){
                     return next;
                 }else{
@@ -245,7 +254,7 @@
                 }
             });
             /*変数解決*/
-            var html = html.replace(/{(\w+)}/g,function(n,key3){
+            html = html.replace(/{(\w+)}/g,function(n,key3){
                 if(key3 == "i"){
                     return i;
                 }else{
