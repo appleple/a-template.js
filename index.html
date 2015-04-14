@@ -604,7 +604,7 @@
 			<!-- BEGIN\ \{name\}@path:veil -->
 			<img src="%{ARCHIVES_DIR}\{\{name\}@\{path\}\}" />
 			<label class="acms-form-checkbox">
-				<input type="checkbox" name="\{name\}@edit" value="delete" />
+				<input type="checkbox" name="\{name\}@edit[\\\{i\\\}]" value="delete" />
 				<i class="acms-ico-checkbox"></i> 削除
 			</label>
 			<!-- END\ \{name\}@path:veil -->
@@ -684,7 +684,9 @@
 <input type="hidden" name="@{name}[]" value="\{name\}@edit" />
 <input type="hidden" name="@{name}[]" value="\{name\}@old" />
 <input type="hidden" name="\{name\}:extension" value="image" />
+<input type="hidden" name="field[]" value="\{name\}" />
 <!-- END\ item.{i}.group:loop -->
+<input type="hidden" name="field[]" value="@{name}" />
 <!-- END type:touch#imagegroup -->
 <!-- END item:loop -->
 	</script>
