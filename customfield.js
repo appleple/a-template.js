@@ -58,13 +58,28 @@ $(function(){
         },
         method:{
             submit:function(){
+                if(this.data.type == "imagegroup"){
+                    this.data.group.push({
+                        "name":this.data.imagename,
+                        "path":this.data.path,
+                        "normal":this.data.normal,
+                        "normalSize":this.data.normalSize,
+                        "tiny":this.data.tiny,
+                        "tinySize":this.data.tinySize,
+                        "large":this.data.large,
+                        "largeSize":this.data.largeSize,
+                        "square":this.data.square,
+                        "squareSize":this.data.squareSize,
+                        "alt":this.data.alt
+                    });
+                }
                 main.data.item.push(this.getData());
                 main.update("text");
                 main.saveData("customField");
                 prettyPrint();
             },
             refresh:function(){
-                this.removeData(["title","name","path","normal","normalSize","tiny","tinySize","large","largeSize","square","squareSize","alt","openValidator"]);
+                this.removeData(["title","name","path","normal","normalSize","imagename","tiny","tinySize","large","largeSize","square","squareSize","alt","openValidator"]);
                 this.data.option = [{value:"",label:""}];
                 this.data.validator = [{option:"",value:"",message:""}];
                 this.data.group = [];

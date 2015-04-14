@@ -294,6 +294,8 @@
 	<p><input type="text" value="" data-bind="title"></p>
 	<p>group名</p>
 	<p><input type="text" value="" data-bind="name"></p>
+	<p>name属性</p>
+	<p><input type="text" value="" data-bind="imagename"></p>
 	<!-- #include id="image" -->
 	<div data-id="group"></div>
 	<!-- #include id="make" -->
@@ -555,7 +557,6 @@
 		<td><input type="button" class="item-delete acms-btn-admin acms-btn-admin-danger" value="削除" /></td>
 	</tr>
 </table>
-<!-- BEGIN\ item.{i}.group:loop -->
 <!-- BEGIN\ square:veil -->
 <input type="hidden" name="@{name}[]" value="\{name\}@squarePath" />
 <input type="hidden" name="@{name}[]" value="\{name\}@squareAlt" />
@@ -587,6 +588,104 @@
 <!-- END\ item.{i}.group:loop -->
 <input type="hidden" name="field[]" value="@{name}" />
 <!-- END type:touch#group -->
+
+<!-- BEGIN type:touch#imagegroup -->
+<table class="js-fieldgroup-sortable">
+	<thead>
+	<tr>
+		<th colspan="3">{title}</th>
+	</tr>
+	</thead>
+	<!-- BEGIN\\ {name}:loop -->
+	<!-- BEGIN\ item.{i}.group:loop -->
+	<tr class="sortable-item">
+		<td class="item-handle"><i class="acms-admin-icon-sort"></i></td>
+		<td>
+			<!-- BEGIN\ \{name\}@path:veil -->
+			<img src="%{ARCHIVES_DIR}\{\{name\}@\{path\}\}" />
+			<label class="acms-form-checkbox">
+				<input type="checkbox" name="\{name\}@edit" value="delete" />
+				<i class="acms-ico-checkbox"></i> 削除
+			</label>
+			<!-- END\ \{name\}@path:veil -->
+			<input type="hidden" name="\{name\}@old[\\\{i\\\}]" value="\{\{name\}@path\}" />
+			<input type="file" name="\{name\}[\\\{i\\\}]"/><br />
+			<!-- BEGIN\ alt:veil -->
+			代替テキスト:<input type="text" name="\{name\}@alt[\\\{i\\\}]" value="\{\{name\}@alt\}" size="40" />
+			<!-- END\ alt:veil -->
+			<!-- BEGIN\ normal:veil -->
+			<input type="hidden" name="\{name\}@\{normal\}[\\\{i\\\}]" value="\{normalSize\}" />
+			<!-- END\ normal:veil -->
+			<!-- BEGIN\ tiny:veil -->
+			<input type="hidden" name="\{name\}@\{tiny\}[\\\{i\\\}]" value="\{tinySize\}" />
+			<!-- END\ tiny:veil -->
+			<!-- BEGIN\ large:veil -->
+			<input type="hidden" name="\{name\}@\{large\}[\\\{i\\\}]" value="\{largeSize\}" />
+			<!-- END\ large:veil -->
+			<!-- BEGIN\ square:veil -->
+			<input type="hidden" name="\{name\}@\{square\}[\\\{i\\\}]" value="\{squareSize\}" />
+			<!-- END\ square:veil -->
+		</td>
+	</tr>
+	<!-- END\ item.{i}.group:loop -->
+	<!-- END\\ {name}:loop -->
+	<!-- BEGIN\ item.{i}.group:loop -->
+	<tr class="sortable-item item-template">
+		<td class="item-handle"><i class="acms-admin-icon-sort"></i></td>
+		<td>
+			<input type="file" name="\{name\}[]"/><br />
+			<!-- BEGIN\ alt:veil -->
+			代替テキスト:<input type="text" name="\{name\}@alt[]" value="" size="40" />
+			<!-- END\ alt:veil -->
+			<!-- BEGIN\ normal:veil -->
+			<input type="hidden" name="\{name\}@\{normal\}[]" value="\{normalSize\}" />
+			<!-- END\ normal:veil -->
+			<!-- BEGIN\ tiny:veil -->
+			<input type="hidden" name="\{name\}@\{tiny\}[]" value="\{tinySize\}" />
+			<!-- END\ tiny:veil -->
+			<!-- BEGIN\ large:veil -->
+			<input type="hidden" name="\{name\}@\{large\}[]" value="\{largeSize\}" />
+			<!-- END\ large:veil -->
+			<!-- BEGIN\ square:veil -->
+			<input type="hidden" name="\{name\}@\{square\}[]" value="\{squareSize\}" />
+			<!-- END\ square:veil -->
+		</td>
+	</tr>
+	<!-- END\ item.{i}.group:loop -->
+	<tfoot>
+	<tr>
+		<td colspan="3"><input type="button" class="item-insert acms-admin-btn-admin" value="追加" /></td>
+	</tr>
+	</tfoot>
+<table>
+<!-- BEGIN\ item.{i}.group:loop -->
+<!-- BEGIN\ square:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@squarePath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@squareY" />
+<!-- END\ square:veil -->
+<!-- BEGIN\ large:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@largePath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@largeY" />
+<!-- END\ large:veil -->
+<!-- BEGIN\ tiny:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyPath" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyAlt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyX" />
+<input type="hidden" name="@{name}[]" value="\{name\}@tinyY" />
+<!-- END\ tiny:veil -->
+<input type="hidden" name="@{name}[]" value="\{name\}@alt" />
+<input type="hidden" name="@{name}[]" value="\{name\}@path" />
+<input type="hidden" name="@{name}[]" value="\{name\}@x" />
+<input type="hidden" name="@{name}[]" value="\{name\}@y" />
+<input type="hidden" name="@{name}[]" value="\{name\}@edit" />
+<input type="hidden" name="@{name}[]" value="\{name\}@old" />
+<input type="hidden" name="\{name\}:extension" value="image" />
+<!-- END\ item.{i}.group:loop -->
+<!-- END type:touch#imagegroup -->
 <!-- END item:loop -->
 	</script>
 	<script src="jquery.js"></script>
