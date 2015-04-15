@@ -58,7 +58,7 @@
             obj.updateDataByString(data,'');
         }
     });
-    $(document).on("input click","[data-action]",function(e){
+    $(document).on("input click change","[data-action]",function(e){
         if(e.type == "click" && $(e.target).is("select")){
             return;
         }
