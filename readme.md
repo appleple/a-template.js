@@ -8,7 +8,7 @@ used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
 
 ```javascript
 var Moon = require("./Moon.js");
-var hoge = new Moon({
+var hoge = new Moon.View({
 	id:"hoge",
 	data:{
 		name:"steelydylan",
