@@ -1,5 +1,11 @@
+/**
+* Moon.js v0.1.0 - Simple Template engine inspired by a-blog cms
+* https://github.com/steelydylan/Moon.js
+* MIT Licensed
+* Copyright (C) 2015 steelydylan http://horicdesign.com
+*/
 (function(){
-    window.Moon = function(){
+    var Moon = function(){
         for(var key in Moon){
             window[key] = Moon[key];
         }
@@ -10,7 +16,7 @@
         };
         if (typeof superClass == "function" && typeof obj == "object") {
             newClass.prototype = Object.create(superClass.prototype);
-            newClass.prototype.inherit = function () {                
+            newClass.prototype.inherit = function () {
                 this.initialize = this.superClass.prototype.initialize;
                 this.superClass = this.superClass.prototype.superClass;
                 if(this.initialize)
@@ -40,22 +46,21 @@
         }
         return null;
     }
-    $(document).on("input change","[data-bind]",function(){
+    $(document).on("input change click","[data-bind]",function(e){
         var data = $(this).data("bind");
         var val = $(this).val();
         var id = $(this).parents("[data-id]").data("id");
-        var obj = Moon.getObjectById(id);
-        obj.updateDataByString(data,val);
-    });
-    $(document).on("change","[data-check-bind]",function(){
-        var data = $(this).data("check-bind");
-        var val = $(this).val();
-        var id = $(this).parents("[data-id]").data("id");
-        var obj = Moon.getObjectById(id);
-        if($(this).is(":checked")){
-            obj.updateDataByString(data,val);
-        }else{
-            obj.updateDataByString(data,'');
+        if(id){
+            var obj = Moon.getObjectById(id);
+            if($(e.target).attr("type") == "checkbox"){
+                if($(this).is(":checked")){
+                    obj.updateDataByString(data,val);
+                }else{
+                    obj.updateDataByString(data,'');
+                }
+            }else{
+                obj.updateDataByString(data,val);
+            }
         }
     });
     $(document).on("input click change","[data-action]",function(e){
@@ -67,66 +72,12 @@
         var parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
         var pts = parameter.split(",");//引き数
         var id = $(this).parents("[data-id]").data("id");
-        var obj = Moon.getObjectById(id);
-        if(obj.method[action]){
-            obj.method[action].apply(obj,pts);
-        }
-    });
-    Moon.ObjectController = Moon.createClass({
-        initialize:function(opt){
-            if(typeof opt !== "undefined"){
-                for(var i in opt){
-                    this[i] = opt[i];
-                }
-                if(opt.method){
-                    var method = opt.method;
-                    for(var i in method){
-                        this.prototype[i] = method[i];
-                    }
-                }
+        if(id){
+            var obj = Moon.getObjectById(id);
+            obj.e = e;
+            if(obj.method[action]){
+                obj.method[action].apply(obj,pts);
             }
-        },
-        findProperties:function(name,opt){
-            var properties = [];
-            var items = this[name];
-            for(var i = 0,n = items.length; i < n; i++){
-                var flag = true;
-                var item = items[i];
-                var data = item.data;
-                for(var t in opt){
-                    if(data[t] !== opt[t]){
-                        flag = false;
-                    }
-                }
-                if(flag === true){
-                    properties.push(item)
-                }
-            }
-            return properties;
-        },
-        findProperty:function(name,opt){
-            var items = this.findProperties(name,opt);
-            return items[0];
-        },
-        removeProperties:function(name,opt){
-            var items = this[name];
-            for(var i = 0,n = items.length; i < n; i++){
-                var flag = true;
-                var item = items[i];
-                var data = item.data;
-                for(var t in opt){
-                    if(data[t] !== opt[t]){
-                        flag = false;
-                    }
-                }
-                if(flag === true){
-                    items.splice(i,1);
-                    i--;
-                    n--;
-                }
-            }
-        },
-        sortProperties:function(name,opt){
         }
     });
     Moon.View = Moon.createClass({
@@ -217,42 +168,75 @@
             }
         },
         resolveBlock:function(html,item,i){
-            var touch = /<!-- BEGIN (\w+):touch#(\w+) -->(([\n\r\t]|.)*?)<!-- END (\w+):touch#(\w+) -->/g;
-            var touchnot = /<!-- BEGIN (\w+):touchnot#(\w+) -->(([\n\r\t]|.)*?)<!-- END (\w+):touchnot#(\w+) -->/g;
-            var veil = /<!-- BEGIN (\w+):veil -->(([\n\r\t]|.)*?)<!-- END (\w+):veil -->/g;
-            var empty = /<!-- BEGIN (\w+):empty -->(([\n\r\t]|.)*?)<!-- END (\w+):empty -->/g;
+            var touchs = html.match(/<!-- BEGIN (\w+):touch#(\w+) -->/g);
+            var touchnots = html.match(/<!-- BEGIN (\w+):touchnot#(\w+) -->/g);
+            var veils = html.match(/<!-- BEGIN (\w+):veil -->/g);
+            var empties = html.match(/<!-- BEGIN (\w+):empty -->/g);
             /*タッチブロック解決*/
-            var html = html.replace(touch,function(m,key2,val,next){
-                if(item[key2] == val){
-                    return next;
-                }else{
-                    return "";
+            if(touchs){
+                for(var k = 0,n = touchs.length; k < n; k++){
+                    var start = touchs[k];
+                    start = start.replace(/(\w+):touch#(\w+)/,"($1):touch#($2)");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(reg,function(m,key2,val,next){
+                        if(item[key2] == val){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    })
                 }
-            });
+            }
             /*タッチノットブロック解決*/
-            html = html.replace(touchnot,function(m,key2,val,next){
-                if(item[key2] != val){
-                    return next;
-                }else{
-                    return "";
+            if(touchnots){
+                for(var k = 0,n = touchnots.length; k < n; k++){
+                    var start = touchnots[k];
+                    start = start.replace(/(\w+):touchnot#(\w+)/,"($1):touchnot#($2)");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(reg,function(m,key2,val,next){
+                        if(item[key2] != val){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    });
                 }
-            });
-            /*ベイルブロック解決*/
-            html = html.replace(veil,function(m,key2,next){
-                if(item[key2]){
-                    return next;
-                }else{
-                    return "";
+            }
+            /*veilブロックを解決*/
+            if(veils){
+                for(var k = 0,n = veils.length; k < n; k++){
+                    var start = veils[k];
+                    start = start.replace(/(\w+):veil/,"($1):veil");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(reg,function(m,key2,next){
+                        console.log();
+                        if(item[key2]){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    });
                 }
-            });
-            /*エンプティプロック解決*/
-            html = html.replace(empty,function(m,key2,next){
-                if(!item[key2]){
-                    return next;
-                }else{
-                    return "";
+            }
+            /*emptyブロックを解決*/
+            if(empties){
+                for(var k = 0,n = empties.length; k < n; k++){
+                    var start = empties[k];
+                    start = start.replace(/(\w+):empty/,"($1):empty");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(empty,function(m,key2,next){
+                        if(!item[key2]){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    });
                 }
-            });
+            }
             /*変数解決*/
             html = html.replace(/{(\w+)}/g,function(n,key3){
                 if(key3 == "i"){
@@ -351,8 +335,22 @@
             var $template = $("[data-id="+this.id+"]");
             $template.find("[data-bind]").each(function(){
                 var data = that.getDataByString($(this).data("bind"));
-                $(this).val(data);
+                if($(this).attr("type") == "checkbox"){
+                    if(data == $(this).val()){
+                        $(this).prop("checked",true);
+                    }
+                }else{
+                    $(this).val(data);
+                }
             });
+        },
+        copyToClipBoard:function(){
+            var copyArea = $("<textarea/>");
+            $("body").append(copyArea);
+            copyArea.text(this.getHtml());
+            copyArea.select();
+            document.execCommand("copy");
+            copyArea.remove();
         },
         remove:function(path){
             var object = this.data;
@@ -368,4 +366,9 @@
             }
         }
     });
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = Moon;
+    }else{
+        window.Moon = Moon;
+    }
 })();
