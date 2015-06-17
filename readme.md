@@ -12,6 +12,11 @@ var hoge = new Moon({
 	data:{
 		name:"steelydylan",
 		url:"http://horicdesign.com"
+		subject:[
+			{name:"Japanese",score:20},
+			{name:"English",score:90},
+			{name:"Mathmatics",score:100},
+		]
 	}
 });
 hoge.update();
@@ -23,6 +28,12 @@ hoge.update();
 <!-- BEGIN url:veil -->
 <p>{url}</p>
 <!-- END url:veil -->
+<p>score</p>
+<ul>
+<!-- BEGIN subject:loop -->
+<li>{name}:{score}</li>
+<!-- END subject:loop -->
+</ul>
 </script>
 <div data-id="hoge"></div>
 ```
