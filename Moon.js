@@ -1,5 +1,5 @@
 /**
-* Moon.js v0.1.0 - Simple Template engine inspired by a-blog cms
+* Moon.js v0.2.0 - Simple Template engine inspired by a-blog cms
 * https://github.com/steelydylan/Moon.js
 * MIT Licensed
 * Copyright (C) 2015 steelydylan http://horicdesign.com
@@ -98,7 +98,6 @@
         loadData:function(key){
             var data = JSON.parse(localStorage.getItem(key));
             if(data){
-                console.log(data);
                 this.data = data;
             }
         },
@@ -129,7 +128,7 @@
                     break;
                 }
             }
-            this.data.moon_id = text;
+            this.data.Moon_id = text;
         },
         getDataByString:function(s){
             var o = this.data;
@@ -212,7 +211,6 @@
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,next){
-                        console.log();
                         if(item[key2]){
                             return next;
                         }else{
@@ -242,7 +240,7 @@
                 if(key3 == "i"){
                     return i;
                 }else{
-                    if(item[key3]){
+                    if(item[key3] || item[key3] === 0){
                         return item[key3];
                     }else{
                         return n;
@@ -284,6 +282,37 @@
             });
             return html;
         },
+        /*絶対パス形式の変数を解決*/
+        resolveAbsBlock:function(html){
+            var veils = html.match(/<!-- BEGIN (.*?):veil -->/g);
+            var that = this;
+            /*veilブロックを解決*/
+            if(veils){
+                for(var k = 0,n = veils.length; k < n; k++){
+                    var start = veils[k];
+                    start = start.replace(/<!-- BEGIN (.*?):veil/,"<!-- BEGIN ($1):veil");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(reg,function(m,key2,next){
+                        var data = that.getDataByString(key2);
+                        if(data){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    });
+                }
+            }
+            html = html.replace(/{(.*?)}/g,function(n,key3){
+                var data = that.getDataByString(key3);
+                if(data){
+                    return data;
+                }else{
+                    return n;
+                }
+            });
+            return html;
+        },
         removeData: function(arr){
             var data = this.data;
             for(var i in data){
@@ -303,8 +332,8 @@
             }
         },
         getHtml:function(){
-            var $template = $("#"+this.id);
-            var html = $template.html();
+            var $Moon = $("#"+this.id);
+            var html = $Moon.html();
             var data = this.data;
             /*インクルード解決*/
             html = this.resolveInclude(html);
@@ -318,6 +347,8 @@
             html = this.resolveBlock(html,data);
             /*エスケープ削除*/
             html = html.replace(/\\([^\\])/g,"$1");
+            /*絶対パスで指定された変数を解決*/
+            html = this.resolveAbsBlock(html);
             /*空行削除*/
            return html.replace(/^([\t ])*\n/gm,"");
         },
@@ -330,10 +361,19 @@
             }
             this.updateBindingData();
         },
+        updatePartialHtml:function(id,txt){
+            var html = $("<div>"+this.getHtml()+"</div>").find(id).html();
+            if(txt == "text"){
+                $("[data-id='"+this.id+"']").find(id).text(html);
+            }else{
+                $("[data-id='"+this.id+"']").find(id).html(html);
+            }
+            this.updateBindingData();
+        },
         updateBindingData:function(){
             var that = this;
-            var $template = $("[data-id="+this.id+"]");
-            $template.find("[data-bind]").each(function(){
+            var $Moon = $("[data-id="+this.id+"]");
+            $Moon.find("[data-bind]").each(function(){
                 var data = that.getDataByString($(this).data("bind"));
                 if($(this).attr("type") == "checkbox"){
                     if(data == $(this).val()){
@@ -366,6 +406,7 @@
             }
         }
     });
+    //for browserify
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = Moon;
     }else{
