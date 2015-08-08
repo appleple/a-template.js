@@ -181,7 +181,7 @@
             var that = this;
             var touchs = html.match(/<!-- BEGIN (\w+):touch#(\w+) -->/g);
             var touchnots = html.match(/<!-- BEGIN (\w+):touchnot#(\w+) -->/g);
-            var veils = html.match(/<!-- BEGIN (\w+):veil -->/g);
+            var exists = html.match(/<!-- BEGIN (\w+):exist -->/g);
             var empties = html.match(/<!-- BEGIN (\w+):empty -->/g);
             /*タッチブロック解決*/
             if(touchs){
@@ -215,11 +215,11 @@
                     });
                 }
             }
-            /*veilブロックを解決*/
-            if(veils){
-                for(var k = 0,n = veils.length; k < n; k++){
-                    var start = veils[k];
-                    start = start.replace(/(\w+):veil/,"($1):veil");
+            /*existブロックを解決*/
+            if(exists){
+                for(var k = 0,n = exists.length; k < n; k++){
+                    var start = exists[k];
+                    start = start.replace(/(\w+):exist/,"($1):exist");
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,next){
@@ -269,13 +269,13 @@
         },
         /*絶対パス形式の変数を解決*/
         resolveAbsBlock:function(html){
-            var veils = html.match(/<!-- BEGIN (.*?):veil -->/g);
+            var exists = html.match(/<!-- BEGIN (.*?):exist -->/g);
             var that = this;
-            /*veilブロックを解決*/
-            if(veils){
-                for(var k = 0,n = veils.length; k < n; k++){
-                    var start = veils[k];
-                    start = start.replace(/<!-- BEGIN (.*?):veil/,"<!-- BEGIN ($1):veil");
+            /*existブロックを解決*/
+            if(exists){
+                for(var k = 0,n = exists.length; k < n; k++){
+                    var start = exists[k];
+                    start = start.replace(/<!-- BEGIN (.*?):exist/,"<!-- BEGIN ($1):exist");
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,next){
