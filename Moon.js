@@ -1,5 +1,5 @@
 /**
-* Moon.js v0.2.0 - Simple Template engine inspired by a-blog cms
+* Moon.js v0.4.0 - Simple Template engine inspired by a-blog cms
 * https://github.com/steelydylan/Moon.js
 * MIT Licensed
 * Copyright (C) 2015 steelydylan http://horicdesign.com
@@ -40,8 +40,12 @@
     Moon.getObjectById = function(id){
         var objs = this.objs;
         for(var i = 0,n = objs.length; i < n; i++){
-            if(objs[i].id == id){
-                return objs[i];
+            var obj = objs[i];
+            var templates = obj.templates;
+            for(var t = 0,m = templates.length; t < m; t++){
+                if(templates[t] == id){
+                    return objs[t];
+                }
             }
         }
         return null;
@@ -49,10 +53,14 @@
     $(document).on("input change click","[data-bind]",function(e){
         var data = $(this).data("bind");
         var val = $(this).val();
+        var attr = $(this).attr("href");
+        if(attr){
+            val = attr.replace("#","");
+        }
         var id = $(this).parents("[data-id]").data("id");
         if(id){
             var obj = Moon.getObjectById(id);
-            if($(e.target).attr("type") == "checkbox"){
+            if($(e.target).attr("type") == "checkbox" || $(e.target).attr("type") == "radio"){
                 if($(this).is(":checked")){
                     obj.updateDataByString(data,val);
                 }else{
@@ -65,6 +73,9 @@
     });
     $(document).on("input click change","[data-action]",function(e){
         if(e.type == "click" && $(e.target).is("select")){
+            return;
+        }
+        if(e.type == "input" && $(e.target).attr("type") == "button"){
             return;
         }
         var string = $(this).data("action");
@@ -128,7 +139,7 @@
                     break;
                 }
             }
-            this.data.Moon_id = text;
+            this.data.moon_id = text;
         },
         getDataByString:function(s){
             var o = this.data;
@@ -167,6 +178,7 @@
             }
         },
         resolveBlock:function(html,item,i){
+            var that = this;
             var touchs = html.match(/<!-- BEGIN (\w+):touch#(\w+) -->/g);
             var touchnots = html.match(/<!-- BEGIN (\w+):touchnot#(\w+) -->/g);
             var veils = html.match(/<!-- BEGIN (\w+):veil -->/g);
@@ -225,7 +237,7 @@
                     var start = empties[k];
                     start = start.replace(/(\w+):empty/,"($1):empty");
                     var end = start.replace(/BEGIN/,"END");
-                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    var empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(empty,function(m,key2,next){
                         if(!item[key2]){
                             return next;
@@ -236,15 +248,52 @@
                 }
             }
             /*変数解決*/
-            html = html.replace(/{(\w+)}/g,function(n,key3){
+            html = html.replace(/{(\w+)}(\[(\w+)\])*/g,function(n,key3,key4,converter){
+                var data;
                 if(key3 == "i"){
-                    return i;
+                    data = i;
                 }else{
-                    if(item[key3] || item[key3] === 0){
-                        return item[key3];
+                    if(item[key3]){
+                        data = item[key3];
                     }else{
                         return n;
                     }
+                }
+                if(converter && that.convert && that.convert && that.convert[converter]){
+                    return that.convert[converter](data);
+                }else{
+                    return data;
+                }
+            });
+            return html;
+        },
+        /*絶対パス形式の変数を解決*/
+        resolveAbsBlock:function(html){
+            var veils = html.match(/<!-- BEGIN (.*?):veil -->/g);
+            var that = this;
+            /*veilブロックを解決*/
+            if(veils){
+                for(var k = 0,n = veils.length; k < n; k++){
+                    var start = veils[k];
+                    start = start.replace(/<!-- BEGIN (.*?):veil/,"<!-- BEGIN ($1):veil");
+                    var end = start.replace(/BEGIN/,"END");
+                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+                    html = html.replace(reg,function(m,key2,next){
+                        var data = that.getDataByString(key2);
+                        if(data){
+                            return next;
+                        }else{
+                            return "";
+                        }
+                    });
+                }
+            }
+            html = html.replace(/{(.*?)}/g,function(n,key3){
+                var data = that.getDataByString(key3);
+                if(data){
+                    return data;
+                }else{
+                    return n;
                 }
             });
             return html;
@@ -282,37 +331,6 @@
             });
             return html;
         },
-        /*絶対パス形式の変数を解決*/
-        resolveAbsBlock:function(html){
-            var veils = html.match(/<!-- BEGIN (.*?):veil -->/g);
-            var that = this;
-            /*veilブロックを解決*/
-            if(veils){
-                for(var k = 0,n = veils.length; k < n; k++){
-                    var start = veils[k];
-                    start = start.replace(/<!-- BEGIN (.*?):veil/,"<!-- BEGIN ($1):veil");
-                    var end = start.replace(/BEGIN/,"END");
-                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
-                    html = html.replace(reg,function(m,key2,next){
-                        var data = that.getDataByString(key2);
-                        if(data){
-                            return next;
-                        }else{
-                            return "";
-                        }
-                    });
-                }
-            }
-            html = html.replace(/{(.*?)}/g,function(n,key3){
-                var data = that.getDataByString(key3);
-                if(data){
-                    return data;
-                }else{
-                    return n;
-                }
-            });
-            return html;
-        },
         removeData: function(arr){
             var data = this.data;
             for(var i in data){
@@ -331,9 +349,12 @@
                 return false;
             }
         },
-        getHtml:function(){
-            var $Moon = $("#"+this.id);
-            var html = $Moon.html();
+        getHtml:function(selector){
+            var $template = $(selector);
+            var html = $template.html();
+            if(!html){
+                return "";
+            }
             var data = this.data;
             /*インクルード解決*/
             html = this.resolveInclude(html);
@@ -350,10 +371,24 @@
             /*絶対パスで指定された変数を解決*/
             html = this.resolveAbsBlock(html);
             /*空行削除*/
-           return html.replace(/^([\t ])*\n/gm,"");
+            return html.replace(/^([\t ])*\n/gm,"");
         },
         update:function(txt){
             var html = this.getHtml();
+            var templates = this.templates;
+            for(var i = 0,n = templates.length; i < n; i++){
+                var tem = templates[i];
+                var selector = "#"+tem;
+                var html = this.getHtml(selector);
+                var $target = $("[data-id="+tem+"]");
+                if($target.length == 0){
+                    var $newitem = $("<div data-id='"+tem+"'></div>");
+                    $newitem.html(html);
+                    $(selector).after($newitem);
+                }else{
+                    $target.html(html);
+                }
+            }
             if(txt == "text"){
                 $("[data-id='"+this.id+"']").text(html);
             }else{
@@ -361,28 +396,23 @@
             }
             this.updateBindingData();
         },
-        updatePartialHtml:function(id,txt){
-            var html = $("<div>"+this.getHtml()+"</div>").find(id).html();
-            if(txt == "text"){
-                $("[data-id='"+this.id+"']").find(id).text(html);
-            }else{
-                $("[data-id='"+this.id+"']").find(id).html(html);
-            }
-            this.updateBindingData();
-        },
         updateBindingData:function(){
             var that = this;
-            var $Moon = $("[data-id="+this.id+"]");
-            $Moon.find("[data-bind]").each(function(){
-                var data = that.getDataByString($(this).data("bind"));
-                if($(this).attr("type") == "checkbox"){
-                    if(data == $(this).val()){
-                        $(this).prop("checked",true);
+            var templates = that.templates;
+            for(var i = 0,n = templates.length; i < n; i++){
+                var temp = templates[i];
+                var $template = $("[data-id="+temp+"]");
+                $template.find("[data-bind]").each(function(){
+                    var data = that.getDataByString($(this).data("bind"));
+                    if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
+                        if(data == $(this).val()){
+                            $(this).prop("checked",true);
+                        }
+                    }else{
+                        $(this).val(data);
                     }
-                }else{
-                    $(this).val(data);
-                }
-            });
+                });
+            }
         },
         copyToClipBoard:function(){
             var copyArea = $("<textarea/>");

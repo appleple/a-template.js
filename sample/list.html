@@ -1,12 +1,3 @@
-#Moon.js
-
-Simple Template Engine
-used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
-
-
-##example
-
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -41,9 +32,10 @@ used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
 				this.update();
 			},
 			addItem:function(){
-				console.log(this.data.newItem);
-				this.data.list.push({name:this.data.newItem});
-				this.update();
+				if(this.data.newItem){
+					this.data.list.push({name:this.data.newItem});
+					this.update();
+				}
 			}
 		},
 		convert:{
@@ -51,9 +43,7 @@ used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
 				return "Mr."+$txt;
 			}
 		}
-	});
-	list.update();
+	}).update();
 	</script>
 </body>
 </html>
-```
