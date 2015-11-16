@@ -1,16 +1,16 @@
 /**
-* Moon.js v0.4.0 - Simple Template engine inspired by a-blog cms
-* https://github.com/steelydylan/Moon.js
+* aTemplate.js v0.4.0 - Simple Template engine inspired by a-blog cms
+* https://github.com/steelydylan/aTemplate.js
 * MIT Licensed
 * Copyright (C) 2015 steelydylan http://horicdesign.com
 */
 (function(){
-    var Moon = function(){
-        for(var key in Moon){
-            window[key] = Moon[key];
+    var aTemplate = function(){
+        for(var key in aTemplate){
+            window[key] = aTemplate[key];
         }
     };
-    Moon.createClass = function (superClass, obj) {
+    aTemplate.createClass = function (superClass, obj) {
         var newClass = function () {
             this.initialize.apply(this, arguments);
         };
@@ -31,13 +31,13 @@
         newClass.prototype.superClass = superClass;
         return newClass;
     };
-    Moon.extendClass = function (targetclass,obj){
+    aTemplate.extendClass = function (targetclass,obj){
         for(var key in obj){
             targetclass.prototype[key] = obj[key];
         }
     };
-    Moon.objs = [];
-    Moon.getObjectById = function(id){
+    aTemplate.objs = [];
+    aTemplate.getObjectById = function(id){
         var objs = this.objs;
         for(var i = 0,n = objs.length; i < n; i++){
             var obj = objs[i];
@@ -59,7 +59,7 @@
         }
         var id = $(this).parents("[data-id]").data("id");
         if(id){
-            var obj = Moon.getObjectById(id);
+            var obj = aTemplate.getObjectById(id);
             if($(e.target).attr("type") == "checkbox" || $(e.target).attr("type") == "radio"){
                 if($(this).is(":checked")){
                     obj.updateDataByString(data,val);
@@ -84,16 +84,16 @@
         var pts = parameter.split(",");//引き数
         var id = $(this).parents("[data-id]").data("id");
         if(id){
-            var obj = Moon.getObjectById(id);
+            var obj = aTemplate.getObjectById(id);
             obj.e = e;
             if(obj.method[action]){
                 obj.method[action].apply(obj,pts);
             }
         }
     });
-    Moon.View = Moon.createClass({
+    aTemplate.View = aTemplate.createClass({
         initialize:function(opt){
-            Moon.objs.push(this);
+            aTemplate.objs.push(this);
             for(var i in opt){
                 this[i] = opt[i];
             }
@@ -126,12 +126,12 @@
         },
         setId:function(){
             var text;
-            var ids = Moon.ids;
+            var ids = aTemplate.ids;
             var flag = false;
             while(1){
                 text = this.getRandText(10);
-                for(var i = 0,n = Moon.ids; i < n; i++){
-                    if(Moon.ids[i] === text){
+                for(var i = 0,n = aTemplate.ids; i < n; i++){
+                    if(aTemplate.ids[i] === text){
                         flag = true;
                     }
                 }
@@ -139,7 +139,7 @@
                     break;
                 }
             }
-            this.data.moon_id = text;
+            this.data.aTemplate_id = text;
         },
         getDataByString:function(s){
             var o = this.data;
@@ -438,8 +438,8 @@
     });
     //for browserify
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = Moon;
+        module.exports = aTemplate;
     }else{
-        window.Moon = Moon;
+        window.aTemplate = aTemplate;
     }
 })();
