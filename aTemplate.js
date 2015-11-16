@@ -259,9 +259,9 @@
                 }else{
                     if(item[key3]){
                         if (typeof item[key3] === "function"){
-                            return item[key3].apply(that);
+                            data = item[key3].apply(that);
                         }else{
-                            return item[key3];
+                            data = item[key3];
                         }
                     }else{
                         return n;
@@ -288,7 +288,8 @@
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,next){
                         var data = that.getDataByString(key2);
-                        if(data){
+                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+                        if(!itemkey){
                             return next;
                         }else{
                             return "";
