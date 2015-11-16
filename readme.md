@@ -23,9 +23,9 @@ used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
 	</ul>
 	</script>
 	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../Moon.js"></script>
+	<script src="../aTemplate.js"></script>
 	<script>
-	var list = new Moon.View({
+	var list = new aTemplate.View({
 		templates:["list_template"],
 		data:{
 			list:[
