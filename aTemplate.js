@@ -1,5 +1,5 @@
 /**
-* aTemplate.js v0.4.0 - Simple Template engine inspired by a-blog cms
+* aTemplate.js v0.5.0 - Simple Template engine inspired by a-blog cms
 * https://github.com/steelydylan/aTemplate.js
 * MIT Licensed
 * Copyright (C) 2015 steelydylan http://horicdesign.com
