@@ -191,7 +191,8 @@
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,val,next){
-                        if(item[key2] == val){
+                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+                        if(itemkey == val){
                             return next;
                         }else{
                             return "";
@@ -207,7 +208,8 @@
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,val,next){
-                        if(item[key2] != val){
+                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+                        if(itemkey != val){
                             return next;
                         }else{
                             return "";
@@ -223,7 +225,8 @@
                     var end = start.replace(/BEGIN/,"END");
                     var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(reg,function(m,key2,next){
-                        if(item[key2]){
+                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+                        if(itemkey){
                             return next;
                         }else{
                             return "";
@@ -239,7 +242,8 @@
                     var end = start.replace(/BEGIN/,"END");
                     var empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
                     html = html.replace(empty,function(m,key2,next){
-                        if(!item[key2]){
+                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+                        if(!itemkey){
                             return next;
                         }else{
                             return "";
@@ -254,7 +258,11 @@
                     data = i;
                 }else{
                     if(item[key3]){
-                        data = item[key3];
+                        if (typeof item[key3] === "function"){
+                            return item[key3].apply(that);
+                        }else{
+                            return item[key3];
+                        }
                     }else{
                         return n;
                     }
@@ -290,8 +298,12 @@
             }
             html = html.replace(/{(.*?)}/g,function(n,key3){
                 var data = that.getDataByString(key3);
-                if(data){
-                    return data;
+                if(item[key3]){
+                    if (typeof item[key3] === "function"){
+                        return item[key3].apply(that);
+                    }else{
+                        return item[key3];
+                    }
                 }else{
                     return n;
                 }
@@ -318,7 +330,13 @@
             var that = this;
             /*ループ文解決*/
             html = html.replace(loop,function(m,key,val){
-                var keys = that.getDataByString(key);
+                var keyItem = that.getDataByString(key);
+                var keys = [];
+                if(typeof keyItem === "function"){
+                    keys = keyItem.apply(that);
+                }else{
+                    keys = keyItem;
+                }
                 var ret = "";
                 if(keys instanceof Array){
                     for(var i = 0,n = keys.length; i < n; i++){
