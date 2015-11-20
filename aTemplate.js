@@ -359,6 +359,7 @@
                     }
                 }
             }
+            return this;
         },
         hasLoop:function(txt){
             var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
@@ -414,6 +415,7 @@
                 $("[data-id='"+this.id+"']").html(html);
             }
             this.updateBindingData();
+            return this;
         },
         updateBindingData:function(){
             var that = this;
@@ -432,6 +434,7 @@
                     }
                 });
             }
+            return this;
         },
         copyToClipBoard:function(){
             var copyArea = $("<textarea/>");
@@ -440,6 +443,7 @@
             copyArea.select();
             document.execCommand("copy");
             copyArea.remove();
+            return this;
         },
         remove:function(path){
             var object = this.data;
@@ -453,6 +457,7 @@
             }else{
                 delete object[shift];
             }
+            return this;
         }
     });
     //for browserify
