@@ -109,7 +109,11 @@
         loadData:function(key){
             var data = JSON.parse(localStorage.getItem(key));
             if(data){
-                this.data = data;
+                for(var i in data){
+                    if(typeof data[i] !== "function"){
+                        this.data[i] = data[i];
+                    }
+                }
             }
         },
         getRand: function (a, b) {
@@ -268,7 +272,7 @@
                     }
                 }
                 if(converter && that.convert && that.convert && that.convert[converter]){
-                    return that.convert[converter](data);
+                    return that.convert[converter].call(that,data);
                 }else{
                     return data;
                 }
@@ -426,6 +430,14 @@
             document.execCommand("copy");
             copyArea.remove();
             return this;
+        },
+        applyMethod:function(method){
+            var args = [].splice.call(arguments,0);
+            args.shift();
+            return this.method[method].apply(this,args);
+        },
+        getComputedProp:function(prop){
+            return this.data[prop].apply(this);
         },
         remove:function(path){
             var object = this.data;
