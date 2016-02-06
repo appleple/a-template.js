@@ -44,7 +44,7 @@
             var templates = obj.templates;
             for(var t = 0,m = templates.length; t < m; t++){
                 if(templates[t] == id){
-                    return objs[t];
+                    return obj;
                 }
             }
         }
@@ -374,26 +374,27 @@
             /*空行削除*/
             return html.replace(/^([\t ])*\n/gm,"");
         },
-        update:function(txt){
+        update:function(txt,part){
             var html = this.getHtml();
             var templates = this.templates;
+            var renderWay = txt || "html";
             for(var i = 0,n = templates.length; i < n; i++){
                 var tem = templates[i];
                 var selector = "#"+tem;
                 var html = this.getHtml(selector);
                 var $target = $("[data-id="+tem+"]");
-                if($target.length == 0){
-                    var $newitem = $("<div data-id='"+tem+"'></div>");
-                    $newitem.html(html);
-                    $(selector).after($newitem);
-                }else{
-                    $target.html(html);
+                if(!part || part == tem){
+                    if($target.length == 0){
+                        var $newitem = $("<div data-id='"+tem+"'></div>");
+                        $newitem[renderWay](html);
+                        $(selector).after($newitem);
+                    }else{
+                        $target[renderWay](html);
+                    }
+                    if(part){
+                        break;
+                    }
                 }
-            }
-            if(txt == "text"){
-                $("[data-id='"+this.id+"']").text(html);
-            }else{
-                $("[data-id='"+this.id+"']").html(html);
             }
             this.updateBindingData();
             return this;
