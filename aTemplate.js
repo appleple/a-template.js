@@ -277,33 +277,14 @@
         },
         /*絶対パス形式の変数を解決*/
         resolveAbsBlock:function(html){
-            var exists = html.match(/<!-- BEGIN (.*?):exist -->/g);
             var that = this;
-            /*existブロックを解決*/
-            if(exists){
-                for(var k = 0,n = exists.length; k < n; k++){
-                    var start = exists[k];
-                    start = start.replace(/<!-- BEGIN (.*?):exist/,"<!-- BEGIN ($1):exist");
-                    var end = start.replace(/BEGIN/,"END");
-                    var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
-                    html = html.replace(reg,function(m,key2,next){
-                        var data = that.getDataByString(key2);
-                        var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
-                        if(!itemkey){
-                            return next;
-                        }else{
-                            return "";
-                        }
-                    });
-                }
-            }
             html = html.replace(/{(.*?)}/g,function(n,key3){
                 var data = that.getDataByString(key3);
-                if(item[key3]){
-                    if (typeof item[key3] === "function"){
-                        return item[key3].apply(that);
+                if(typeof data !== "undefined"){
+                    if (typeof data === "function"){
+                        return data.apply(that);
                     }else{
-                        return item[key3];
+                        return data;
                     }
                 }else{
                     return n;
