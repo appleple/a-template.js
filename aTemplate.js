@@ -275,10 +275,14 @@
                             data = item[key3];
                         }
                     }else{
-                        return n;
+                        if(converter && that.convert && that.convert[converter]){
+                            return that.convert[converter].call(that,"");
+                        }else{
+                            return "";
+                        }
                     }
                 }
-                if(converter && that.convert && that.convert && that.convert[converter]){
+                if(converter && that.convert && that.convert[converter]){
                     return that.convert[converter].call(that,data);
                 }else{
                     return data;
