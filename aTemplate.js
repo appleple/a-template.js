@@ -71,7 +71,7 @@
             }
         }
     });
-    $(document).on("input click change","[data-action]",function(e){
+    $(document).on("input click change keydown","[data-action]",function(e){
         if(e.type == "click" && $(e.target).is("select")){
             return;
         }
@@ -105,6 +105,13 @@
         saveData:function(key){
             var data = JSON.stringify(this.data);
             localStorage.setItem(key,data);
+        },
+        setData:function(val){
+            for(var i in val){
+                if(typeof val[i] !== "function"){
+                    this.data[i] = val[i];
+                }
+            }
         },
         loadData:function(key){
             var data = JSON.parse(localStorage.getItem(key));
@@ -400,25 +407,30 @@
                     }
                 }
             }
-            this.updateBindingData();
+            this.updateBindingData(part);
             return this;
         },
-        updateBindingData:function(){
+        updateBindingData:function(part){
             var that = this;
             var templates = that.templates;
             for(var i = 0,n = templates.length; i < n; i++){
                 var temp = templates[i];
-                var $template = $("[data-id="+temp+"]");
-                $template.find("[data-bind]").each(function(){
-                    var data = that.getDataByString($(this).data("bind"));
-                    if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
-                        if(data == $(this).val()){
-                            $(this).prop("checked",true);
+                if(!part || part == temp){
+                    var $template = $("[data-id="+temp+"]");
+                    $template.find("[data-bind]").each(function(){
+                        var data = that.getDataByString($(this).data("bind"));
+                        if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
+                            if(data == $(this).val()){
+                                $(this).prop("checked",true);
+                            }
+                        }else{
+                            $(this).val(data);
                         }
-                    }else{
-                        $(this).val(data);
+                    });
+                    if(part){
+                        break;
                     }
-                });
+                }
             }
             return this;
         },
