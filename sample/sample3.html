@@ -13,7 +13,17 @@
 	var list = new aTemplate.View({
 		templates:["load_sample","another_sample"],
 		data:{
-			"sample":"hoge"
+			"sample":"hoge",
+			"number":1
+		},
+		convert:{
+			add:function(txt,a){
+				txt = parseInt(txt);
+				for(var i = 0,n = a.length; i < n; i++){
+					txt += parseInt(a[i]);
+				}
+				return txt;
+			}
 		}
 	});
 	//this code won't work in a local environment.
