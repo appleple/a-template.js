@@ -60,12 +60,21 @@
         var id = $(this).parents("[data-id]").data("id");
         if(id){
             var obj = aTemplate.getObjectById(id);
-            if($(e.target).attr("type") == "checkbox" || $(e.target).attr("type") == "radio"){
+            if($(e.target).attr("type") == "radio"){
                 if($(this).is(":checked")){
                     obj.updateDataByString(data,val);
                 }else{
                     obj.updateDataByString(data,'');
                 }
+            }else if($(e.target).attr("type") == "checkbox"){
+                var name = $(this).attr("name");
+                var arr = [];
+                $(":checkbox[name="+name+"]").each(function(){
+                    if($(this).is(":checked")){
+                        arr.push($(this).val());
+                    }
+                });
+                obj.updateDataByString(data,arr);
             }else{
                 obj.updateDataByString(data,val);
             }
@@ -263,12 +272,12 @@
                 }
             }
             /*変数解決*/
-            html = html.replace(/{(\w+)}(\[(\w+)\])*/g,function(n,key3,key4,converter){
+            html = html.replace(/{(\w+)}(\[(.*?)\])*/g,function(n,key3,key4,converter){
                 var data;
                 if(key3 == "i"){
                     data = i;
                 }else{
-                    if(item[key3]){
+                    if(item && item[key3]){
                         if (typeof item[key3] === "function"){
                             data = item[key3].apply(that);
                         }else{
@@ -282,8 +291,20 @@
                         }
                     }
                 }
-                if(converter && that.convert && that.convert[converter]){
-                    return that.convert[converter].call(that,data);
+
+                if(converter && that.convert){
+                    var params = converter.replace(/.*?\((.*?)\)/,"$1");
+                    if(params){
+                        converter = converter.replace(/(.*?)\(.*?\)/,"$1");
+                        params = params.split(",");
+                    }else{
+                        params = [];
+                    }
+                    if(that.convert[converter]){
+                        return that.convert[converter].call(that,data,params);
+                    }else{
+                        return data;
+                    }
                 }else{
                     return data;
                 }
