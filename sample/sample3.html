@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>list sample</title>
+</head>
+<body>
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="../aTemplate.js"></script>
+	<script id="load_sample" type="text/template" src="./sample3.js"></script>
+	<script id="another_sample" type="text/template" src="./sample4.js"></script>
+	<script>
+	var list = new aTemplate.View({
+		templates:["load_sample","another_sample"],
+		data:{
+			"sample":"hoge"
+		}
+	});
+	//this code won't work in a local environment.
+	list.loadHtml().then(function(){
+		list.update();
+	});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+<p>{sample} is loaded!!</p>

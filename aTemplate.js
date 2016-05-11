@@ -108,6 +108,24 @@
             }
             this.setId();
         },
+        loadHtml:function(){     
+            var templates = this.templates;
+            var promises = [];
+            templates.forEach(function(template){
+                var d = new $.Deferred();
+                promises.push(d);
+                var src = $("#"+template).attr("src");
+                $.ajax({
+                    url:src,
+                    type: 'GET',
+                    dataType: 'text'
+                }).success(function(data){
+                    $("#"+template).html(data);
+                    d.resolve();
+                });
+            });
+            return $.when.apply($,promises);
+        },
         getData:function(){
             return JSON.parse(JSON.stringify(this.data));
         },
