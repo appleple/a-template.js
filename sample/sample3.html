@@ -5,12 +5,11 @@
 	<title>list sample</title>
 </head>
 <body>
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../aTemplate.js"></script>
+	<script src="../lib/a-template.js"></script>
 	<script id="load_sample" type="text/template" src="./sample3.js"></script>
 	<script id="another_sample" type="text/template" src="./sample4.js"></script>
 	<script>
-	var list = new aTemplate.View({
+	var list = new aTemplate({
 		templates:["load_sample","another_sample"],
 		data:{
 			"sample":"hoge",

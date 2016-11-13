@@ -16,10 +16,9 @@
 		<!-- END result:loop -->
 	</ul>
 	</script>
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../aTemplate.js"></script>
+	<script src="../lib/a-template.js"></script>
 	<script>
-	var search = new aTemplate.View({
+	var search = new aTemplate({
 		templates:["search"],
 		data:{
 			search:""
@@ -31,7 +30,7 @@
 			}
 		}
 	}).update();
-	var list = new aTemplate.View({
+	var list = new aTemplate({
 		templates:["list_template"],
 		data:{
 			search:search.data.search,
