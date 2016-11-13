@@ -4,9 +4,9 @@
  * MIT Licensed
  * Copyright (C) 2015 steelydylan http://horicdesign.com
  */
-var $ = require("zepto-browserify").$;
+import {$} from "zepto-browserify";
 var objs = [];
-var getObjectById = function(id) {
+var getObjectById = (id) => {
     for (var i = 0, n = objs.length; i < n; i++) {
         var obj = objs[i];
         var templates = obj.templates;
@@ -18,7 +18,7 @@ var getObjectById = function(id) {
     }
     return null;
 }
-$(document).on("input change click", "[data-bind]", function(e) {
+$(document).on("input change click", "[data-bind]", (e) => {
     var data = $(this).data("bind");
     var val = $(this).val();
     var attr = $(this).attr("href");
@@ -37,7 +37,7 @@ $(document).on("input change click", "[data-bind]", function(e) {
         } else if ($(e.target).attr("type") == "checkbox") {
             var name = $(this).attr("name");
             var arr = [];
-            $(":checkbox[name=" + name + "]").each(function() {
+            $(":checkbox[name=" + name + "]").each(() => {
                 if ($(this).is(":checked")) {
                     arr.push($(this).val());
                 }
@@ -48,7 +48,7 @@ $(document).on("input change click", "[data-bind]", function(e) {
         }
     }
 });
-$(document).on("input click change keydown", "[data-action]", function(e) {
+$(document).on("input click change keydown", "[data-action]", (e) => {
     if (e.type == "click" && $(e.target).is("select")) {
         return;
     }
