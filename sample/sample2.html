@@ -27,16 +27,14 @@
 				{name:"koike"}
 			]
 		},
-		method:{
-			removeItem:function(i){
-				this.data.list.splice(i,1);
+		removeItem:function(i){
+			this.data.list.splice(i,1);
+			this.update();
+		},
+		addItem:function(){
+			if(this.data.newItem){
+				this.data.list.push({name:this.data.newItem});
 				this.update();
-			},
-			addItem:function(){
-				if(this.data.newItem){
-					this.data.list.push({name:this.data.newItem});
-					this.update();
-				}
 			}
 		},
 		convert:{

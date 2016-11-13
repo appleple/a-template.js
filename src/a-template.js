@@ -18,7 +18,7 @@ var getObjectById = (id) => {
     }
     return null;
 }
-$(document).on("input change click", "[data-bind]", (e) => {
+$(document).on("input change click", "[data-bind]", function(e) {
     var data = $(this).data("bind");
     var val = $(this).val();
     var attr = $(this).attr("href");
@@ -48,7 +48,7 @@ $(document).on("input change click", "[data-bind]", (e) => {
         }
     }
 });
-$(document).on("input click change keydown", "[data-action]", (e) => {
+$(document).on("input click change keydown", "[data-action]", function(e) {
     if (e.type == "click" && $(e.target).is("select")) {
         return;
     }
@@ -63,16 +63,19 @@ $(document).on("input click change keydown", "[data-action]", (e) => {
     if (id) {
         var obj = getObjectById(id);
         obj.e = e;
-        if (obj.method[action]) {
-            obj.method[action].apply(obj, pts);
+        if(obj[action]){
+            obj[action].apply(obj,pts);
         }
     }
 });
 export default class aTemplate {
     constructor(opt) {
         objs.push(this);
-        for (var i in opt) {
+        for(var i in opt){
             this[i] = opt[i];
+        }
+        if(!this.data){
+            this.data = {};
         }
         this.setId();
     }

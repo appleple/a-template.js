@@ -23,11 +23,9 @@
 		data:{
 			search:""
 		},
-		method:{
-			doSearch:function(){
-				list.data.search = this.data.search;
-				list.update();
-			}
+		doSearch:function(){
+			list.data.search = this.data.search;
+			list.update();
 		}
 	}).update();
 	var list = new aTemplate({
