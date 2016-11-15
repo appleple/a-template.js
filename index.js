@@ -6,6 +6,8 @@
  */
 import {$} from "zepto-browserify";
 var objs = [];
+var eventType = "input click change keydown contextmenu mouseup mousedown mousemove";
+var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 var getObjectById = (id) => {
 	for (var i = 0, n = objs.length; i < n; i++) {
 		var obj = objs[i];
@@ -48,22 +50,37 @@ $(document).on("input change click", "[data-bind]", function(e) {
 		}
 	}
 });
-$(document).on("input click change keydown", "[data-action]", function(e) {
-	if (e.type == "click" && $(e.target).is("select")) {
+$(document).on(eventType,dataAction,function(e){
+	if(e.type == "click" && $(e.target).is("select")){
 		return;
 	}
-	if (e.type == "input" && $(e.target).attr("type") == "button") {
+	if(e.type == "input" && $(e.target).attr("type") == "button"){
 		return;
 	}
-	var string = $(this).data("action");
-	var action = string.replace(/\(.*?\);?/, "");
-	var parameter = string.replace(/(.*?)\((.*?)\);?/, "$2");
-	var pts = parameter.split(","); //引き数
-	var id = $(this).parents("[data-id]").data("id");
-	if (id) {
-		var obj = getObjectById(id);
+	var events = eventType.split(" ");
+	var $self = $(this);
+	var action = "action";
+	events.forEach(function(event){
+		if ($self.data("action-"+event)) {
+			if(e.type === event){
+				action += "-"+event;
+			}
+		}
+	});
+	var string = $self.data(action);
+	if(!string){
+		return;
+	}
+	var action = string.replace(/\(.*?\);?/,"");
+	var parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
+	var pts = parameter.split(",");//引き数
+	var id = $self.parents("[data-id]").data("id");
+	if(id){
+		var obj = aTemplate.getObjectById(id);
 		obj.e = e;
-		if(obj[action]){
+		if(obj.method && obj.method[action]){
+			obj.method[action].apply(obj,pts);
+		}else if(obj[action]){
 			obj[action].apply(obj,pts);
 		}
 	}
