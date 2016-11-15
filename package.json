@@ -2,8 +2,8 @@
   "name": "a-template",
   "version": "0.0.2",
   "scripts": {
-    "build": "browserify ./index.js -t [ babelify --presets [ es2015 ] browserify-shim ] --standalone aTemplate --outfile ./lib/a-template.js",
-    "build:watch": "watchify ./index.js -t [ babelify --presets [ es2015 ] browserify-shim ] --standalone aTemplate --outfile ./lib/a-template.js"
+    "build": "browserify ./index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./lib/a-template.js",
+    "build:watch": "watchify ./index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./lib/a-template.js"
   },
   "main": "./index.js",
   "devDependencies": {
