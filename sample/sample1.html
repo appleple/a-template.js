@@ -18,7 +18,7 @@
 	<script src="../lib/a-template.js"></script>
 	<!-- <script src="../lib/test.js"></script> -->
 	<script>
-	var search = new aTemplate.default({
+	var search = new aTemplate({
 		templates:["search"],
 		data:{
 			search:""
@@ -28,7 +28,7 @@
 			list.update();
 		}
 	}).update();
-	var list = new aTemplate.default({
+	var list = new aTemplate({
 		templates:["list_template"],
 		data:{
 			search:search.data.search,

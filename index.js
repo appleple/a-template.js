@@ -184,9 +184,8 @@ class aTemplate {
 		this.data.aTemplate_id = text;
 	}
 
-	getDataByString (s) {
-		var o = this.data;
-		s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+	getDataFromObj(s,o){
+		s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1');  // convert indexes to properties
 		s = s.replace(/^\./, ''); // strip leading dot
 		var a = s.split('.');
 		while (a.length) {
@@ -198,6 +197,11 @@ class aTemplate {
 			}
 		}
 		return o;
+	}
+
+	getDataByString(s){
+		var o = this.data;
+		return this.getDataFromObj(s,o);
 	}
 
 	updateDataByString (path, newValue) {
@@ -223,185 +227,173 @@ class aTemplate {
 		}
 	}
 
-	resolveBlock (html, item, i) {
+	resolveBlock(html,item,i){
 		var that = this;
-		var touchs = html.match(/<!-- BEGIN (\w+):touch#(\w+) -->/g);
-		var touchnots = html.match(/<!-- BEGIN (\w+):touchnot#(\w+) -->/g);
-		var exists = html.match(/<!-- BEGIN (\w+):exist -->/g);
-		var empties = html.match(/<!-- BEGIN (\w+):empty -->/g);
+		var touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
+		var touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+) -->/g);
+		var exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):exist -->/g);
+		var empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):empty -->/g);
 		/*タッチブロック解決*/
-		if (touchs) {
-			for (var k = 0, n = touchs.length; k < n; k++) {
+		if(touchs){
+			for(var k = 0,n = touchs.length; k < n; k++){
 				var start = touchs[k];
-				start = start.replace(/(\w+):touch#(\w+)/, "($1):touch#($2)");
-				var end = start.replace(/BEGIN/, "END");
-				var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-				html = html.replace(reg, function(m, key2, val, next) {
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
-					if (itemkey == val) {
+				start = start.replace(/([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+)/,"($1):touch#($2)");
+				var end = start.replace(/BEGIN/,"END");
+				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				html = html.replace(reg,function(m,key2,val,next){
+					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					if(itemkey == val){
 						return next;
-					} else {
+					}else{
 						return "";
 					}
 				})
 			}
 		}
 		/*タッチノットブロック解決*/
-		if (touchnots) {
-			for (var k = 0, n = touchnots.length; k < n; k++) {
+		if(touchnots){
+			for(var k = 0,n = touchnots.length; k < n; k++){
 				var start = touchnots[k];
-				start = start.replace(/(\w+):touchnot#(\w+)/, "($1):touchnot#($2)");
-				var end = start.replace(/BEGIN/, "END");
-				var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-				html = html.replace(reg, function(m, key2, val, next) {
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
-					if (itemkey != val) {
+				start = start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/,"($1):touchnot#($2)");
+				var end = start.replace(/BEGIN/,"END");
+				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				html = html.replace(reg,function(m,key2,val,next){
+					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					if(itemkey != val){
 						return next;
-					} else {
+					}else{
 						return "";
 					}
 				});
 			}
 		}
 		/*existブロックを解決*/
-		if (exists) {
-			for (var k = 0, n = exists.length; k < n; k++) {
+		if(exists){
+			for(var k = 0,n = exists.length; k < n; k++){
 				var start = exists[k];
-				start = start.replace(/(\w+):exist/, "($1):exist");
-				var end = start.replace(/BEGIN/, "END");
-				var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-				html = html.replace(reg, function(m, key2, next) {
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
-					if (itemkey) {
+				start = start.replace(/([a-zA-Z0-9._-]+):exist/,"($1):exist");
+				var end = start.replace(/BEGIN/,"END");
+				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				html = html.replace(reg,function(m,key2,next){
+					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					if(itemkey){
 						return next;
-					} else {
+					}else{
 						return "";
 					}
 				});
 			}
 		}
 		/*emptyブロックを解決*/
-		if (empties) {
-			for (var k = 0, n = empties.length; k < n; k++) {
+		if(empties){
+			for(var k = 0,n = empties.length; k < n; k++){
 				var start = empties[k];
-				start = start.replace(/(\w+):empty/, "($1):empty");
-				var end = start.replace(/BEGIN/, "END");
-				var empty = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-				html = html.replace(empty, function(m, key2, next) {
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
-					if (!itemkey) {
+				start = start.replace(/([a-zA-Z0-9._-]+):empty/,"($1):empty");
+				var end = start.replace(/BEGIN/,"END");
+				var empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				html = html.replace(empty,function(m,key2,next){
+					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					if(!itemkey){
 						return next;
-					} else {
+					}else{
 						return "";
 					}
 				});
 			}
 		}
 		/*変数解決*/
-		html = html.replace(/{(\w+)}(\[(.*?)\])*/g, function(n, key3, key4, converter) {
+		html = html.replace(/{([a-zA-Z0-9._-]+)}(\[([a-zA-Z0-9._-]+)\])*/g,function(n,key3,key4,converter){
 			var data;
-			if (key3 == "i") {
+			if(key3 == "i"){
 				data = i;
-			} else {
-				if (item && item[key3]) {
-					if (typeof item[key3] === "function") {
+			}else{
+				if(item[key3]){
+					if (typeof item[key3] === "function"){
 						data = item[key3].apply(that);
-					} else {
+					}else{
 						data = item[key3];
 					}
-				} else {
-					if (converter && that.convert && that.convert[converter]) {
-						return that.convert[converter].call(that, "");
-					} else {
+				}else{
+					if(converter && that.convert && that.convert[converter]){
+						return that.convert[converter].call(that,"");
+					}else{
 						return "";
 					}
 				}
 			}
-
-			if (converter && that.convert) {
-				var params = converter.replace(/.*?\((.*?)\)/, "$1");
-				if (params) {
-					converter = converter.replace(/(.*?)\(.*?\)/, "$1");
-					params = params.split(",");
-				} else {
-					params = [];
-				}
-				if (that.convert[converter]) {
-					return that.convert[converter].call(that, data, params);
-				} else {
-					return data;
-				}
-			} else {
+			if(converter && that.convert && that.convert[converter]){
+				return that.convert[converter].call(that,data);
+			}else{
 				return data;
 			}
 		});
 		return html;
 	}
 	/*絶対パス形式の変数を解決*/
-	resolveAbsBlock (html) {
+	resolveAbsBlock(html){
 		var that = this;
-		html = html.replace(/{(.*?)}/g, function(n, key3) {
+		html = html.replace(/{(.*?)}/g,function(n,key3){
 			var data = that.getDataByString(key3);
-			if (typeof data !== "undefined") {
-				if (typeof data === "function") {
+			if(typeof data !== "undefined"){
+				if (typeof data === "function"){
 					return data.apply(that);
-				} else {
+				}else{
 					return data;
 				}
-			} else {
+			}else{
 				return n;
 			}
 		});
 		return html;
 	}
 
-	resolveInclude (html) {
+	resolveInclude(html){
 		var include = /<!-- #include id="(.*?)" -->/g;
-		html = html.replace(include, function(m, key) {
-			return $("#" + key).html();
+		html = html.replace(include,function(m,key){
+			return $("#"+key).html();
 		});
 		return html;
 	}
 
-	resolveWith (html) {
-		var width = /<!-- BEGIN (\w+):with -->(([\n\r\t]|.)*?)<!-- END (\w+):with -->/g;
-		html = html.replace(width, function(m, key, val) {
-			m = m.replace(/data\-bind=['"](.*?)['"]/g, "data-bind='" + key + ".$1'");
+	resolveWith(html){
+		var width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
+		html = html.replace(width,function(m,key,val){
+			m = m.replace(/data\-bind=['"](.*?)['"]/g,"data-bind='"+key+".$1'");
 			return m;
 		});
 		return html;
 	}
 
-	resolveLoop (html) {
+	resolveLoop(html){
 		var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
 		var that = this;
 		/*ループ文解決*/
-		html = html.replace(loop, function(m, key, val) {
+		html = html.replace(loop,function(m,key,val){
 			var keyItem = that.getDataByString(key);
 			var keys = [];
-			if (typeof keyItem === "function") {
+			if(typeof keyItem === "function"){
 				keys = keyItem.apply(that);
-			} else {
+			}else{
 				keys = keyItem;
 			}
 			var ret = "";
-			if (keys instanceof Array) {
-				for (var i = 0, n = keys.length; i < n; i++) {
-					ret += that.resolveBlock(val, keys[i], i);
+			if(keys instanceof Array){
+				for(var i = 0,n = keys.length; i < n; i++){
+					ret += that.resolveBlock(val,keys[i],i);
 				}
 			}
 			/*エスケープ削除*/
-			ret = ret.replace(/\\([^\\])/g, "$1");
+			ret = ret.replace(/\\([^\\])/g,"$1");
 			return ret;
 		});
 		return html;
 	}
 
-	removeData (arr) {
+	removeData(arr){
 		var data = this.data;
-		for (var i in data) {
-			for (var t = 0, n = arr.length; t < n; t++) {
-				if (i === arr[t]) {
+		for(var i in data){
+			for(var t = 0,n = arr.length; t < n; t++){
+				if(i === arr[t]){
 					delete data[i];
 				}
 			}
@@ -409,19 +401,22 @@ class aTemplate {
 		return this;
 	}
 
-	hasLoop (txt) {
+	hasLoop(txt){
 		var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
-		if (txt.match(loop)) {
+		if(txt.match(loop)){
 			return true;
-		} else {
+		}else{
 			return false;
 		}
 	}
 
-	getHtml (selector) {
+	getHtml(selector,row){
 		var $template = $(selector);
 		var html = $template.html();
-		if (!html) {
+		if(row){
+			html = selector;
+		}
+		if(!html){
 			return "";
 		}
 		var data = this.data;
@@ -430,63 +425,69 @@ class aTemplate {
 		/*with解決*/
 		html = this.resolveWith(html);
 		/*ループ解決*/
-		while (this.hasLoop(html)) {
+		while(this.hasLoop(html)){
 			html = this.resolveLoop(html);
 		}
 		/*変数解決*/
-		html = this.resolveBlock(html, data);
+		html = this.resolveBlock(html,data);
 		/*エスケープ削除*/
-		html = html.replace(/\\([^\\])/g, "$1");
+		html = html.replace(/\\([^\\])/g,"$1");
 		/*絶対パスで指定された変数を解決*/
 		html = this.resolveAbsBlock(html);
 		/*空行削除*/
-		return html.replace(/^([\t ])*\n/gm, "");
+		return html.replace(/^([\t ])*\n/gm,"");
 	}
 
-	update (txt, part) {
+	update(txt,part){
 		var html = this.getHtml();
 		var templates = this.templates;
 		var renderWay = txt || "html";
-		for (var i = 0, n = templates.length; i < n; i++) {
+		if(this.method && this.method.beforeUpdated){
+			this.applyMethod("beforeUpdated");
+		}
+		for(var i = 0,n = templates.length; i < n; i++){
 			var tem = templates[i];
-			var selector = "#" + tem;
+			var selector = "#"+tem;
 			var html = this.getHtml(selector);
-			var $target = $("[data-id='" + tem + "']");
-			if (!part || part == tem) {
-				if ($target.length == 0) {
-					var $newitem = $("<div data-id='" + tem + "'></div>");
+			var $target = $("[data-id='"+tem+"']");
+			if(!part || part == tem){
+				if($target.length == 0){
+					var $newitem = $("<div data-id='"+tem+"'></div>");
 					$newitem[renderWay](html);
 					$(selector).after($newitem);
-				} else {
+				}else{
 					$target[renderWay](html);
 				}
-				if (part) {
+				if(part){
 					break;
 				}
 			}
 		}
 		this.updateBindingData(part);
+		if(this.onUpdated){
+			this.onUpdated();
+		}
 		return this;
 	}
 
-	updateBindingData (part) {
+	updateBindingData(part){
 		var that = this;
 		var templates = that.templates;
-		for (var i = 0, n = templates.length; i < n; i++) {
+		for(var i = 0,n = templates.length; i < n; i++){
 			var temp = templates[i];
-			if (!part || part == temp) {
-				var $template = $("[data-id='" + temp + "']");
-				$template.find("[data-bind]").each(function() {
+			if(!part || part == temp){
+				var $template = $("[data-id='"+temp+"']");
+				$template.find("[data-bind]").each(function(){
 					var data = that.getDataByString($(this).data("bind"));
-					if ($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio") {
-						if (data == $(this).val()) {
-							$(this).prop("checked", true);
+					if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
+						if(data == $(this).val()){
+							$(this).prop("checked",true);
 						}
-					} else {
+					}else{
 						$(this).val(data);
 					}
 				});
-				if (part) {
+				if(part){
 					break;
 				}
 			}
