@@ -5,7 +5,7 @@
     "build": "browserify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
     "watch": "watchify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js",
-    "watch:lib": "watchify ./src/index.js -t [ babelify --presets [ es2015 ] ] --outfile ./index.js",
+    "watch:lib": "nodemon ./src/index.js \"npm run build:lib\"",
     "watch:all": "npm run watch & npm run watch:lib"
   },
   "main": "./index.js",
@@ -17,6 +17,7 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "nodemon": "^1.11.0",
     "zepto-browserify": "*"
   }
 }
