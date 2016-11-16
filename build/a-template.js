@@ -1619,73 +1619,77 @@ var getObjectById = function getObjectById(id) {
 	}
 	return null;
 };
-$(document).on("input change click", "[data-bind]", function (e) {
-	var _this = this;
+if (typeof document !== "undefined") {
+	//data binding
+	$(document).on("input change click", "[data-bind]", function (e) {
+		var _this = this;
 
-	var data = $(this).data("bind");
-	var val = $(this).val();
-	var attr = $(this).attr("href");
-	if (attr) {
-		val = attr.replace("#", "");
-	}
-	var id = $(this).parents("[data-id]").data("id");
-	if (id) {
-		var obj = getObjectById(id);
-		if ($(e.target).attr("type") == "radio") {
-			if ($(this).is(":checked")) {
-				obj.updateDataByString(data, val);
-			} else {
-				obj.updateDataByString(data, '');
-			}
-		} else if ($(e.target).attr("type") == "checkbox") {
-			var name = $(this).attr("name");
-			var arr = [];
-			$(":checkbox[name=" + name + "]").each(function () {
-				if ($(_this).is(":checked")) {
-					arr.push($(_this).val());
-				}
-			});
-			obj.updateDataByString(data, arr);
-		} else {
-			obj.updateDataByString(data, val);
+		var data = $(this).data("bind");
+		var val = $(this).val();
+		var attr = $(this).attr("href");
+		if (attr) {
+			val = attr.replace("#", "");
 		}
-	}
-});
-$(document).on(eventType, dataAction, function (e) {
-	if (e.type == "click" && $(e.target).is("select")) {
-		return;
-	}
-	if (e.type == "input" && $(e.target).attr("type") == "button") {
-		return;
-	}
-	var events = eventType.split(" ");
-	var $self = $(this);
-	var action = "action";
-	events.forEach(function (event) {
-		if ($self.data("action-" + event)) {
-			if (e.type === event) {
-				action += "-" + event;
+		var id = $(this).parents("[data-id]").data("id");
+		if (id) {
+			var obj = getObjectById(id);
+			if ($(e.target).attr("type") == "radio") {
+				if ($(this).is(":checked")) {
+					obj.updateDataByString(data, val);
+				} else {
+					obj.updateDataByString(data, '');
+				}
+			} else if ($(e.target).attr("type") == "checkbox") {
+				var name = $(this).attr("name");
+				var arr = [];
+				$(":checkbox[name=" + name + "]").each(function () {
+					if ($(_this).is(":checked")) {
+						arr.push($(_this).val());
+					}
+				});
+				obj.updateDataByString(data, arr);
+			} else {
+				obj.updateDataByString(data, val);
 			}
 		}
 	});
-	var string = $self.data(action);
-	if (!string) {
-		return;
-	}
-	var action = string.replace(/\(.*?\);?/, "");
-	var parameter = string.replace(/(.*?)\((.*?)\);?/, "$2");
-	var pts = parameter.split(","); //引き数
-	var id = $self.parents("[data-id]").data("id");
-	if (id) {
-		var obj = getObjectById(id);
-		obj.e = e;
-		if (obj.method && obj.method[action]) {
-			obj.method[action].apply(obj, pts);
-		} else if (obj[action]) {
-			obj[action].apply(obj, pts);
+	//action
+	$(document).on(eventType, dataAction, function (e) {
+		if (e.type == "click" && $(e.target).is("select")) {
+			return;
 		}
-	}
-});
+		if (e.type == "input" && $(e.target).attr("type") == "button") {
+			return;
+		}
+		var events = eventType.split(" ");
+		var $self = $(this);
+		var action = "action";
+		events.forEach(function (event) {
+			if ($self.data("action-" + event)) {
+				if (e.type === event) {
+					action += "-" + event;
+				}
+			}
+		});
+		var string = $self.data(action);
+		if (!string) {
+			return;
+		}
+		var action = string.replace(/\(.*?\);?/, "");
+		var parameter = string.replace(/(.*?)\((.*?)\);?/, "$2");
+		var pts = parameter.split(","); //引き数
+		var id = $self.parents("[data-id]").data("id");
+		if (id) {
+			var obj = getObjectById(id);
+			obj.e = e;
+			if (obj.method && obj.method[action]) {
+				obj.method[action].apply(obj, pts);
+			} else if (obj[action]) {
+				obj[action].apply(obj, pts);
+			}
+		}
+	});
+}
 
 var aTemplate = function () {
 	function aTemplate(opt) {
