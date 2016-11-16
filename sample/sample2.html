@@ -14,10 +14,9 @@
 		<!-- END list:loop -->
 	</ul>
 	</script>
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../aTemplate.js"></script>
+	<script src="../lib/a-template.js"></script>
 	<script>
-	var list = new aTemplate.View({
+	var list = new aTemplate({
 		templates:["list_template"],
 		data:{
 			list:[
@@ -28,16 +27,14 @@
 				{name:"koike"}
 			]
 		},
-		method:{
-			removeItem:function(i){
-				this.data.list.splice(i,1);
+		removeItem:function(i){
+			this.data.list.splice(i,1);
+			this.update();
+		},
+		addItem:function(){
+			if(this.data.newItem){
+				this.data.list.push({name:this.data.newItem});
 				this.update();
-			},
-			addItem:function(){
-				if(this.data.newItem){
-					this.data.list.push({name:this.data.newItem});
-					this.update();
-				}
 			}
 		},
 		convert:{

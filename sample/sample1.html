@@ -9,29 +9,26 @@
 		<input type="text" data-bind="search" data-action="doSearch">
 	</script>
 	<script id="list_template" type="text/template">
-	
 	<ul>
 		<!-- BEGIN result:loop -->
 		<li>{name}</li>
 		<!-- END result:loop -->
 	</ul>
 	</script>
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../aTemplate.js"></script>
+	<script src="../lib/a-template.js"></script>
+	<!-- <script src="../lib/test.js"></script> -->
 	<script>
-	var search = new aTemplate.View({
+	var search = new aTemplate({
 		templates:["search"],
 		data:{
 			search:""
 		},
-		method:{
-			doSearch:function(){
-				list.data.search = this.data.search;
-				list.update();
-			}
+		doSearch:function(){
+			list.data.search = this.data.search;
+			list.update();
 		}
 	}).update();
-	var list = new aTemplate.View({
+	var list = new aTemplate({
 		templates:["list_template"],
 		data:{
 			search:search.data.search,
