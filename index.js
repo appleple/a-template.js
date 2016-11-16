@@ -4,7 +4,7 @@
  * MIT Licensed
  * Copyright (C) 2015 steelydylan http://horicdesign.com
  */
-import {$} from "zepto-browserify";
+var $ = require("zepto-browserify").$;
 var objs = [];
 var eventType = "input click change keydown contextmenu mouseup mousedown mousemove";
 var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
@@ -76,7 +76,7 @@ $(document).on(eventType,dataAction,function(e){
 	var pts = parameter.split(",");//引き数
 	var id = $self.parents("[data-id]").data("id");
 	if(id){
-		var obj = aTemplate.getObjectById(id);
+		var obj = getObjectById(id);
 		obj.e = e;
 		if(obj.method && obj.method[action]){
 			obj.method[action].apply(obj,pts);
@@ -85,7 +85,7 @@ $(document).on(eventType,dataAction,function(e){
 		}
 	}
 });
-export default class aTemplate {
+class aTemplate {
 	constructor(opt) {
 		objs.push(this);
 		for(var i in opt){
@@ -95,6 +95,14 @@ export default class aTemplate {
 			this.data = {};
 		}
 		this.setId();
+	}
+
+	addTemplate(template,id) {
+		$("body").append("<script type='text/template' id='"+id+"'>"+template+"</script>");
+		if(!this.templates){
+			this.templates = [];
+		}
+		this.templates.push(id);
 	}
 
 	loadHtml() {
@@ -521,3 +529,5 @@ export default class aTemplate {
 		return this;
 	}
 }
+
+module.exports = aTemplate;

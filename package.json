@@ -1,6 +1,6 @@
 {
   "name": "a-template",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build": "browserify ./index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./lib/a-template.js",
     "build:watch": "watchify ./index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./lib/a-template.js"
