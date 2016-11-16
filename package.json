@@ -1,6 +1,6 @@
 {
   "name": "a-template",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "scripts": {
     "build": "browserify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
