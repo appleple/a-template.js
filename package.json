@@ -4,9 +4,7 @@
   "scripts": {
     "build": "browserify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
-    "watch": "watchify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js",
-    "watch:lib": "nodemon ./src/index.js \"npm run build:lib\"",
-    "watch:all": "npm run watch & npm run watch:lib"
+    "watch": "watchify ./src/index.js -t [ babelify --presets [ es2015 ] ] --standalone aTemplate --outfile ./build/a-template.js"
   },
   "main": "./index.js",
   "devDependencies": {
