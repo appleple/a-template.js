@@ -9,9 +9,7 @@
     "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js",
     "build": "npm run bundle && npm run minifyjs",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
-    "watch": "watch 'npm run build' ./src/",
-    "watch:lib": "watch 'npm run build:lib' ./src/",
-    "watch:all": "npm run watch & npm run watch:lib"
+    "watch": "watch 'npm run build && npm run build:lib' ./src/"
   },
   "main": "./index.js",
   "devDependencies": {
