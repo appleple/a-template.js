@@ -5,12 +5,13 @@
   "description": "Simple Template Engine",
   "license": "MIT",
   "scripts": {
-    "build": "browserify ./src/index.js -t [ babelify --presets [ es2015 ] ] -p licensify --standalone aTemplate --outfile ./build/a-template.js",
+    "bundle": "browserify ./src/index.js -t [ babelify --presets [ es2015 ] ] -p licensify --standalone aTemplate --outfile ./build/a-template.js",
+    "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js",
+    "build": "npm run bundle && npm run minifyjs",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
-    "watch": "watchify ./src/index.js -t [ babelify --presets [ es2015 ] ] -p licensify --standalone aTemplate --outfile ./build/a-template.js",
+    "watch": "watch 'npm run build' ./src/",
     "watch:lib": "watch 'npm run build:lib' ./src/",
-    "watch:all": "npm run watch & npm run watch:lib",
-    "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js"
+    "watch:all": "npm run watch & npm run watch:lib"
   },
   "main": "./index.js",
   "devDependencies": {
