@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.0.9
+ *   version: 0.0.11
  *
  * zepto-browserify:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2091,8 +2091,8 @@ var aTemplate = function () {
 			var html = this.getHtml();
 			var templates = this.templates;
 			var renderWay = txt || "html";
-			if (this.method && this.method.beforeUpdated) {
-				this.applyMethod("beforeUpdated");
+			if (this.beforeUpdated) {
+				this.beforeUpdated();
 			}
 			for (var i = 0, n = templates.length; i < n; i++) {
 				var tem = templates[i];
