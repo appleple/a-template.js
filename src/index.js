@@ -1,9 +1,3 @@
-/**
- * a-template.js v0.5.0 - Simple Template engine inspired by a-blog cms
- * https://github.com/steelydylan/aTemplate.js
- * MIT Licensed
- * Copyright (C) 2015 steelydylan http://horicdesign.com
- */
 var $ = require("zepto-browserify").$;
 var objs = [];
 var eventType = "input click change keydown contextmenu mouseup mousedown mousemove compositionstart compositionend";
@@ -451,8 +445,8 @@ class aTemplate {
 		var html = this.getHtml();
 		var templates = this.templates;
 		var renderWay = txt || "html";
-		if(this.method && this.method.beforeUpdated){
-			this.applyMethod("beforeUpdated");
+		if(this.beforeUpdated){
+			this.beforeUpdated();
 		}
 		for(var i = 0,n = templates.length; i < n; i++){
 			var tem = templates[i];
