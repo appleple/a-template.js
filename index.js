@@ -483,8 +483,8 @@ var aTemplate = function () {
 			var html = this.getHtml();
 			var templates = this.templates;
 			var renderWay = txt || "html";
-			if (this.method && this.method.beforeUpdated) {
-				this.applyMethod("beforeUpdated");
+			if (this.beforeUpdated) {
+				this.beforeUpdated();
 			}
 			for (var i = 0, n = templates.length; i < n; i++) {
 				var tem = templates[i];
