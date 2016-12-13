@@ -6,7 +6,7 @@
  */
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove";
+var eventType = "input click change keydown contextmenu mouseup mousedown mousemove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 var getObjectById = (id) => {
 	for (var i = 0, n = objs.length; i < n; i++) {
@@ -19,6 +19,10 @@ var getObjectById = (id) => {
 		}
 	}
 	return null;
+}
+if (typeof jQuery !== "undefined") {
+	// for IE
+	$ = jQuery;
 }
 if(typeof document !== "undefined"){
 	//data binding
@@ -39,9 +43,8 @@ if(typeof document !== "undefined"){
 					obj.updateDataByString(data, '');
 				}
 			} else if ($(e.target).attr("type") == "checkbox") {
-				var name = $(this).attr("name");
 				var arr = [];
-				$(":checkbox[name=" + name + "]").each(() => {
+				$("[data-bind=\"" + data + "\"]").each(function () {
 					if ($(this).is(":checked")) {
 						arr.push($(this).val());
 					}
