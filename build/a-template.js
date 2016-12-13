@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.0.11
+ *   version: 0.0.13
  *
  * zepto-browserify:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1635,6 +1635,10 @@ var getObjectById = function getObjectById(id) {
 	}
 	return null;
 };
+if (typeof jQuery !== "undefined") {
+	// for IE
+	$ = jQuery;
+}
 if (typeof document !== "undefined") {
 	//data binding
 	$(document).on("input change click", "[data-bind]", function (e) {

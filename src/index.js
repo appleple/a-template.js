@@ -20,6 +20,10 @@ var getObjectById = (id) => {
 	}
 	return null;
 }
+if (typeof jQuery !== "undefined"){
+  // for IE
+  $ = jQuery;
+}
 if(typeof document !== "undefined"){
 	//data binding
 	$(document).on("input change click", "[data-bind]", function(e) {
