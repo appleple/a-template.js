@@ -4,15 +4,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * a-template.js v0.5.0 - Simple Template engine inspired by a-blog cms
- * https://github.com/steelydylan/aTemplate.js
- * MIT Licensed
- * Copyright (C) 2015 steelydylan http://horicdesign.com
- */
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove";
+var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g, "[data-action-$1],") + "[data-action]";
 var getObjectById = function getObjectById(id) {
 	for (var i = 0, n = objs.length; i < n; i++) {
@@ -33,8 +27,6 @@ if (typeof jQuery !== "undefined") {
 if (typeof document !== "undefined") {
 	//data binding
 	$(document).on("input change click", "[data-bind]", function (e) {
-		var _this = this;
-
 		var data = $(this).data("bind");
 		var val = $(this).val();
 		var attr = $(this).attr("href");
@@ -51,11 +43,10 @@ if (typeof document !== "undefined") {
 					obj.updateDataByString(data, '');
 				}
 			} else if ($(e.target).attr("type") == "checkbox") {
-				var name = $(this).attr("name");
 				var arr = [];
-				$(":checkbox[name=" + name + "]").each(function () {
-					if ($(_this).is(":checked")) {
-						arr.push($(_this).val());
+				$("[data-bind=\"" + data + "\"]").each(function () {
+					if ($(this).is(":checked")) {
+						arr.push($(this).val());
 					}
 				});
 				obj.updateDataByString(data, arr);

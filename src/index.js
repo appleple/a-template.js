@@ -1,12 +1,6 @@
-/**
- * a-template.js v0.5.0 - Simple Template engine inspired by a-blog cms
- * https://github.com/steelydylan/aTemplate.js
- * MIT Licensed
- * Copyright (C) 2015 steelydylan http://horicdesign.com
- */
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove";
+var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 var getObjectById = (id) => {
 	for (var i = 0, n = objs.length; i < n; i++) {
@@ -20,9 +14,9 @@ var getObjectById = (id) => {
 	}
 	return null;
 }
-if (typeof jQuery !== "undefined"){
-  // for IE
-  $ = jQuery;
+if (typeof jQuery !== "undefined") {
+	// for IE
+	$ = jQuery;
 }
 if(typeof document !== "undefined"){
 	//data binding
@@ -43,9 +37,8 @@ if(typeof document !== "undefined"){
 					obj.updateDataByString(data, '');
 				}
 			} else if ($(e.target).attr("type") == "checkbox") {
-				var name = $(this).attr("name");
 				var arr = [];
-				$(":checkbox[name=" + name + "]").each(() => {
+				$("[data-bind=\"" + data + "\"]").each(function () {
 					if ($(this).is(":checked")) {
 						arr.push($(this).val());
 					}
