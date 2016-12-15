@@ -6,7 +6,7 @@
  */
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove";
+var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove";
 var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 var getObjectById = (id) => {
 	for (var i = 0, n = objs.length; i < n; i++) {
