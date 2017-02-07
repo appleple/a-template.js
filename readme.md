@@ -1,4 +1,4 @@
-#aTemplate.js
+#a-template.js
 
 Simple Template Engine
 used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
