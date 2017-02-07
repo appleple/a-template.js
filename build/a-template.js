@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.0.16
+ *   version: 0.0.17
  *
  * zepto-browserify:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1615,7 +1615,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
+var eventType = "input paste click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g, "[data-action-$1],") + "[data-action]";
 var getObjectById = function getObjectById(id) {
 	for (var i = 0, n = objs.length; i < n; i++) {
