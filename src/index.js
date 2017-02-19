@@ -1,12 +1,12 @@
-var $ = require("zepto-browserify").$;
-var objs = [];
-var eventType = "input paste click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
-var dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
-var getObjectById = (id) => {
-	for (var i = 0, n = objs.length; i < n; i++) {
-		var obj = objs[i];
-		var templates = obj.templates;
-		for (var t = 0, m = templates.length; t < m; t++) {
+let $ = require("zepto-browserify").$;
+const objs = [];
+const eventType = "input paste click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
+const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
+const getObjectById = (id) => {
+	for (let i = 0, n = objs.length; i < n; i++) {
+		let obj = objs[i];
+		let templates = obj.templates;
+		for (let t = 0, m = templates.length; t < m; t++) {
 			if (templates[t] == id) {
 				return obj;
 			}
@@ -14,22 +14,22 @@ var getObjectById = (id) => {
 	}
 	return null;
 }
-if (typeof jQuery !== "undefined") {
+if (typeof jQuery !=="undefined"){
 	// for IE
 	$ = jQuery;
 }
 if(typeof document !== "undefined"){
 	//data binding
 	$(document).on("input change click", "[data-bind]", function(e) {
-		var data = $(this).data("bind");
-		var val = $(this).val();
-		var attr = $(this).attr("href");
+		let data = $(this).data("bind");
+		let val = $(this).val();
+		let attr = $(this).attr("href");
 		if (attr) {
 			val = attr.replace("#", "");
 		}
-		var id = $(this).parents("[data-id]").data("id");
+		let id = $(this).parents("[data-id]").data("id");
 		if (id) {
-			var obj = getObjectById(id);
+			let obj = getObjectById(id);
 			if ($(e.target).attr("type") == "radio") {
 				if ($(this).is(":checked")) {
 					obj.updateDataByString(data, val);
@@ -37,7 +37,7 @@ if(typeof document !== "undefined"){
 					obj.updateDataByString(data, '');
 				}
 			} else if ($(e.target).attr("type") == "checkbox") {
-				var arr = [];
+				let arr = [];
 				$("[data-bind=\"" + data + "\"]").each(function () {
 					if ($(this).is(":checked")) {
 						arr.push($(this).val());
@@ -57,9 +57,9 @@ if(typeof document !== "undefined"){
 		if(e.type == "input" && $(e.target).attr("type") == "button"){
 			return;
 		}
-		var events = eventType.split(" ");
-		var $self = $(this);
-		var action = "action";
+		let events = eventType.split(" ");
+		let $self = $(this);
+		let action = "action";
 		events.forEach(function(event){
 			if ($self.data("action-"+event)) {
 				if(e.type === event){
@@ -67,21 +67,21 @@ if(typeof document !== "undefined"){
 				}
 			}
 		});
-		var string = $self.data(action);
+		let string = $self.data(action);
 		if(!string){
 			return;
 		}
-		var action = string.replace(/\(.*?\);?/,"");
-		var parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
-		var pts = parameter.split(",");//引き数
-		var id = $self.parents("[data-id]").data("id");
+		let method = string.replace(/\(.*?\);?/,"");
+		let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
+		let pts = parameter.split(",");//引き数
+		let id = $self.parents("[data-id]").data("id");
 		if(id){
-			var obj = getObjectById(id);
+			let obj = getObjectById(id);
 			obj.e = e;
-			if(obj.method && obj.method[action]){
-				obj.method[action].apply(obj,pts);
-			}else if(obj[action]){
-				obj[action].apply(obj,pts);
+			if(obj.method && obj.method[method]){
+				obj.method[method].apply(obj,pts);
+			}else if(obj[method]){
+				obj[method].apply(obj,pts);
 			}
 		}
 	});
@@ -91,7 +91,7 @@ if(typeof document !== "undefined"){
 class aTemplate {
 	constructor(opt) {
 		objs.push(this);
-		for(var i in opt){
+		for(let i in opt){
 			this[i] = opt[i];
 		}
 		if(!this.data){
@@ -109,12 +109,12 @@ class aTemplate {
 	}
 
 	loadHtml() {
-		var templates = this.templates;
-		var promises = [];
+		let templates = this.templates;
+		let promises = [];
 		templates.forEach((template) => {
-			var d = new $.Deferred();
+			let d = new $.Deferred();
 			promises.push(d);
-			var src = $("#" + template).attr("src");
+			let src = $("#" + template).attr("src");
 			$.ajax({
 				url: src,
 				type: 'GET',
@@ -132,12 +132,12 @@ class aTemplate {
 	}
 
 	saveData (key) {
-		var data = JSON.stringify(this.data);
+		let data = JSON.stringify(this.data);
 		localStorage.setItem(key, data);
 	}
 
 	setData (val) {
-		for (var i in val) {
+		for (let i in val) {
 			if (typeof val[i] !== "function") {
 				this.data[i] = val[i];
 			}
@@ -145,9 +145,9 @@ class aTemplate {
 	}
 
 	loadData (key) {
-		var data = JSON.parse(localStorage.getItem(key));
+		let data = JSON.parse(localStorage.getItem(key));
 		if (data) {
-			for (var i in data) {
+			for (let i in data) {
 				if (typeof data[i] !== "function") {
 					this.data[i] = data[i];
 				}
@@ -160,22 +160,22 @@ class aTemplate {
 	}
 
 	getRandText (limit) {
-		var ret = "";
-		var strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		var length = strings.length;
-		for (var i = 0; i < limit; i++) {
+		let ret = "";
+		let strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		let length = strings.length;
+		for (let i = 0; i < limit; i++) {
 			ret += strings.charAt(Math.floor(this.getRand(0, length)));
 		}
 		return ret;
 	}
 
 	setId () {
-		var text;
-		var ids = aTemplate.ids;
-		var flag = false;
+		let text;
+		let ids = aTemplate.ids;
+		let flag = false;
 		while (1) {
 			text = this.getRandText(10);
-			for (var i = 0, n = aTemplate.ids; i < n; i++) {
+			for (let i = 0, n = aTemplate.ids; i < n; i++) {
 				if (aTemplate.ids[i] === text) {
 					flag = true;
 				}
@@ -190,9 +190,9 @@ class aTemplate {
 	getDataFromObj(s,o){
 		s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1');  // convert indexes to properties
 		s = s.replace(/^\./, ''); // strip leading dot
-		var a = s.split('.');
+		let a = s.split('.');
 		while (a.length) {
-			var n = a.shift();
+			let n = a.shift();
 			if (n in o) {
 				o = o[n];
 			} else {
@@ -203,13 +203,13 @@ class aTemplate {
 	}
 
 	getDataByString(s){
-		var o = this.data;
+		let o = this.data;
 		return this.getDataFromObj(s,o);
 	}
 
 	updateDataByString (path, newValue) {
-		var object = this.data;
-		var stack = path.split('.');
+		let object = this.data;
+		let stack = path.split('.');
 		while (stack.length > 1) {
 			object = object[stack.shift()];
 		}
@@ -217,12 +217,12 @@ class aTemplate {
 	}
 
 	removeDataByString (path) {
-		var object = this.data;
-		var stack = path.split('.');
+		let object = this.data;
+		let stack = path.split('.');
 		while (stack.length > 1) {
 			object = object[stack.shift()];
 		}
-		var shift = stack.shift();
+		let shift = stack.shift();
 		if (shift.match(/^\d+$/)) {
 			object.splice(Number(shift), 1);
 		} else {
@@ -231,20 +231,20 @@ class aTemplate {
 	}
 
 	resolveBlock(html,item,i){
-		var that = this;
-		var touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
-		var touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+) -->/g);
-		var exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):exist -->/g);
-		var empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):empty -->/g);
+		let that = this;
+		let touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
+		let touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+) -->/g);
+		let exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):exist -->/g);
+		let empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):empty -->/g);
 		/*タッチブロック解決*/
 		if(touchs){
-			for(var k = 0,n = touchs.length; k < n; k++){
-				var start = touchs[k];
+			for(let k = 0,n = touchs.length; k < n; k++){
+				let start = touchs[k];
 				start = start.replace(/([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+)/,"($1):touch#($2)");
-				var end = start.replace(/BEGIN/,"END");
-				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				let end = start.replace(/BEGIN/,"END");
+				let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 				html = html.replace(reg,function(m,key2,val,next){
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 					if(itemkey == val){
 						return next;
 					}else{
@@ -255,13 +255,13 @@ class aTemplate {
 		}
 		/*タッチノットブロック解決*/
 		if(touchnots){
-			for(var k = 0,n = touchnots.length; k < n; k++){
-				var start = touchnots[k];
+			for(let k = 0,n = touchnots.length; k < n; k++){
+				let start = touchnots[k];
 				start = start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/,"($1):touchnot#($2)");
-				var end = start.replace(/BEGIN/,"END");
-				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				let end = start.replace(/BEGIN/,"END");
+				let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 				html = html.replace(reg,function(m,key2,val,next){
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 					if(itemkey != val){
 						return next;
 					}else{
@@ -272,13 +272,13 @@ class aTemplate {
 		}
 		/*existブロックを解決*/
 		if(exists){
-			for(var k = 0,n = exists.length; k < n; k++){
-				var start = exists[k];
+			for(let k = 0,n = exists.length; k < n; k++){
+				let start = exists[k];
 				start = start.replace(/([a-zA-Z0-9._-]+):exist/,"($1):exist");
-				var end = start.replace(/BEGIN/,"END");
-				var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				let end = start.replace(/BEGIN/,"END");
+				let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 				html = html.replace(reg,function(m,key2,next){
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 					if(itemkey){
 						return next;
 					}else{
@@ -289,13 +289,13 @@ class aTemplate {
 		}
 		/*emptyブロックを解決*/
 		if(empties){
-			for(var k = 0,n = empties.length; k < n; k++){
-				var start = empties[k];
+			for(let k = 0,n = empties.length; k < n; k++){
+				let start = empties[k];
 				start = start.replace(/([a-zA-Z0-9._-]+):empty/,"($1):empty");
-				var end = start.replace(/BEGIN/,"END");
-				var empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
+				let end = start.replace(/BEGIN/,"END");
+				let empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 				html = html.replace(empty,function(m,key2,next){
-					var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
+					let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 					if(!itemkey){
 						return next;
 					}else{
@@ -306,7 +306,7 @@ class aTemplate {
 		}
 		/*変数解決*/
 		html = html.replace(/{([a-zA-Z0-9._-]+)}(\[([a-zA-Z0-9._-]+)\])*/g,function(n,key3,key4,converter){
-			var data;
+			let data;
 			if(key3 == "i"){
 				data = i;
 			}else{
@@ -334,9 +334,9 @@ class aTemplate {
 	}
 	/*絶対パス形式の変数を解決*/
 	resolveAbsBlock(html){
-		var that = this;
+		let that = this;
 		html = html.replace(/{(.*?)}/g,function(n,key3){
-			var data = that.getDataByString(key3);
+			let data = that.getDataByString(key3);
 			if(typeof data !== "undefined"){
 				if (typeof data === "function"){
 					return data.apply(that);
@@ -351,7 +351,7 @@ class aTemplate {
 	}
 
 	resolveInclude(html){
-		var include = /<!-- #include id="(.*?)" -->/g;
+		let include = /<!-- #include id="(.*?)" -->/g;
 		html = html.replace(include,function(m,key){
 			return $("#"+key).html();
 		});
@@ -359,7 +359,7 @@ class aTemplate {
 	}
 
 	resolveWith(html){
-		var width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
+		let width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
 		html = html.replace(width,function(m,key,val){
 			m = m.replace(/data\-bind=['"](.*?)['"]/g,"data-bind='"+key+".$1'");
 			return m;
@@ -368,20 +368,20 @@ class aTemplate {
 	}
 
 	resolveLoop(html){
-		var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
-		var that = this;
+		let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+		let that = this;
 		/*ループ文解決*/
 		html = html.replace(loop,function(m,key,val){
-			var keyItem = that.getDataByString(key);
-			var keys = [];
+			let keyItem = that.getDataByString(key);
+			let keys = [];
 			if(typeof keyItem === "function"){
 				keys = keyItem.apply(that);
 			}else{
 				keys = keyItem;
 			}
-			var ret = "";
+			let ret = "";
 			if(keys instanceof Array){
-				for(var i = 0,n = keys.length; i < n; i++){
+				for(let i = 0,n = keys.length; i < n; i++){
 					ret += that.resolveBlock(val,keys[i],i);
 				}
 			}
@@ -393,9 +393,9 @@ class aTemplate {
 	}
 
 	removeData(arr){
-		var data = this.data;
-		for(var i in data){
-			for(var t = 0,n = arr.length; t < n; t++){
+		let data = this.data;
+		for(let i in data){
+			for(let t = 0,n = arr.length; t < n; t++){
 				if(i === arr[t]){
 					delete data[i];
 				}
@@ -405,7 +405,7 @@ class aTemplate {
 	}
 
 	hasLoop(txt){
-		var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+		let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
 		if(txt.match(loop)){
 			return true;
 		}else{
@@ -414,15 +414,15 @@ class aTemplate {
 	}
 
 	getHtml(selector,row){
-		var $template = $(selector);
-		var html = $template.html();
+		let $template = $(selector);
+		let html = $template.html();
 		if(row){
 			html = selector;
 		}
 		if(!html){
 			return "";
 		}
-		var data = this.data;
+		let data = this.data;
 		/*インクルード解決*/
 		html = this.resolveInclude(html);
 		/*with解決*/
@@ -442,20 +442,20 @@ class aTemplate {
 	}
 
 	update(txt,part){
-		var html = this.getHtml();
-		var templates = this.templates;
-		var renderWay = txt || "html";
+		let html = this.getHtml();
+		let templates = this.templates;
+		let renderWay = txt || "html";
 		if(this.beforeUpdated){
 			this.beforeUpdated();
 		}
-		for(var i = 0,n = templates.length; i < n; i++){
-			var tem = templates[i];
-			var selector = "#"+tem;
-			var html = this.getHtml(selector);
-			var $target = $("[data-id='"+tem+"']");
+		for(let i = 0,n = templates.length; i < n; i++){
+			let tem = templates[i];
+			let selector = "#"+tem;
+			let html = this.getHtml(selector);
+			let $target = $("[data-id='"+tem+"']");
 			if(!part || part == tem){
 				if($target.length == 0){
-					var $newitem = $("<div data-id='"+tem+"'></div>");
+					let $newitem = $("<div data-id='"+tem+"'></div>");
 					$newitem[renderWay](html);
 					$(selector).after($newitem);
 				}else{
@@ -474,14 +474,14 @@ class aTemplate {
 	}
 
 	updateBindingData(part){
-		var that = this;
-		var templates = that.templates;
-		for(var i = 0,n = templates.length; i < n; i++){
-			var temp = templates[i];
+		let that = this;
+		let templates = that.templates;
+		for(let i = 0,n = templates.length; i < n; i++){
+			let temp = templates[i];
 			if(!part || part == temp){
-				var $template = $("[data-id='"+temp+"']");
+				let $template = $("[data-id='"+temp+"']");
 				$template.find("[data-bind]").each(function(){
-					var data = that.getDataByString($(this).data("bind"));
+					let data = that.getDataByString($(this).data("bind"));
 					if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
 						if(data == $(this).val()){
 							$(this).prop("checked",true);
@@ -499,7 +499,7 @@ class aTemplate {
 	}
 
 	copyToClipBoard () {
-		var copyArea = $("<textarea/>");
+		let copyArea = $("<textarea/>");
 		$("body").append(copyArea);
 		copyArea.text(this.getHtml());
 		copyArea.select();
@@ -509,7 +509,7 @@ class aTemplate {
 	}
 
 	applyMethod (method) {
-		var args = [].splice.call(arguments, 0);
+		let args = [].splice.call(arguments, 0);
 		args.shift();
 		return this.method[method].apply(this, args);
 	}
@@ -519,12 +519,12 @@ class aTemplate {
 	}
 
 	remove (path) {
-		var object = this.data;
-		var stack = path.split('.');
+		let object = this.data;
+		let stack = path.split('.');
 		while (stack.length > 1) {
 			object = object[stack.shift()];
 		}
-		var shift = stack.shift();
+		let shift = stack.shift();
 		if (shift.match(/^\d+$/)) {
 			object.splice(Number(shift), 1);
 		} else {
