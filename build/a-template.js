@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.0.15
+ *   version: 0.0.16
  *
  * zepto-browserify:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2109,7 +2109,7 @@ var aTemplate = function () {
 			}
 			this.updateBindingData(part);
 			if (this.onUpdated) {
-				this.onUpdated();
+				this.onUpdated(part);
 			}
 			return this;
 		}

@@ -468,7 +468,7 @@ class aTemplate {
 		}
 		this.updateBindingData(part);
 		if(this.onUpdated){
-			this.onUpdated();
+			this.onUpdated(part);
 		}
 		return this;
 	}

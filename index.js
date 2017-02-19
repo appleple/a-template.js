@@ -4,12 +4,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * a-template.js v0.5.0 - Simple Template engine inspired by a-blog cms
- * https://github.com/steelydylan/aTemplate.js
- * MIT Licensed
- * Copyright (C) 2015 steelydylan http://horicdesign.com
- */
 var $ = require("zepto-browserify").$;
 var objs = [];
 var eventType = "input click change keydown contextmenu mouseup mousedown mousemove compositionstart compositionend";
@@ -506,7 +500,7 @@ var aTemplate = function () {
 			}
 			this.updateBindingData(part);
 			if (this.onUpdated) {
-				this.onUpdated();
+				this.onUpdated(part);
 			}
 			return this;
 		}
