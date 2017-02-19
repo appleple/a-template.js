@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.0.16
+ *   version: 0.0.18
  *
  * zepto-browserify:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1615,7 +1615,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var $ = require("zepto-browserify").$;
 var objs = [];
-var eventType = "input click change keydown contextmenu mouseup mousedown mousemove compositionstart compositionend";
+var eventType = "input paste click change keydown contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g, "[data-action-$1],") + "[data-action]";
 var getObjectById = function getObjectById(id) {
 	for (var i = 0, n = objs.length; i < n; i++) {
@@ -1652,13 +1652,15 @@ if (typeof document !== "undefined") {
 					obj.updateDataByString(data, '');
 				}
 			} else if ($(e.target).attr("type") == "checkbox") {
-				var arr = [];
-				$("[data-bind=\"" + data + "\"]").each(function () {
-					if ($(this).is(":checked")) {
-						arr.push($(this).val());
-					}
-				});
-				obj.updateDataByString(data, arr);
+				(function () {
+					var arr = [];
+					$("[data-bind=\"" + data + "\"]").each(function () {
+						if ($(this).is(":checked")) {
+							arr.push($(this).val());
+						}
+					});
+					obj.updateDataByString(data, arr);
+				})();
 			} else {
 				obj.updateDataByString(data, val);
 			}
@@ -1686,17 +1688,17 @@ if (typeof document !== "undefined") {
 		if (!string) {
 			return;
 		}
-		var action = string.replace(/\(.*?\);?/, "");
+		var method = string.replace(/\(.*?\);?/, "");
 		var parameter = string.replace(/(.*?)\((.*?)\);?/, "$2");
 		var pts = parameter.split(","); //引き数
 		var id = $self.parents("[data-id]").data("id");
 		if (id) {
 			var obj = getObjectById(id);
 			obj.e = e;
-			if (obj.method && obj.method[action]) {
-				obj.method[action].apply(obj, pts);
-			} else if (obj[action]) {
-				obj[action].apply(obj, pts);
+			if (obj.method && obj.method[method]) {
+				obj.method[method].apply(obj, pts);
+			} else if (obj[method]) {
+				obj[method].apply(obj, pts);
 			}
 		}
 	});
@@ -1796,7 +1798,7 @@ var aTemplate = function () {
 	}, {
 		key: "setId",
 		value: function setId() {
-			var text;
+			var text = void 0;
 			var ids = aTemplate.ids;
 			var flag = false;
 			while (1) {
@@ -1886,12 +1888,12 @@ var aTemplate = function () {
 			}
 			/*タッチノットブロック解決*/
 			if (touchnots) {
-				for (var k = 0, n = touchnots.length; k < n; k++) {
-					var start = touchnots[k];
-					start = start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/, "($1):touchnot#($2)");
-					var end = start.replace(/BEGIN/, "END");
-					var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-					html = html.replace(reg, function (m, key2, val, next) {
+				for (var _k = 0, _n = touchnots.length; _k < _n; _k++) {
+					var _start = touchnots[_k];
+					_start = _start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/, "($1):touchnot#($2)");
+					var _end = _start.replace(/BEGIN/, "END");
+					var _reg = new RegExp(_start + "(([\\n\\r\\t]|.)*?)" + _end, "g");
+					html = html.replace(_reg, function (m, key2, val, next) {
 						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
 						if (itemkey != val) {
 							return next;
@@ -1903,12 +1905,12 @@ var aTemplate = function () {
 			}
 			/*existブロックを解決*/
 			if (exists) {
-				for (var k = 0, n = exists.length; k < n; k++) {
-					var start = exists[k];
-					start = start.replace(/([a-zA-Z0-9._-]+):exist/, "($1):exist");
-					var end = start.replace(/BEGIN/, "END");
-					var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
-					html = html.replace(reg, function (m, key2, next) {
+				for (var _k2 = 0, _n2 = exists.length; _k2 < _n2; _k2++) {
+					var _start2 = exists[_k2];
+					_start2 = _start2.replace(/([a-zA-Z0-9._-]+):exist/, "($1):exist");
+					var _end2 = _start2.replace(/BEGIN/, "END");
+					var _reg2 = new RegExp(_start2 + "(([\\n\\r\\t]|.)*?)" + _end2, "g");
+					html = html.replace(_reg2, function (m, key2, next) {
 						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
 						if (itemkey) {
 							return next;
@@ -1920,11 +1922,11 @@ var aTemplate = function () {
 			}
 			/*emptyブロックを解決*/
 			if (empties) {
-				for (var k = 0, n = empties.length; k < n; k++) {
-					var start = empties[k];
-					start = start.replace(/([a-zA-Z0-9._-]+):empty/, "($1):empty");
-					var end = start.replace(/BEGIN/, "END");
-					var empty = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
+				for (var _k3 = 0, _n3 = empties.length; _k3 < _n3; _k3++) {
+					var _start3 = empties[_k3];
+					_start3 = _start3.replace(/([a-zA-Z0-9._-]+):empty/, "($1):empty");
+					var _end3 = _start3.replace(/BEGIN/, "END");
+					var empty = new RegExp(_start3 + "(([\\n\\r\\t]|.)*?)" + _end3, "g");
 					html = html.replace(empty, function (m, key2, next) {
 						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
 						if (!itemkey) {
@@ -1937,7 +1939,7 @@ var aTemplate = function () {
 			}
 			/*変数解決*/
 			html = html.replace(/{([a-zA-Z0-9._-]+)}(\[([a-zA-Z0-9._-]+)\])*/g, function (n, key3, key4, converter) {
-				var data;
+				var data = void 0;
 				if (key3 == "i") {
 					data = i;
 				} else {
@@ -2092,15 +2094,15 @@ var aTemplate = function () {
 			for (var i = 0, n = templates.length; i < n; i++) {
 				var tem = templates[i];
 				var selector = "#" + tem;
-				var html = this.getHtml(selector);
+				var _html = this.getHtml(selector);
 				var $target = $("[data-id='" + tem + "']");
 				if (!part || part == tem) {
 					if ($target.length == 0) {
 						var $newitem = $("<div data-id='" + tem + "'></div>");
-						$newitem[renderWay](html);
+						$newitem[renderWay](_html);
 						$(selector).after($newitem);
 					} else {
-						$target[renderWay](html);
+						$target[renderWay](_html);
 					}
 					if (part) {
 						break;
