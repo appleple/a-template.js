@@ -482,10 +482,10 @@ var aTemplate = function () {
       var template = this.atemplate.find(function (item) {
         return item.id === selector;
       });
-      if (!template) {
-        return "";
+      var html = "";
+      if (template && template.html) {
+        html = template.html;
       }
-      var html = template.html;
       if (row) {
         html = selector;
       }

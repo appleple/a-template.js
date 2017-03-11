@@ -447,10 +447,10 @@ class aTemplate {
   
 	getHtml(selector,row){
 		let template = this.atemplate.find((item) => item.id === selector);
-		if(!template){
-			return "";
+    let html = "";
+		if(template && template.html){
+			html = template.html;
 		}
-		let html = template.html;
 		if(row){
 			html = selector;
 		}

@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.1.0
+ *   version: 0.1.1
  *
  * morphdom:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2771,10 +2771,10 @@ var aTemplate = function () {
       var template = this.atemplate.find(function (item) {
         return item.id === selector;
       });
-      if (!template) {
-        return "";
+      var html = "";
+      if (template && template.html) {
+        html = template.html;
       }
-      var html = template.html;
       if (row) {
         html = selector;
       }
