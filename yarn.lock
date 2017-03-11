@@ -1616,6 +1616,10 @@ module-deps@^4.0.8:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
+morphdom:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-2.3.1.tgz#94247c316360b92cee49e529815370763e27da90"
+
 ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"

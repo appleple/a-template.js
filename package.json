@@ -1,6 +1,6 @@
 {
   "name": "a-template",
-  "version": "0.0.18",
+  "version": "0.1.0",
   "author": "steelydylan",
   "description": "Simple Template Engine",
   "license": "MIT",
@@ -19,10 +19,15 @@
     "browserify": "^13.1.1",
     "licensify": "^3.1.2",
     "uglifyjs": "^2.4.10",
+    "eslint": "^3.13.0",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint-plugin-import": "^2.2.0",
     "watch": "^1.0.1",
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "morphdom": "^2.3.1",
     "zepto-browserify": "*"
   }
 }

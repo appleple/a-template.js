@@ -8,9 +8,9 @@
 	<script id="list_template" type="text/template">
 	{list.0.test.test.hoge.3}
 	<ul>
-		<li><input type="text" data-bind="newItem"><button data-action="addItem()">追加</button></li>
+		<li><input type="text" data-bind="newItem"><button data-action-click="addItem()">追加</button></li>
 		<!-- BEGIN list:loop -->
-		<li>{name}[addMr]<button data-action="removeItem({i})">削除</button></li>
+		<li>{name}[addMr]<button data-action-click="removeItem({i})">削除</button></li>
 		<!-- END list:loop -->
 	</ul>
 	</script>

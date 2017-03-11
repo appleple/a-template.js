@@ -6,32 +6,20 @@
 </head>
 <body>
 	<script id="search" type="text/template">
-		<input type="text" data-bind="search" data-action="doSearch">
-	</script>
-	<script id="list_template" type="text/template">
-	<ul>
-		<!-- BEGIN result:loop -->
-		<li>{name}</li>
-		<!-- END result:loop -->
-	</ul>
+		<input type="text" data-bind="search" data-action-input="update">
+		<ul>
+			<!-- BEGIN result:loop -->
+			<li>{name}</li>
+			<!-- END result:loop -->
+		</ul>
 	</script>
 	<script src="../build/a-template.js"></script>
 	<!-- <script src="../lib/test.js"></script> -->
 	<script>
-	var search = new aTemplate({
+	var list = new aTemplate({
 		templates:["search"],
 		data:{
-			search:""
-		},
-		doSearch:function(){
-			list.data.search = this.data.search;
-			list.update();
-		}
-	}).update();
-	var list = new aTemplate({
-		templates:["list_template"],
-		data:{
-			search:search.data.search,
+			search:"",
 			list:[
 				{name:"tomomi",id:1111},
 				{name:"daigo",id:1112},
