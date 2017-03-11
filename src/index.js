@@ -47,13 +47,13 @@ if (!Array.prototype.find) {
 if(typeof document !== "undefined"){
   //data binding
   $(document).on("input change click", "[data-bind]", function(e) {
-    let data = $(this).data("bind");
+    let data = $(this).attr("data-bind");
     let val = $(this).val();
     let attr = $(this).attr("href");
     if (attr) {
       val = attr.replace("#", "");
     }
-    let id = $(this).parents("[data-id]").data("id");
+    let id = $(this).parents("[data-id]").attr("data-id");
     if (id) {
       let obj = getObjectById(id);
       if ($(e.target).attr("type") == "radio") {
@@ -87,20 +87,20 @@ if(typeof document !== "undefined"){
     let $self = $(this);
     let action = "action";
     events.forEach(function(event){
-      if ($self.data("action-"+event)) {
+      if ($self.attr("data-action-"+event)) {
         if(e.type === event){
           action += "-"+event;
         }
       }
     });
-    let string = $self.data(action);
+    let string = $self.attr(`data-${action}`);
     if(!string){
       return;
     }
     let method = string.replace(/\(.*?\);?/,"");
     let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
     let pts = parameter.split(",");//引き数
-    let id = $self.parents("[data-id]").data("id");
+    let id = $self.parents("[data-id]").attr("data-id");
     if(id){
       let obj = getObjectById(id);
       obj.e = e;
@@ -520,7 +520,7 @@ class aTemplate {
       if(!part || part == temp){
         let $template = $("[data-id='"+temp+"']");
         $template.find("[data-bind]").each(function(){
-          let data = that.getDataByString($(this).data("bind"));
+          let data = that.getDataByString($(this).attr("data-bind"));
           if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
             if(data == $(this).val()){
               $(this).prop("checked",true);

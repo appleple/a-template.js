@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.1.1
+ *   version: 0.1.2
  *
  * morphdom:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2342,13 +2342,13 @@ if (!Array.prototype.find) {
 if (typeof document !== "undefined") {
   //data binding
   $(document).on("input change click", "[data-bind]", function (e) {
-    var data = $(this).data("bind");
+    var data = $(this).attr("data-bind");
     var val = $(this).val();
     var attr = $(this).attr("href");
     if (attr) {
       val = attr.replace("#", "");
     }
-    var id = $(this).parents("[data-id]").data("id");
+    var id = $(this).parents("[data-id]").attr("data-id");
     if (id) {
       var obj = getObjectById(id);
       if ($(e.target).attr("type") == "radio") {
@@ -2384,20 +2384,20 @@ if (typeof document !== "undefined") {
     var $self = $(this);
     var action = "action";
     events.forEach(function (event) {
-      if ($self.data("action-" + event)) {
+      if ($self.attr("data-action-" + event)) {
         if (e.type === event) {
           action += "-" + event;
         }
       }
     });
-    var string = $self.data(action);
+    var string = $self.attr("data-" + action);
     if (!string) {
       return;
     }
     var method = string.replace(/\(.*?\);?/, "");
     var parameter = string.replace(/(.*?)\((.*?)\);?/, "$2");
     var pts = parameter.split(","); //引き数
-    var id = $self.parents("[data-id]").data("id");
+    var id = $self.parents("[data-id]").attr("data-id");
     if (id) {
       var obj = getObjectById(id);
       obj.e = e;
@@ -2846,7 +2846,7 @@ var aTemplate = function () {
         if (!part || part == temp) {
           var $template = $("[data-id='" + temp + "']");
           $template.find("[data-bind]").each(function () {
-            var data = that.getDataByString($(this).data("bind"));
+            var data = that.getDataByString($(this).attr("data-bind"));
             if ($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio") {
               if (data == $(this).val()) {
                 $(this).prop("checked", true);
