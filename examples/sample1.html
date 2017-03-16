@@ -9,7 +9,7 @@
 		<input type="text" data-bind="search" data-action-input="update">
 		<ul>
 			<!-- BEGIN result:loop -->
-			<li>{name}</li>
+			<li>{name}-{id}</li>
 			<!-- END result:loop -->
 		</ul>
 	</script>
@@ -21,7 +21,7 @@
 		data:{
 			search:"",
 			list:[
-				{name:"tomomi",id:1111},
+				{name:"tomomi",id:0},
 				{name:"daigo",id:1112},
 				{name:"taro",id:11113},
 				{name:"koike",id:1114},

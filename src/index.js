@@ -33,7 +33,7 @@ if (!Array.prototype.find) {
     let length = list.length >>> 0;
     let thisArg = arguments[1];
     let value;
-    
+
     for (let i = 0; i < length; i++) {
       value = list[i];
       if (predicate.call(thisArg, value, i, list)) {
@@ -134,12 +134,12 @@ class aTemplate {
 		}
 		this.setId();
 	}
-  
+
 	addTemplate(id,html) {
 		this.atemplate.push({id:id,html:html})
 		this.templates.push(id);
 	}
-  
+
   loadHtml() {
     let templates = this.templates;
     let promises = [];
@@ -158,16 +158,16 @@ class aTemplate {
     });
     return $.when.apply($, promises);
   }
-  
+
   getData () {
     return JSON.parse(JSON.stringify(this.data));
   }
-  
+
   saveData (key) {
     let data = JSON.stringify(this.data);
     localStorage.setItem(key, data);
   }
-  
+
   setData (val) {
     for (let i in val) {
       if (typeof val[i] !== "function") {
@@ -175,7 +175,7 @@ class aTemplate {
       }
     }
   }
-  
+
   loadData (key) {
     let data = JSON.parse(localStorage.getItem(key));
     if (data) {
@@ -186,11 +186,11 @@ class aTemplate {
       }
     }
   }
-  
+
   getRand (a, b) {
     return ~~(Math.random() * (b - a + 1)) + a;
   }
-  
+
   getRandText (limit) {
     let ret = "";
     let strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -200,7 +200,7 @@ class aTemplate {
     }
     return ret;
   }
-  
+
   setId () {
     let text;
     let ids = aTemplate.ids;
@@ -218,7 +218,7 @@ class aTemplate {
     }
     this.data.aTemplate_id = text;
   }
-  
+
   getDataFromObj(s,o){
     s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1');  // convert indexes to properties
     s = s.replace(/^\./, ''); // strip leading dot
@@ -233,12 +233,12 @@ class aTemplate {
     }
     return o;
   }
-  
+
   getDataByString(s){
     let o = this.data;
     return this.getDataFromObj(s,o);
   }
-  
+
   updateDataByString (path, newValue) {
     let object = this.data;
     let stack = path.split('.');
@@ -247,7 +247,7 @@ class aTemplate {
     }
     object[stack.shift()] = newValue;
   }
-  
+
   removeDataByString (path) {
     let object = this.data;
     let stack = path.split('.');
@@ -261,7 +261,7 @@ class aTemplate {
       delete object[shift];
     }
   }
-  
+
   resolveBlock(html,item,i){
     let that = this;
     let touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
@@ -277,7 +277,7 @@ class aTemplate {
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(itemkey == val){
+          if(itemkey === val){
             return next;
           }else{
             return "";
@@ -294,7 +294,7 @@ class aTemplate {
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(itemkey != val){
+          if(itemkey !== val){
             return next;
           }else{
             return "";
@@ -311,7 +311,7 @@ class aTemplate {
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(itemkey){
+          if(itemkey || itemkey === 0){
             return next;
           }else{
             return "";
@@ -328,7 +328,7 @@ class aTemplate {
         let empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(empty,function(m,key2,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(!itemkey){
+          if(!itemkey　&& itemkey !== 0){
             return next;
           }else{
             return "";
@@ -342,7 +342,7 @@ class aTemplate {
       if(key3 == "i"){
         data = i;
       }else{
-        if(item[key3]){
+        if(item[key3] || item[key3] === 0){
           if (typeof item[key3] === "function"){
             data = item[key3].apply(that);
           }else{
@@ -381,7 +381,7 @@ class aTemplate {
     });
     return html;
   }
-  
+
   resolveInclude(html){
     let include = /<!-- #include id="(.*?)" -->/g;
     html = html.replace(include,function(m,key){
@@ -389,7 +389,7 @@ class aTemplate {
     });
     return html;
   }
-  
+
   resolveWith(html){
     let width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
     html = html.replace(width,function(m,key,val){
@@ -398,7 +398,7 @@ class aTemplate {
     });
     return html;
   }
-  
+
   resolveLoop(html){
     let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
     let that = this;
@@ -423,7 +423,7 @@ class aTemplate {
     });
     return html;
   }
-  
+
   removeData(arr){
     let data = this.data;
     for(let i in data){
@@ -435,7 +435,7 @@ class aTemplate {
     }
     return this;
   }
-  
+
   hasLoop(txt){
     let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
     if(txt.match(loop)){
@@ -444,7 +444,7 @@ class aTemplate {
       return false;
     }
   }
-  
+
 	getHtml(selector,row){
 		let template = this.atemplate.find((item) => item.id === selector);
     let html = "";
@@ -475,7 +475,7 @@ class aTemplate {
 		/*空行削除*/
 		return html.replace(/^([\t ])*\n/gm,"");
 	}
-  
+
 	update(txt,part){
 		let html = this.getHtml();
 		let templates = this.templates;
@@ -511,7 +511,7 @@ class aTemplate {
 		}
 		return this;
 	}
-  
+
   updateBindingData(part){
     let that = this;
     let templates = that.templates;
@@ -536,7 +536,7 @@ class aTemplate {
     }
     return this;
   }
-  
+
   copyToClipBoard () {
     let copyArea = $("<textarea/>");
     $("body").append(copyArea);
@@ -546,17 +546,17 @@ class aTemplate {
     copyArea.remove();
     return this;
   }
-  
+
   applyMethod (method) {
     let args = [].splice.call(arguments, 0);
     args.shift();
     return this.method[method].apply(this, args);
   }
-  
+
   getComputedProp (prop) {
     return this.data[prop].apply(this);
   }
-  
+
   remove (path) {
     let object = this.data;
     let stack = path.split('.');

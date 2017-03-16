@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.1.2
+ *   version: 0.1.3
  *
  * morphdom:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2590,7 +2590,7 @@ var aTemplate = function () {
           var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
           html = html.replace(reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey == val) {
+            if (itemkey === val) {
               return next;
             } else {
               return "";
@@ -2607,7 +2607,7 @@ var aTemplate = function () {
           var _reg = new RegExp(_start + "(([\\n\\r\\t]|.)*?)" + _end, "g");
           html = html.replace(_reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey != val) {
+            if (itemkey !== val) {
               return next;
             } else {
               return "";
@@ -2624,7 +2624,7 @@ var aTemplate = function () {
           var _reg2 = new RegExp(_start2 + "(([\\n\\r\\t]|.)*?)" + _end2, "g");
           html = html.replace(_reg2, function (m, key2, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey) {
+            if (itemkey || itemkey === 0) {
               return next;
             } else {
               return "";
@@ -2641,7 +2641,7 @@ var aTemplate = function () {
           var empty = new RegExp(_start3 + "(([\\n\\r\\t]|.)*?)" + _end3, "g");
           html = html.replace(empty, function (m, key2, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (!itemkey) {
+            if (!itemkey && itemkey !== 0) {
               return next;
             } else {
               return "";
@@ -2655,7 +2655,7 @@ var aTemplate = function () {
         if (key3 == "i") {
           data = i;
         } else {
-          if (item[key3]) {
+          if (item[key3] || item[key3] === 0) {
             if (typeof item[key3] === "function") {
               data = item[key3].apply(that);
             } else {
