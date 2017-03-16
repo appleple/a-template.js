@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.1.3
+ *   version: 0.1.4
  *
  * morphdom:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2590,7 +2590,7 @@ var aTemplate = function () {
           var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
           html = html.replace(reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey === val) {
+            if (itemkey == val) {
               return next;
             } else {
               return "";
@@ -2607,7 +2607,7 @@ var aTemplate = function () {
           var _reg = new RegExp(_start + "(([\\n\\r\\t]|.)*?)" + _end, "g");
           html = html.replace(_reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey !== val) {
+            if (itemkey != val) {
               return next;
             } else {
               return "";

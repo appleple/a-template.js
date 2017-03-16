@@ -277,7 +277,7 @@ class aTemplate {
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(itemkey === val){
+          if(itemkey == val){
             return next;
           }else{
             return "";
@@ -294,7 +294,7 @@ class aTemplate {
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
           let itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
-          if(itemkey !== val){
+          if(itemkey != val){
             return next;
           }else{
             return "";
