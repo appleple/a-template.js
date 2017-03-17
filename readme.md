@@ -1,59 +1,46 @@
-#a-template.js
+# a-template.js
 
 Simple Template Engine
 used for [gulp-generator](https://github.com/steelydylan/gulp-generator)
 
 
-##example
+## example
 
 ```html
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-	<meta charset="UTF-8">
-	<title>list sample</title>
-</head>
-<body>
-	<script id="list_template" type="text/template">
-	<ul>
-		<li><input type="text" data-bind="newItem"><button data-action="addItem()">追加</button></li>
-		<!-- BEGIN list:loop -->
-		<li>{name}[addMr]<button data-action="removeItem({i})">削除</button></li>
-		<!-- END list:loop -->
-	</ul>
-	</script>
-	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="../aTemplate.js"></script>
-	<script>
-	var list = new aTemplate.View({
-		templates:["list_template"],
-		data:{
-			list:[
-				{name:"tomomi"},
-				{name:"daigo"},
-				{name:"taro"},
-				{name:"koike"}
-			]
-		},
-		method:{
-			removeItem:function(i){
-				this.data.list.splice(i,1);
-				this.update();
-			},
-			addItem:function(){
-				console.log(this.data.newItem);
-				this.data.list.push({name:this.data.newItem});
-				this.update();
-			}
-		},
-		convert:{
-			addMr:function($txt){
-				return "Mr."+$txt;
-			}
-		}
-	});
-	list.update();
-	</script>
-</body>
-</html>
+<script id="search" type="text/template">
+   <input type="text" data-bind="search" data-action-input="update">
+   <ul>
+       <!-- BEGIN result:loop -->
+       <li>{name}-{id}</li>
+       <!-- END result:loop -->
+   </ul>
+</script>
+<script>
+var list = new aTemplate({
+templates:["search"],
+data:{
+   search:"",
+   list:[
+       {name:"tomomi",id:0},
+       {name:"daigo",id:1112},
+       {name:"taro",id:11113},
+       {name:"koike",id:1114},
+       {name:"aboki",id:1115},
+       {name:"tetsuro",id:1116},
+       {name:"takahashi",id:1117},
+       {name:"suzuki",id:1118},
+       {name:"okazaki",id:1119},
+       {name:"aoi",id:1120},
+   ],
+   result:function(){
+       var search = this.data.search;
+       var list = this.data.list;
+       return list.filter(function(str){
+	   var id = str.id+"";
+	   return str.name.indexOf(search) >= 0 || id.indexOf(search) >= 0;
+       });
+   }
+},
+}).update();
+</script>
 ```
