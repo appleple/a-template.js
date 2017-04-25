@@ -4,6 +4,7 @@ const util = require('./util.js');
 const objs = [];
 const eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
+const selector = document.querySelector;
 const getObjectById = (id) => {
 	for (let i = 0, n = objs.length; i < n; i++) {
 		let obj = objs[i];
@@ -42,7 +43,7 @@ if (!Array.prototype.find) {
 
 if(typeof document !== "undefined"){
   //data binding
-  delegate(document,'input change click',(e) => {
+  delegate('[data-bind]','input change click',(e) => {
     const target = e.delegatedTarget;
     const data = target.getAttribute('data-bind');
     const attr = target.getAttribute('href');
@@ -57,9 +58,10 @@ if(typeof document !== "undefined"){
 
       } else if (target.getAttribute('type') === 'checkbox') {
         const arr = [];
-        $("[data-bind=\"" + data + "\"]").each(function () {
-          if ($(this).is(":checked")) {
-            arr.push($(this).val());
+        const items = document.querySelectorAll(`[data-bind="${data}"]`);
+        [].forEach.call(items, (item) => {
+          if(item.checked) {
+            arr.push(item.value);
           }
         });
       } else {
@@ -69,39 +71,40 @@ if(typeof document !== "undefined"){
   });
 
   //action
-  $(document).on(eventType,dataAction,function(e){
-    if(e.type == "click" && $(e.target).is("select")){
+  delegate(dataAction,eventType,(e) => {
+    const target = e.delegatedTarget;
+    if(e.type === "click" && target.tagName === 'select'){
       return;
     }
-    if(e.type == "input" && $(e.target).attr("type") == "button"){
+    if(e.type === "input" && target.getAttribute("type") === "button"){
       return;
     }
     let events = eventType.split(" ");
-    let $self = $(this);
     let action = "action";
-    events.forEach(function(event){
-      if ($self.attr("data-action-"+event)) {
+    events.forEach((event) => {
+      if (target.getAttribute("data-action-"+event)) {
         if(e.type === event){
           action += "-"+event;
         }
       }
     });
-    let string = $self.attr(`data-${action}`);
+    const string = target.getAttribute(`data-${action}`);
     if(!string){
       return;
     }
     let method = string.replace(/\(.*?\);?/,"");
     let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
     let pts = parameter.split(",");//引き数
-    let id = $self.parents("[data-id]").attr("data-id");
-    if(id){
-      let obj = getObjectById(id);
-      obj.e = e;
-      if(obj.method && obj.method[method]){
-        obj.method[method].apply(obj,pts);
-      }else if(obj[method]){
-        obj[method].apply(obj,pts);
-      }
+    const id = util.findAncestor('[data-id]').getAttribute('data-id');
+    if(!id) {
+      return;
+    }
+    const obj = getObjectById(id);
+    obj.e = e;
+    if(obj.method && obj.method[method]){
+      obj.method[method].apply(obj,pts);
+    }else if(obj[method]){
+      obj[method].apply(obj,pts);
     }
   });
 }
@@ -121,9 +124,11 @@ class aTemplate {
 			this.templates = [];
 		}
 		const templates = this.templates;
-		for(let i = 0,n = this.templates.length; i < n; i++) {
+    const length = templates.length;
+		for(let i = 0,n = length; i < n; i++) {
 			let template = this.templates[i];
-			this.atemplate.push({id:template,html:$(`#${template}`).html()});
+      let html = selector(`#${template}`).innerHTML;
+			this.atemplate.push({id:template,html:html});
 		}
 		this.setId();
 	}
@@ -139,13 +144,13 @@ class aTemplate {
     templates.forEach((template) => {
       let d = new $.Deferred();
       promises.push(d);
-      let src = $("#" + template).attr("src");
+      let src = selector(`#${template}`).getAttribute('src');
       $.ajax({
         url: src,
         type: 'GET',
         dataType: 'text'
       }).success(function(data) {
-        $("#" + template).html(data);
+        selector(`#${template}`).innerHTML = data;
         d.resolve();
       });
     });
@@ -378,7 +383,7 @@ class aTemplate {
   resolveInclude(html){
     let include = /<!-- #include id="(.*?)" -->/g;
     html = html.replace(include,function(m,key){
-      return $("#"+key).html();
+      return selector(`#${key}`).innerHTML;
     });
     return html;
   }
@@ -478,14 +483,13 @@ class aTemplate {
 		}
 		for(let i = 0,n = templates.length; i < n; i++){
 			let tem = templates[i];
-			let selector = "#"+tem;
+			let query = "#"+tem;
 			let html = this.getHtml(tem);
 			let $target = $("[data-id='"+tem+"']");
 			if(!part || part == tem){
 				if($target.length == 0){
-					let $newitem = $("<div data-id='"+tem+"'></div>");
 					$newitem[renderWay](html);
-					$(selector).after($newitem);
+          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
 				}else{
 					if(renderWay === 'text'){
 						$target.text(html);
