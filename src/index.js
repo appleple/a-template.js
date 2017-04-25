@@ -1,5 +1,6 @@
-let $ = require("zepto-browserify").$;
 const morphdom = require('morphdom');
+const delegate = require('delegate');
+const util = require('./util.js');
 const objs = [];
 const eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
@@ -14,11 +15,6 @@ const getObjectById = (id) => {
 		}
 	}
 	return null;
-}
-
-if (typeof jQuery !=="undefined"){
-	// for IE
-	$ = jQuery;
 }
 
 if (!Array.prototype.find) {
@@ -46,35 +42,32 @@ if (!Array.prototype.find) {
 
 if(typeof document !== "undefined"){
   //data binding
-  $(document).on("input change click", "[data-bind]", function(e) {
-    let data = $(this).attr("data-bind");
-    let val = $(this).val();
-    let attr = $(this).attr("href");
+  delegate(document,'input change click',(e) => {
+    const target = e.delegatedTarget;
+    const data = target.getAttribute('data-bind');
+    const attr = target.getAttribute('href');
+    const id = util.findAncestor('[data-id]').getAttribute('data-id');
+    let value = target.value;
     if (attr) {
-      val = attr.replace("#", "");
+      value = value.replace('#','');
     }
-    let id = $(this).parents("[data-id]").attr("data-id");
     if (id) {
-      let obj = getObjectById(id);
-      if ($(e.target).attr("type") == "radio") {
-        if ($(this).is(":checked")) {
-          obj.updateDataByString(data, val);
-        } else {
-          obj.updateDataByString(data, '');
-        }
-      } else if ($(e.target).attr("type") == "checkbox") {
-        let arr = [];
+      const obj = getObjectById(id);
+      if(target.getAttribute('type') === 'radio') {
+
+      } else if (target.getAttribute('type') === 'checkbox') {
+        const arr = [];
         $("[data-bind=\"" + data + "\"]").each(function () {
           if ($(this).is(":checked")) {
             arr.push($(this).val());
           }
         });
-        obj.updateDataByString(data, arr);
       } else {
         obj.updateDataByString(data, val);
       }
     }
   });
+
   //action
   $(document).on(eventType,dataAction,function(e){
     if(e.type == "click" && $(e.target).is("select")){
