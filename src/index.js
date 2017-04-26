@@ -1,22 +1,8 @@
 const morphdom = require('morphdom');
 const delegate = require('delegate');
-const util = require('./util.js');
 const objs = [];
 const eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
-const selector = document.querySelector;
-const getObjectById = (id) => {
-	for (let i = 0, n = objs.length; i < n; i++) {
-		let obj = objs[i];
-		let templates = obj.templates;
-		for (let t = 0, m = templates.length; t < m; t++) {
-			if (templates[t] == id) {
-				return obj;
-			}
-		}
-	}
-	return null;
-}
 
 if (!Array.prototype.find) {
   Array.prototype.find = function(predicate) {
@@ -41,13 +27,64 @@ if (!Array.prototype.find) {
   };
 }
 
+if (!Element.prototype.matches) {
+  Element.prototype.matches = 
+  Element.prototype.matchesSelector || 
+  Element.prototype.mozMatchesSelector ||
+  Element.prototype.msMatchesSelector || 
+  Element.prototype.oMatchesSelector || 
+  Element.prototype.webkitMatchesSelector ||
+  function(s) {
+    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+        i = matches.length;
+    while (--i >= 0 && matches.item(i) !== this) {}
+    return i > -1;            
+  };
+}
+
+const selector = (selector) => {
+  return document.querySelector(selector);
+}
+const getObjectById = (id) => {
+	for (let i = 0, n = objs.length; i < n; i++) {
+		let obj = objs[i];
+		let templates = obj.templates;
+		for (let t = 0, m = templates.length; t < m; t++) {
+			if (templates[t] == id) {
+				return obj;
+			}
+		}
+	}
+	return null;
+}
+
+const findAncestor = (element, selector) => {
+  if (typeof element.closest === 'function') {
+    return element.closest(selector) || null;
+  }
+  while (element) {
+    if (element.matches(selector)) {
+      return element;
+    }
+    element = element.parentElement;
+  }
+  return null;
+}
+
+const on = (element, query, e, fn) => {
+  const events = e.split(' ');
+  events.forEach((event) => {
+    delegate(element,query,event,fn);
+  });
+} 
+
 if(typeof document !== "undefined"){
   //data binding
-  delegate('[data-bind]','input change click',(e) => {
-    const target = e.delegatedTarget;
+  on(document,'[data-bind]','input change click',(e) => {
+    const target = e.delegateTarget;
     const data = target.getAttribute('data-bind');
     const attr = target.getAttribute('href');
-    const id = util.findAncestor('[data-id]').getAttribute('data-id');
+    const id = findAncestor(target,'[data-id]').getAttribute('data-id');
     let value = target.value;
     if (attr) {
       value = value.replace('#','');
@@ -65,14 +102,14 @@ if(typeof document !== "undefined"){
           }
         });
       } else {
-        obj.updateDataByString(data, val);
+        obj.updateDataByString(data, value);
       }
     }
   });
 
   //action
-  delegate(dataAction,eventType,(e) => {
-    const target = e.delegatedTarget;
+  on(document,dataAction,eventType,(e) => {
+    const target = e.delegateTarget;
     if(e.type === "click" && target.tagName === 'select'){
       return;
     }
@@ -95,7 +132,7 @@ if(typeof document !== "undefined"){
     let method = string.replace(/\(.*?\);?/,"");
     let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
     let pts = parameter.split(",");//引き数
-    const id = util.findAncestor('[data-id]').getAttribute('data-id');
+    const id = findAncestor(target,'[data-id]').getAttribute('data-id');
     if(!id) {
       return;
     }
@@ -108,7 +145,6 @@ if(typeof document !== "undefined"){
     }
   });
 }
-
 
 class aTemplate {
 	constructor(opt) {
@@ -485,16 +521,16 @@ class aTemplate {
 			let tem = templates[i];
 			let query = "#"+tem;
 			let html = this.getHtml(tem);
-			let $target = $("[data-id='"+tem+"']");
+			const target = selector(`[data-id='${tem}']`);
 			if(!part || part == tem){
-				if($target.length == 0){
-					$newitem[renderWay](html);
-          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
+				if(!target){
+          //todo
+          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}">${html}</div>`);
 				}else{
 					if(renderWay === 'text'){
-						$target.text(html);
+						target.innerText = html;
 					}else{
-						morphdom($target.get(0),`<div data-id='${tem}'>${html}</div>`);
+						morphdom(target,`<div data-id='${tem}'>${html}</div>`);
 					}
 				}
 				if(part){
@@ -510,20 +546,20 @@ class aTemplate {
 	}
 
   updateBindingData(part){
-    let that = this;
-    let templates = that.templates;
+    let templates = this.templates;
     for(let i = 0,n = templates.length; i < n; i++){
       let temp = templates[i];
       if(!part || part == temp){
-        let $template = $("[data-id='"+temp+"']");
-        $template.find("[data-bind]").each(function(){
-          let data = that.getDataByString($(this).attr("data-bind"));
-          if($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio"){
-            if(data == $(this).val()){
-              $(this).prop("checked",true);
+        const template = selector(`[data-id='${temp}']`);
+        const binds = template.querySelectorAll('[data-bind]');
+        [].forEach.call(binds,(item) => {
+          let data = this.getDataByString(item.getAttribute("data-bind"));
+          if(item.getAttribute("type") === "checkbox" || item.getAttribute("type") === "radio"){
+            if(data == item.value){
+              item.checked = true;
             }
           }else{
-            $(this).val(data);
+            item.value = data;
           }
         });
         if(part){

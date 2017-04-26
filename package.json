@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "delegate": "^3.1.2",
-    "morphdom": "^2.3.1",
-    "zepto-browserify": "*"
+    "morphdom": "^2.3.1"
   }
 }
