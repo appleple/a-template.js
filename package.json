@@ -9,7 +9,10 @@
     "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js",
     "build": "npm run bundle && npm run minifyjs",
     "build:lib": "babel ./src/index.js --presets es2015 --out-file ./index.js",
-    "watch": "watch 'npm run build && npm run build:lib' ./src/"
+    "watch": "watch 'npm run build && npm run build:lib' ./src/",
+    "patch": "npm version patch && node ./tools/index.js",
+    "minor": "npm version minor &&  node ./tools/index.js",
+    "major": "npm version major && node ./tools/index.js"
   },
   "main": "./index.js",
   "devDependencies": {
@@ -24,7 +27,10 @@
     "licensify": "^3.1.2",
     "uglifyjs": "^2.4.10",
     "watch": "^1.0.1",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "node-cmd": "^2.0.0",
+    "co": "^4.6.0",
+    "fs-extra": "^2.1.2"
   },
   "dependencies": {
     "delegate": "^3.1.2",
