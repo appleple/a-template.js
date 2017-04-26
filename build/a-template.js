@@ -1327,8 +1327,12 @@ var aTemplate = function () {
         var target = selector('[data-id=\'' + tem + '\']');
         if (!part || part == tem) {
           if (!target) {
-            //todo
-            selector(query).insertAdjacentHTML('afterend', '<div data-id="' + tem + '">' + _html + '</div>');
+            selector(query).insertAdjacentHTML('afterend', '<div data-id="' + tem + '"></div>');
+            if (renderWay === 'text') {
+              selector('[data-id=\'' + tem + '\']').innerText = _html;
+            } else {
+              selector('[data-id=\'' + tem + '\']').innerHTML = _html;
+            }
           } else {
             if (renderWay === 'text') {
               target.innerText = _html;
@@ -1373,17 +1377,6 @@ var aTemplate = function () {
           }
         }
       }
-      return this;
-    }
-  }, {
-    key: 'copyToClipBoard',
-    value: function copyToClipBoard() {
-      var copyArea = $("<textarea/>");
-      $("body").append(copyArea);
-      copyArea.text(this.getHtml());
-      copyArea.select();
-      document.execCommand("copy");
-      copyArea.remove();
       return this;
     }
   }, {
