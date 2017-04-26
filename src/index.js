@@ -28,17 +28,17 @@ if (!Array.prototype.find) {
 }
 
 if (!Element.prototype.matches) {
-  Element.prototype.matches = 
-  Element.prototype.matchesSelector || 
+  Element.prototype.matches =
+  Element.prototype.matchesSelector ||
   Element.prototype.mozMatchesSelector ||
-  Element.prototype.msMatchesSelector || 
-  Element.prototype.oMatchesSelector || 
+  Element.prototype.msMatchesSelector ||
+  Element.prototype.oMatchesSelector ||
   Element.prototype.webkitMatchesSelector ||
   function(s) {
     var matches = (this.document || this.ownerDocument).querySelectorAll(s),
         i = matches.length;
     while (--i >= 0 && matches.item(i) !== this) {}
-    return i > -1;            
+    return i > -1;
   };
 }
 
@@ -76,7 +76,7 @@ const on = (element, query, e, fn) => {
   events.forEach((event) => {
     delegate(element,query,event,fn);
   });
-} 
+}
 
 if(typeof document !== "undefined"){
   //data binding
@@ -524,8 +524,12 @@ class aTemplate {
 			const target = selector(`[data-id='${tem}']`);
 			if(!part || part == tem){
 				if(!target){
-          //todo
-          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}">${html}</div>`);
+          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
+          if(renderWay === 'text') {
+            selector(`[data-id='${tem}']`).innerText = html;
+          } else {
+            selector(`[data-id='${tem}']`).innerHTML = html;
+          }
 				}else{
 					if(renderWay === 'text'){
 						target.innerText = html;
@@ -567,16 +571,6 @@ class aTemplate {
         }
       }
     }
-    return this;
-  }
-
-  copyToClipBoard () {
-    let copyArea = $("<textarea/>");
-    $("body").append(copyArea);
-    copyArea.text(this.getHtml());
-    copyArea.select();
-    document.execCommand("copy");
-    copyArea.remove();
     return this;
   }
 
