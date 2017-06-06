@@ -1,11 +1,10 @@
-'use strict';
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var morphdom = require('morphdom');
-var delegate = require('delegate');
 var objs = [];
 var eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 var dataAction = eventType.replace(/([a-z]+)/g, "[data-action-$1],") + "[data-action]";
@@ -33,18 +32,17 @@ if (!Array.prototype.find) {
   };
 }
 
-if (!Element.prototype.matches) {
-  Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
-    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-        i = matches.length;
-    while (--i >= 0 && matches.item(i) !== this) {}
-    return i > -1;
-  };
-}
+var matches = function matches(element, query) {
+  var matches = (element.document || element.ownerDocument).querySelectorAll(query);
+  var i = matches.length;
+  while (--i >= 0 && matches.item(i) !== element) {}
+  return i > -1;
+};
 
 var selector = function selector(_selector) {
   return document.querySelector(_selector);
 };
+
 var getObjectById = function getObjectById(id) {
   for (var i = 0, n = objs.length; i < n; i++) {
     var obj = objs[i];
@@ -63,7 +61,7 @@ var findAncestor = function findAncestor(element, selector) {
     return element.closest(selector) || null;
   }
   while (element) {
-    if (element.matches(selector)) {
+    if (matches(element, selector)) {
       return element;
     }
     element = element.parentElement;
@@ -71,10 +69,17 @@ var findAncestor = function findAncestor(element, selector) {
   return null;
 };
 
-var on = function on(element, query, e, fn) {
-  var events = e.split(' ');
+var on = function on(element, query, eventNames, fn) {
+  var events = eventNames.split(' ');
   events.forEach(function (event) {
-    delegate(element, query, event, fn);
+    element.addEventListener(event, function (e) {
+      var target = e.target;
+      var delegateTarget = findAncestor(e.target, query);
+      if (delegateTarget) {
+        e.delegateTarget = delegateTarget;
+        fn(e);
+      }
+    });
   });
 };
 
@@ -94,7 +99,7 @@ if (typeof document !== "undefined") {
       if (target.getAttribute('type') === 'radio') {} else if (target.getAttribute('type') === 'checkbox') {
         (function () {
           var arr = [];
-          var items = document.querySelectorAll('[data-bind="' + data + '"]');
+          var items = document.querySelectorAll("[data-bind=\"" + data + "\"]");
           [].forEach.call(items, function (item) {
             if (item.checked) {
               arr.push(item.value);
@@ -125,7 +130,7 @@ if (typeof document !== "undefined") {
         }
       }
     });
-    var string = target.getAttribute('data-' + action);
+    var string = target.getAttribute("data-" + action);
     if (!string) {
       return;
     }
@@ -165,51 +170,51 @@ var aTemplate = function () {
     var length = templates.length;
     for (var _i = 0, n = length; _i < n; _i++) {
       var template = this.templates[_i];
-      var html = selector('#' + template).innerHTML;
+      var html = selector("#" + template).innerHTML;
       this.atemplate.push({ id: template, html: html });
     }
     this.setId();
   }
 
   _createClass(aTemplate, [{
-    key: 'addTemplate',
+    key: "addTemplate",
     value: function addTemplate(id, html) {
       this.atemplate.push({ id: id, html: html });
       this.templates.push(id);
     }
   }, {
-    key: 'loadHtml',
+    key: "loadHtml",
     value: function loadHtml() {
       var templates = this.templates;
       var promises = [];
       templates.forEach(function (template) {
         var d = new $.Deferred();
         promises.push(d);
-        var src = selector('#' + template).getAttribute('src');
+        var src = selector("#" + template).getAttribute('src');
         $.ajax({
           url: src,
           type: 'GET',
           dataType: 'text'
         }).success(function (data) {
-          selector('#' + template).innerHTML = data;
+          selector("#" + template).innerHTML = data;
           d.resolve();
         });
       });
       return $.when.apply($, promises);
     }
   }, {
-    key: 'getData',
+    key: "getData",
     value: function getData() {
       return JSON.parse(JSON.stringify(this.data));
     }
   }, {
-    key: 'saveData',
+    key: "saveData",
     value: function saveData(key) {
       var data = JSON.stringify(this.data);
       localStorage.setItem(key, data);
     }
   }, {
-    key: 'setData',
+    key: "setData",
     value: function setData(val) {
       for (var i in val) {
         if (typeof val[i] !== "function") {
@@ -218,7 +223,7 @@ var aTemplate = function () {
       }
     }
   }, {
-    key: 'loadData',
+    key: "loadData",
     value: function loadData(key) {
       var data = JSON.parse(localStorage.getItem(key));
       if (data) {
@@ -230,12 +235,12 @@ var aTemplate = function () {
       }
     }
   }, {
-    key: 'getRand',
+    key: "getRand",
     value: function getRand(a, b) {
       return ~~(Math.random() * (b - a + 1)) + a;
     }
   }, {
-    key: 'getRandText',
+    key: "getRandText",
     value: function getRandText(limit) {
       var ret = "";
       var strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -246,7 +251,7 @@ var aTemplate = function () {
       return ret;
     }
   }, {
-    key: 'setId',
+    key: "setId",
     value: function setId() {
       var text = void 0;
       var ids = aTemplate.ids;
@@ -265,7 +270,7 @@ var aTemplate = function () {
       this.data.aTemplate_id = text;
     }
   }, {
-    key: 'getDataFromObj',
+    key: "getDataFromObj",
     value: function getDataFromObj(s, o) {
       s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1'); // convert indexes to properties
       s = s.replace(/^\./, ''); // strip leading dot
@@ -281,13 +286,13 @@ var aTemplate = function () {
       return o;
     }
   }, {
-    key: 'getDataByString',
+    key: "getDataByString",
     value: function getDataByString(s) {
       var o = this.data;
       return this.getDataFromObj(s, o);
     }
   }, {
-    key: 'updateDataByString',
+    key: "updateDataByString",
     value: function updateDataByString(path, newValue) {
       var object = this.data;
       var stack = path.split('.');
@@ -297,7 +302,7 @@ var aTemplate = function () {
       object[stack.shift()] = newValue;
     }
   }, {
-    key: 'removeDataByString',
+    key: "removeDataByString",
     value: function removeDataByString(path) {
       var object = this.data;
       var stack = path.split('.');
@@ -312,7 +317,7 @@ var aTemplate = function () {
       }
     }
   }, {
-    key: 'resolveBlock',
+    key: "resolveBlock",
     value: function resolveBlock(html, item, i) {
       var that = this;
       var touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
@@ -418,7 +423,7 @@ var aTemplate = function () {
     /*絶対パス形式の変数を解決*/
 
   }, {
-    key: 'resolveAbsBlock',
+    key: "resolveAbsBlock",
     value: function resolveAbsBlock(html) {
       var that = this;
       html = html.replace(/{(.*?)}/g, function (n, key3) {
@@ -436,16 +441,16 @@ var aTemplate = function () {
       return html;
     }
   }, {
-    key: 'resolveInclude',
+    key: "resolveInclude",
     value: function resolveInclude(html) {
       var include = /<!-- #include id="(.*?)" -->/g;
       html = html.replace(include, function (m, key) {
-        return selector('#' + key).innerHTML;
+        return selector("#" + key).innerHTML;
       });
       return html;
     }
   }, {
-    key: 'resolveWith',
+    key: "resolveWith",
     value: function resolveWith(html) {
       var width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
       html = html.replace(width, function (m, key, val) {
@@ -455,7 +460,7 @@ var aTemplate = function () {
       return html;
     }
   }, {
-    key: 'resolveLoop',
+    key: "resolveLoop",
     value: function resolveLoop(html) {
       var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
       var that = this;
@@ -481,7 +486,7 @@ var aTemplate = function () {
       return html;
     }
   }, {
-    key: 'removeData',
+    key: "removeData",
     value: function removeData(arr) {
       var data = this.data;
       for (var i in data) {
@@ -494,7 +499,7 @@ var aTemplate = function () {
       return this;
     }
   }, {
-    key: 'hasLoop',
+    key: "hasLoop",
     value: function hasLoop(txt) {
       var loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
       if (txt.match(loop)) {
@@ -504,7 +509,7 @@ var aTemplate = function () {
       }
     }
   }, {
-    key: 'getHtml',
+    key: "getHtml",
     value: function getHtml(selector, row) {
       var template = this.atemplate.find(function (item) {
         return item.id === selector;
@@ -538,7 +543,7 @@ var aTemplate = function () {
       return html.replace(/^([\t ])*\n/gm, "");
     }
   }, {
-    key: 'update',
+    key: "update",
     value: function update(txt, part) {
       var html = this.getHtml();
       var templates = this.templates;
@@ -550,20 +555,20 @@ var aTemplate = function () {
         var tem = templates[i];
         var query = "#" + tem;
         var _html = this.getHtml(tem);
-        var target = selector('[data-id=\'' + tem + '\']');
+        var target = selector("[data-id='" + tem + "']");
         if (!part || part == tem) {
           if (!target) {
-            selector(query).insertAdjacentHTML('afterend', '<div data-id="' + tem + '"></div>');
+            selector(query).insertAdjacentHTML('afterend', "<div data-id=\"" + tem + "\"></div>");
             if (renderWay === 'text') {
-              selector('[data-id=\'' + tem + '\']').innerText = _html;
+              selector("[data-id='" + tem + "']").innerText = _html;
             } else {
-              selector('[data-id=\'' + tem + '\']').innerHTML = _html;
+              selector("[data-id='" + tem + "']").innerHTML = _html;
             }
           } else {
             if (renderWay === 'text') {
               target.innerText = _html;
             } else {
-              morphdom(target, '<div data-id=\'' + tem + '\'>' + _html + '</div>');
+              morphdom(target, "<div data-id='" + tem + "'>" + _html + "</div>");
             }
           }
           if (part) {
@@ -578,7 +583,7 @@ var aTemplate = function () {
       return this;
     }
   }, {
-    key: 'updateBindingData',
+    key: "updateBindingData",
     value: function updateBindingData(part) {
       var _this = this;
 
@@ -586,7 +591,7 @@ var aTemplate = function () {
       for (var i = 0, n = templates.length; i < n; i++) {
         var temp = templates[i];
         if (!part || part == temp) {
-          var template = selector('[data-id=\'' + temp + '\']');
+          var template = selector("[data-id='" + temp + "']");
           var binds = template.querySelectorAll('[data-bind]');
           [].forEach.call(binds, function (item) {
             var data = _this.getDataByString(item.getAttribute("data-bind"));
@@ -606,19 +611,19 @@ var aTemplate = function () {
       return this;
     }
   }, {
-    key: 'applyMethod',
+    key: "applyMethod",
     value: function applyMethod(method) {
       var args = [].splice.call(arguments, 0);
       args.shift();
       return this.method[method].apply(this, args);
     }
   }, {
-    key: 'getComputedProp',
+    key: "getComputedProp",
     value: function getComputedProp(prop) {
       return this.data[prop].apply(this);
     }
   }, {
-    key: 'remove',
+    key: "remove",
     value: function remove(path) {
       var object = this.data;
       var stack = path.split('.');

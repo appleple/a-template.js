@@ -1,5 +1,4 @@
 const morphdom = require('morphdom');
-const delegate = require('delegate');
 const objs = [];
 const eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
@@ -27,24 +26,17 @@ if (!Array.prototype.find) {
   };
 }
 
-if (!Element.prototype.matches) {
-  Element.prototype.matches =
-  Element.prototype.matchesSelector ||
-  Element.prototype.mozMatchesSelector ||
-  Element.prototype.msMatchesSelector ||
-  Element.prototype.oMatchesSelector ||
-  Element.prototype.webkitMatchesSelector ||
-  function(s) {
-    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-        i = matches.length;
-    while (--i >= 0 && matches.item(i) !== this) {}
-    return i > -1;
-  };
+const matches = (element, query) => {
+  const matches = (element.document || element.ownerDocument).querySelectorAll(query);
+  let i = matches.length;
+  while (--i >= 0 && matches.item(i) !== element) {}
+  return i > -1;
 }
 
 const selector = (selector) => {
   return document.querySelector(selector);
 }
+
 const getObjectById = (id) => {
 	for (let i = 0, n = objs.length; i < n; i++) {
 		let obj = objs[i];
@@ -63,7 +55,7 @@ const findAncestor = (element, selector) => {
     return element.closest(selector) || null;
   }
   while (element) {
-    if (element.matches(selector)) {
+    if (matches(element, selector)) {
       return element;
     }
     element = element.parentElement;
@@ -71,12 +63,19 @@ const findAncestor = (element, selector) => {
   return null;
 }
 
-const on = (element, query, e, fn) => {
-  const events = e.split(' ');
+const on = (element, query, eventNames, fn) => {
+  const events = eventNames.split(' ');
   events.forEach((event) => {
-    delegate(element,query,event,fn);
+    element.addEventListener(event, (e) => {
+      let target = e.target;
+      const delegateTarget = findAncestor(e.target, query);
+      if(delegateTarget) {
+        e.delegateTarget = delegateTarget;
+        fn(e);
+      }
+    });
   });
-}
+};
 
 if(typeof document !== "undefined"){
   //data binding
