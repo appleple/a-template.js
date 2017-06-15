@@ -90,6 +90,9 @@ if(typeof document !== "undefined"){
     }
     if (id) {
       const obj = getObjectById(id);
+      if (!obj){
+        return;
+      }
       if(target.getAttribute('type') === 'radio') {
 
       } else if (target.getAttribute('type') === 'checkbox') {
@@ -136,6 +139,9 @@ if(typeof document !== "undefined"){
       return;
     }
     const obj = getObjectById(id);
+    if (!obj){
+      return;
+    }
     obj.e = e;
     if(obj.method && obj.method[method]){
       obj.method[method].apply(obj,pts);
