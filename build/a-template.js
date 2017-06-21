@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.2.2
+ *   version: 0.2.3
  *
  * morphdom:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -752,7 +752,7 @@ var findAncestor = function findAncestor(element, selector) {
   if (typeof element.closest === 'function') {
     return element.closest(selector) || null;
   }
-  while (element) {
+  while (element && element !== document) {
     if (matches(element, selector)) {
       return element;
     }

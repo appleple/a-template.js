@@ -54,7 +54,7 @@ const findAncestor = (element, selector) => {
   if (typeof element.closest === 'function') {
     return element.closest(selector) || null;
   }
-  while (element) {
+  while (element && element !== document) {
     if (matches(element, selector)) {
       return element;
     }
