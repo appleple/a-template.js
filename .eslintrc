@@ -7,8 +7,7 @@
   },
   "globals": {
     "document": true,
-    "window": true,
-    "ACMS": true
+    "window": true
   },
   "rules":{
     "comma-dangle":0

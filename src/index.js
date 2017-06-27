@@ -1,161 +1,21 @@
+import { selector, on } from './util';
 const morphdom = require('morphdom');
-const objs = [];
-const eventType = "input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend";
+const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend';
+const bindType = 'input change click';
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
+const find = require('array.prototype.find');
 
-if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
-    if (this === null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    let list = Object(this);
-    let length = list.length >>> 0;
-    let thisArg = arguments[1];
-    let value;
+export default class aTemplate {
 
-    for (let i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return value;
-      }
-    }
-    return undefined;
-  };
-}
-
-const matches = (element, query) => {
-  const matches = (element.document || element.ownerDocument).querySelectorAll(query);
-  let i = matches.length;
-  while (--i >= 0 && matches.item(i) !== element) {}
-  return i > -1;
-}
-
-const selector = (selector) => {
-  return document.querySelector(selector);
-}
-
-const getObjectById = (id) => {
-	for (let i = 0, n = objs.length; i < n; i++) {
-		let obj = objs[i];
-		let templates = obj.templates;
-		for (let t = 0, m = templates.length; t < m; t++) {
-			if (templates[t] == id) {
-				return obj;
-			}
-		}
-	}
-	return null;
-}
-
-const findAncestor = (element, selector) => {
-  if (typeof element.closest === 'function') {
-    return element.closest(selector) || null;
-  }
-  while (element) {
-    if (matches(element, selector)) {
-      return element;
-    }
-    element = element.parentElement;
-  }
-  return null;
-}
-
-const on = (element, query, eventNames, fn) => {
-  const events = eventNames.split(' ');
-  events.forEach((event) => {
-    element.addEventListener(event, (e) => {
-      let target = e.target;
-      const delegateTarget = findAncestor(e.target, query);
-      if(delegateTarget) {
-        e.delegateTarget = delegateTarget;
-        fn(e);
-      }
-    });
-  });
-};
-
-if(typeof document !== "undefined"){
-  //data binding
-  on(document,'[data-bind]','input change click',(e) => {
-    const target = e.delegateTarget;
-    const data = target.getAttribute('data-bind');
-    const attr = target.getAttribute('href');
-    const id = findAncestor(target,'[data-id]').getAttribute('data-id');
-    let value = target.value;
-    if (attr) {
-      value = value.replace('#','');
-    }
-    if (id) {
-      const obj = getObjectById(id);
-      if(target.getAttribute('type') === 'radio') {
-
-      } else if (target.getAttribute('type') === 'checkbox') {
-        const arr = [];
-        const items = document.querySelectorAll(`[data-bind="${data}"]`);
-        [].forEach.call(items, (item) => {
-          if(item.checked) {
-            arr.push(item.value);
-          }
-        });
-      } else {
-        obj.updateDataByString(data, value);
-      }
-    }
-  });
-
-  //action
-  on(document,dataAction,eventType,(e) => {
-    const target = e.delegateTarget;
-    if(e.type === "click" && target.tagName === 'select'){
-      return;
-    }
-    if(e.type === "input" && target.getAttribute("type") === "button"){
-      return;
-    }
-    let events = eventType.split(" ");
-    let action = "action";
-    events.forEach((event) => {
-      if (target.getAttribute("data-action-"+event)) {
-        if(e.type === event){
-          action += "-"+event;
-        }
-      }
-    });
-    const string = target.getAttribute(`data-${action}`);
-    if(!string){
-      return;
-    }
-    let method = string.replace(/\(.*?\);?/,"");
-    let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
-    let pts = parameter.split(",");//引き数
-    const id = findAncestor(target,'[data-id]').getAttribute('data-id');
-    if(!id) {
-      return;
-    }
-    const obj = getObjectById(id);
-    obj.e = e;
-    if(obj.method && obj.method[method]){
-      obj.method[method].apply(obj,pts);
-    }else if(obj[method]){
-      obj[method].apply(obj,pts);
-    }
-  });
-}
-
-class aTemplate {
 	constructor(opt) {
 		this.atemplate = [];
-		objs.push(this);
 		for(let i in opt){
 			this[i] = opt[i];
 		}
 		if(!this.data){
 			this.data = {};
 		}
-		if(!this.templates){
+		if(!this.templates) {
 			this.templates = [];
 		}
 		const templates = this.templates;
@@ -163,13 +23,63 @@ class aTemplate {
 		for(let i = 0,n = length; i < n; i++) {
 			let template = this.templates[i];
       let html = selector(`#${template}`).innerHTML;
-			this.atemplate.push({id:template,html:html});
+			this.atemplate.push({id:template,html:html,binded:false});
 		}
-		this.setId();
 	}
 
+  addDataBind(ele) {
+    on(ele,'[data-bind]', bindType,(e) => {
+      const target = e.delegateTarget;
+      const data = target.getAttribute('data-bind');
+      const attr = target.getAttribute('href');
+      let value = target.value;
+      if (attr) {
+        value = value.replace('#','');
+      }
+      if (target.getAttribute('type') === 'checkbox') {
+        const arr = [];
+        const items = document.querySelectorAll(`[data-bind="${data}"]`);
+        [].forEach.call(items, (item) => {
+          if(item.checked) {
+            arr.push(item.value);
+          }
+        });
+      } else if (target.getAttribute('type') !== 'radio') {
+        this.updateDataByString(data, value);
+      }
+    });
+  }
+
+  addActionBind(ele) {
+    on(ele, dataAction, eventType,(e) => {
+      const target = e.delegateTarget;
+      let events = eventType.split(" ");
+      let action = "action";
+      events.forEach((event) => {
+        if (target.getAttribute("data-action-"+event)) {
+          if(e.type === event){
+            action += "-"+event;
+          }
+        }
+      });
+      const string = target.getAttribute(`data-${action}`);
+      if(!string){
+        return;
+      }
+      let method = string.replace(/\(.*?\);?/,"");
+      let parameter = string.replace(/(.*?)\((.*?)\);?/,"$2");
+      let pts = parameter.split(",");//引き数
+      this.e = e;
+      if(this.method && this.method[method]){
+        this.method[method].apply(this,pts);
+      }else if(this[method]){
+        this[method].apply(this,pts);
+      }
+    });    
+  }
+
 	addTemplate(id,html) {
-		this.atemplate.push({id:id,html:html})
+		this.atemplate.push({id:id,html:html,binded:false})
 		this.templates.push(id);
 	}
 
@@ -232,24 +142,6 @@ class aTemplate {
       ret += strings.charAt(Math.floor(this.getRand(0, length)));
     }
     return ret;
-  }
-
-  setId () {
-    let text;
-    let ids = aTemplate.ids;
-    let flag = false;
-    while (1) {
-      text = this.getRandText(10);
-      for (let i = 0, n = aTemplate.ids; i < n; i++) {
-        if (aTemplate.ids[i] === text) {
-          flag = true;
-        }
-      }
-      if (flag === false) {
-        break;
-      }
-    }
-    this.data.aTemplate_id = text;
   }
 
   getDataFromObj(s,o){
@@ -479,7 +371,7 @@ class aTemplate {
   }
 
 	getHtml(selector,row){
-		let template = this.atemplate.find((item) => item.id === selector);
+		let template = find(this.atemplate, (item) => item.id === selector);
     let html = "";
 		if(template && template.html){
 			html = template.html;
@@ -509,14 +401,13 @@ class aTemplate {
 		return html.replace(/^([\t ])*\n/gm,"");
 	}
 
-	update(txt,part){
+	update(renderWay = 'html', part){
 		let html = this.getHtml();
 		let templates = this.templates;
-		let renderWay = txt || "html";
 		if(this.beforeUpdated){
 			this.beforeUpdated();
 		}
-		for(let i = 0,n = templates.length; i < n; i++){
+		for(let i = 0, n = templates.length; i < n; i++){
 			let tem = templates[i];
 			let query = "#"+tem;
 			let html = this.getHtml(tem);
@@ -536,6 +427,14 @@ class aTemplate {
 						morphdom(target,`<div data-id='${tem}'>${html}</div>`);
 					}
 				}
+        const template = find(this.atemplate, (item) => {
+          return item.id === tem;
+        });
+        if (!template.binded) {
+          template.binded = true;
+          this.addDataBind(selector(`[data-id='${tem}']`));
+          this.addActionBind(selector(`[data-id='${tem}']`));
+        }
 				if(part){
 					break;
 				}
@@ -562,7 +461,9 @@ class aTemplate {
               item.checked = true;
             }
           }else{
-            item.value = data;
+            // if(item !== document.activeElement) {
+              item.value = data;
+            // }
           }
         });
         if(part){
@@ -598,5 +499,3 @@ class aTemplate {
     return this;
   }
 }
-
-module.exports = aTemplate;
