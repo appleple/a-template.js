@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.2.2
+ *   version: 0.2.4
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
