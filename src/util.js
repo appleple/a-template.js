@@ -1,3 +1,4 @@
+
 export const matches = (element, query) => {
   const matches = (element.document || element.ownerDocument).querySelectorAll(query);
   let i = matches.length;
@@ -13,7 +14,7 @@ export const findAncestor = (element, selector) => {
   if (typeof element.closest === 'function') {
     return element.closest(selector) || null;
   }
-  while (element) {
+  while (element && element !== document) {
     if (matches(element, selector)) {
       return element;
     }

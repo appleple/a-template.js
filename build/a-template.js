@@ -2343,7 +2343,7 @@ var aTemplate = function () {
           if (!template.binded) {
             template.binded = true;
             _this3.addDataBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
-            // this.addActionBind(selector(`[data-id='${tem}']`));
+            _this3.addActionBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
           }
           if (part) {
             return 'break';
@@ -2449,7 +2449,7 @@ var findAncestor = exports.findAncestor = function findAncestor(element, selecto
   if (typeof element.closest === 'function') {
     return element.closest(selector) || null;
   }
-  while (element) {
+  while (element && element !== document) {
     if (matches(element, selector)) {
       return element;
     }
