@@ -13,7 +13,7 @@
     "patch": "npm version patch && node ./tools/index.js",
     "minor": "npm version minor &&  node ./tools/index.js",
     "major": "npm version major && node ./tools/index.js",
-    "publish": "np"
+    "deploy": "np"
   },
   "main": "./lib/index.js",
   "devDependencies": {
