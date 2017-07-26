@@ -6,7 +6,7 @@
 </head>
 <body>
 	<script id="list_template" type="text/template">
-	{list.0.test.test.hoge.3}
+	\{list.0.test.test.hoge.3\}
 	<ul>
 		<li><input type="text" data-bind="newItem"><button data-action-click="addItem()">追加</button></li>
 		<!-- BEGIN list:loop -->
@@ -25,7 +25,8 @@
 				{name:"daigo"},
 				{name:"taro"},
 				{name:"koike"}
-			]
+			],
+			newItem:''
 		},
 		removeItem:function(i){
 			this.data.list.splice(i,1);
