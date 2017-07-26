@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.3.3
+ *   version: 0.3.4
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2033,7 +2033,7 @@ var aTemplate = function () {
   }, {
     key: 'getDataFromObj',
     value: function getDataFromObj(s, o) {
-      s = s.replace(/\[([\w\-\.]+)\]/g, '.$1'); // convert indexes to properties
+      s = s.replace(/\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\]/g, '.$1'); // convert indexes to properties
       s = s.replace(/^\./, ''); // strip leading dot
       var a = s.split('.');
       while (a.length) {
@@ -2081,15 +2081,15 @@ var aTemplate = function () {
     key: 'resolveBlock',
     value: function resolveBlock(html, item, i) {
       var that = this;
-      var touchs = html.match(/<!-- BEGIN ([\w\-\.]+):touch#([\w\-\.]+) -->/g);
-      var touchnots = html.match(/<!-- BEGIN ([\w\-\.]+):touchnot#([\w\-\.]+) -->/g);
-      var exists = html.match(/<!-- BEGIN ([\w\-\.]+):exist -->/g);
-      var empties = html.match(/<!-- BEGIN ([\w\-\.]+):empty -->/g);
+      var touchs = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+) -->/g);
+      var touchnots = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+) -->/g);
+      var exists = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist -->/g);
+      var empties = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty -->/g);
       /*タッチブロック解決*/
       if (touchs) {
         for (var k = 0, n = touchs.length; k < n; k++) {
           var start = touchs[k];
-          start = start.replace(/([\w\-\.]+):touch#([\w\-\.]+)/, "($1):touch#($2)");
+          start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, "($1):touch#($2)");
           var end = start.replace(/BEGIN/, "END");
           var reg = new RegExp(start + "(([\\n\\r\\t]|.)*?)" + end, "g");
           html = html.replace(reg, function (m, key2, val, next) {
@@ -2106,7 +2106,7 @@ var aTemplate = function () {
       if (touchnots) {
         for (var _k = 0, _n = touchnots.length; _k < _n; _k++) {
           var _start = touchnots[_k];
-          _start = _start.replace(/([\w\-\.]+):touchnot#([\w\-\.]+)/, "($1):touchnot#($2)");
+          _start = _start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, "($1):touchnot#($2)");
           var _end = _start.replace(/BEGIN/, "END");
           var _reg = new RegExp(_start + "(([\\n\\r\\t]|.)*?)" + _end, "g");
           html = html.replace(_reg, function (m, key2, val, next) {
@@ -2123,7 +2123,7 @@ var aTemplate = function () {
       if (exists) {
         for (var _k2 = 0, _n2 = exists.length; _k2 < _n2; _k2++) {
           var _start2 = exists[_k2];
-          _start2 = _start2.replace(/([\w\-\.]+):exist/, "($1):exist");
+          _start2 = _start2.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist/, "($1):exist");
           var _end2 = _start2.replace(/BEGIN/, "END");
           var _reg2 = new RegExp(_start2 + "(([\\n\\r\\t]|.)*?)" + _end2, "g");
           html = html.replace(_reg2, function (m, key2, next) {
@@ -2140,7 +2140,7 @@ var aTemplate = function () {
       if (empties) {
         for (var _k3 = 0, _n3 = empties.length; _k3 < _n3; _k3++) {
           var _start3 = empties[_k3];
-          _start3 = _start3.replace(/([\w\-\.]+):empty/, "($1):empty");
+          _start3 = _start3.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty/, "($1):empty");
           var _end3 = _start3.replace(/BEGIN/, "END");
           var empty = new RegExp(_start3 + "(([\\n\\r\\t]|.)*?)" + _end3, "g");
           html = html.replace(empty, function (m, key2, next) {
@@ -2154,7 +2154,7 @@ var aTemplate = function () {
         }
       }
       /*変数解決*/
-      html = html.replace(/{([\w\-\.]+)}(\[([\w\-\.]+)\])*/g, function (n, key3, key4, converter) {
+      html = html.replace(/{([\w\-\.ぁ-んァ-ヶ亜-熙]+)}(\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\])*/g, function (n, key3, key4, converter) {
         var data = void 0;
         if (key3 == "i") {
           data = i;
@@ -2213,7 +2213,7 @@ var aTemplate = function () {
   }, {
     key: 'resolveWith',
     value: function resolveWith(html) {
-      var width = /<!-- BEGIN ([\w\-\.]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+):with -->/g;
+      var width = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->/g;
       html = html.replace(width, function (m, key, val) {
         m = m.replace(/data\-bind=['"](.*?)['"]/g, "data-bind='" + key + ".$1'");
         return m;
@@ -2223,7 +2223,7 @@ var aTemplate = function () {
   }, {
     key: 'resolveLoop',
     value: function resolveLoop(html) {
-      var loop = /<!-- BEGIN ([\w\-\.]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+?):loop -->/g;
+      var loop = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->/g;
       var that = this;
       /*ループ文解決*/
       html = html.replace(loop, function (m, key, val) {
@@ -2262,7 +2262,7 @@ var aTemplate = function () {
   }, {
     key: 'hasLoop',
     value: function hasLoop(txt) {
-      var loop = /<!-- BEGIN ([\w\-\.]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+?):loop -->/g;
+      var loop = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->/g;
       if (txt.match(loop)) {
         return true;
       } else {
