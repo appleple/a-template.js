@@ -145,7 +145,7 @@ export default class aTemplate {
   }
 
   getDataFromObj(s,o){
-    s = s.replace(/\[([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+)\]/g, '.$1');  // convert indexes to properties
+    s = s.replace(/\[([\w\-\.]+)\]/g, '.$1');  // convert indexes to properties
     s = s.replace(/^\./, ''); // strip leading dot
     let a = s.split('.');
     while (a.length) {
@@ -189,15 +189,15 @@ export default class aTemplate {
 
   resolveBlock(html,item,i){
     let that = this;
-    let touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):touch#([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+) -->/g);
-    let touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):touchnot#([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+) -->/g);
-    let exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):exist -->/g);
-    let empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):empty -->/g);
+    let touchs = html.match(/<!-- BEGIN ([\w\-\.]+):touch#([\w\-\.]+) -->/g);
+    let touchnots = html.match(/<!-- BEGIN ([\w\-\.]+):touchnot#([\w\-\.]+) -->/g);
+    let exists = html.match(/<!-- BEGIN ([\w\-\.]+):exist -->/g);
+    let empties = html.match(/<!-- BEGIN ([\w\-\.]+):empty -->/g);
     /*タッチブロック解決*/
     if(touchs){
       for(let k = 0,n = touchs.length; k < n; k++){
         let start = touchs[k];
-        start = start.replace(/([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):touch#([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+)/,"($1):touch#($2)");
+        start = start.replace(/([\w\-\.]+):touch#([\w\-\.]+)/,"($1):touch#($2)");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
@@ -214,7 +214,7 @@ export default class aTemplate {
     if(touchnots){
       for(let k = 0,n = touchnots.length; k < n; k++){
         let start = touchnots[k];
-        start = start.replace(/([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):touchnot#([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+)/,"($1):touchnot#($2)");
+        start = start.replace(/([\w\-\.]+):touchnot#([\w\-\.]+)/,"($1):touchnot#($2)");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
@@ -231,7 +231,7 @@ export default class aTemplate {
     if(exists){
       for(let k = 0,n = exists.length; k < n; k++){
         let start = exists[k];
-        start = start.replace(/([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):exist/,"($1):exist");
+        start = start.replace(/([\w\-\.]+):exist/,"($1):exist");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,next){
@@ -248,7 +248,7 @@ export default class aTemplate {
     if(empties){
       for(let k = 0,n = empties.length; k < n; k++){
         let start = empties[k];
-        start = start.replace(/([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):empty/,"($1):empty");
+        start = start.replace(/([\w\-\.]+):empty/,"($1):empty");
         let end = start.replace(/BEGIN/,"END");
         let empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(empty,function(m,key2,next){
@@ -262,7 +262,7 @@ export default class aTemplate {
       }
     }
     /*変数解決*/
-    html = html.replace(/{([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+)}(\[([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+)\])*/g,function(n,key3,key4,converter){
+    html = html.replace(/{([\w\-\.]+)}(\[([\w\-\.]+)\])*/g,function(n,key3,key4,converter){
       let data;
       if(key3 == "i"){
         data = i;
@@ -316,7 +316,7 @@ export default class aTemplate {
   }
 
   resolveWith(html){
-    let width = /<!-- BEGIN ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-ぁ-んァ-ヶ亜-熙]+):with -->/g;
+    let width = /<!-- BEGIN ([\w\-\.]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+):with -->/g;
     html = html.replace(width,function(m,key,val){
       m = m.replace(/data\-bind=['"](.*?)['"]/g,"data-bind='"+key+".$1'");
       return m;
@@ -325,7 +325,7 @@ export default class aTemplate {
   }
 
   resolveLoop(html){
-    let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+    let loop = /<!-- BEGIN ([\w\-\.]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+?):loop -->/g;
     let that = this;
     /*ループ文解決*/
     html = html.replace(loop,function(m,key,val){
@@ -362,7 +362,7 @@ export default class aTemplate {
   }
 
   hasLoop(txt){
-    let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+    let loop = /<!-- BEGIN ([\w\-\.]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.]+?):loop -->/g;
     if(txt.match(loop)){
       return true;
     }else{
