@@ -424,7 +424,9 @@ export default class aTemplate {
           target.innerText = html;
         }else{
           if (part) {
-            morphdom(target.querySelector(part),`<div data-id='${tem}'>${html}</div>`);
+            const doc = parser.parseFromString(html, "text/html");
+            const partHtml = doc.querySelector(part).outerHTML;
+            morphdom(target.querySelector(part), partHtml);
           } else {
             morphdom(target,`<div data-id='${tem}'>${html}</div>`);
           }
