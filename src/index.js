@@ -1,6 +1,6 @@
 import { selector, on } from './util';
 const morphdom = require('morphdom');
-const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend';
+const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 const bindType = 'input change click';
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 const find = require('array.prototype.find');
