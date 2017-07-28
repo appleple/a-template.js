@@ -424,6 +424,7 @@ export default class aTemplate {
           target.innerText = html;
         }else{
           if (part) {
+            const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
             const partHtml = doc.querySelector(part).outerHTML;
             morphdom(target.querySelector(part), partHtml);

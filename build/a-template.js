@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.3.5
+ *   version: 0.4.1
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2334,7 +2334,10 @@ var aTemplate = function () {
             target.innerText = html;
           } else {
             if (part) {
-              morphdom(target.querySelector(part), '<div data-id=\'' + tem + '\'>' + html + '</div>');
+              var parser = new DOMParser();
+              var doc = parser.parseFromString(html, "text/html");
+              var partHtml = doc.querySelector(part).outerHTML;
+              morphdom(target.querySelector(part), partHtml);
             } else {
               morphdom(target, '<div data-id=\'' + tem + '\'>' + html + '</div>');
             }

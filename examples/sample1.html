@@ -7,7 +7,7 @@
 <body>
 	<script id="search" type="text/template">
 		<input type="text" data-bind="search" data-action-input="update">
-		<ul>
+		<ul class="hoge">
 			<!-- BEGIN result:loop -->
 			<li>{name}-{id}</li>
 			<!-- END result:loop -->
@@ -41,7 +41,7 @@
 				});
 			}
 		},
-	}).update();
+	}).update('html');
 	</script>
 </body>
 </html>
