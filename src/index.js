@@ -412,33 +412,32 @@ export default class aTemplate {
 			let query = "#"+tem;
 			let html = this.getHtml(tem);
 			const target = selector(`[data-id='${tem}']`);
-			if(!part || part == tem){
-				if(!target){
-          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
-          if(renderWay === 'text') {
-            selector(`[data-id='${tem}']`).innerText = html;
-          } else {
-            selector(`[data-id='${tem}']`).innerHTML = html;
-          }
-				}else{
-					if(renderWay === 'text'){
-						target.innerText = html;
-					}else{
-						morphdom(target,`<div data-id='${tem}'>${html}</div>`);
-					}
-				}
-        const template = find(this.atemplate, (item) => {
-          return item.id === tem;
-        });
-        if (!template.binded) {
-          template.binded = true;
-          this.addDataBind(selector(`[data-id='${tem}']`));
-          this.addActionBind(selector(`[data-id='${tem}']`));
+      if(!target){
+        selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
+        if(renderWay === 'text') {
+          selector(`[data-id='${tem}']`).innerText = html;
+        } else {
+          selector(`[data-id='${tem}']`).innerHTML = html;
         }
-				if(part){
-					break;
-				}
-			}
+      }else{
+        if(renderWay === 'text'){
+          target.innerText = html;
+        }else{
+          if (part) {
+            morphdom(target.querySelector(part),`<div data-id='${tem}'>${html}</div>`);
+          } else {
+            morphdom(target,`<div data-id='${tem}'>${html}</div>`);
+          }
+        }
+      }
+      const template = find(this.atemplate, (item) => {
+        return item.id === tem;
+      });
+      if (!template.binded) {
+        template.binded = true;
+        this.addDataBind(selector(`[data-id='${tem}']`));
+        this.addActionBind(selector(`[data-id='${tem}']`));
+      }
 		}
 		this.updateBindingData(part);
 		if(this.onUpdated){
