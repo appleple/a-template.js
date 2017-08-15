@@ -5,15 +5,17 @@
   "description": "Simple Template Engine",
   "license": "MIT",
   "scripts": {
+    "test": "npm run lint && mocha ./test/test.js --timeout 1000000",
+    "lint": "eslint ./src/index.js --fix",
     "bundle": "browserify ./src/index.js -t babelify -p licensify --standalone aTemplate --outfile ./build/a-template.js",
     "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js",
     "build": "npm run bundle && npm run minifyjs",
     "build:lib": "babel src --out-dir lib",
     "watch": "watch 'npm run build && npm run build:lib' ./src/",
-    "patch": "npm version patch && node ./tools/index.js",
-    "minor": "npm version minor &&  node ./tools/index.js",
-    "major": "npm version major && node ./tools/index.js",
-    "deploy": "np"
+    "patch": "npm run lint && npm version patch && node ./tools/index.js",
+    "minor": "npm run lint && npm version minor &&  node ./tools/index.js",
+    "major": "npm run lint && npm version major && node ./tools/index.js",
+    "deploy": "np --no-cleanup"
   },
   "main": "./lib/index.js",
   "devDependencies": {
