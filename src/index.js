@@ -113,22 +113,18 @@ export default class aTemplate {
     localStorage.setItem(key, data);
   }
 
-  setData(val) {
-    for (const i in val) {
-      if (typeof val[i] !== 'function') {
-        this.data[i] = val[i];
+  setData(opt) {
+    Object.keys(opt).forEach((key) => {
+      if (typeof opt[key] !== 'function') {
+        this.data[key] = opt[key];
       }
-    }
+    });
   }
 
   loadData(key) {
     const data = JSON.parse(localStorage.getItem(key));
     if (data) {
-      for (const i in data) {
-        if (typeof data[i] !== 'function') {
-          this.data[i] = data[i];
-        }
-      }
+      this.setData(data);
     }
   }
 
@@ -140,7 +136,7 @@ export default class aTemplate {
     let ret = '';
     const strings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = strings.length;
-    for (let i = 0; i < limit; i++) {
+    for (let i = 0; i < limit; i += 1) {
       ret += strings.charAt(Math.floor(this.getRand(0, length)));
     }
     return ret;
@@ -155,7 +151,7 @@ export default class aTemplate {
       if (n in o) {
         o = o[n];
       } else {
-        return;
+        return null;
       }
     }
     return o;
@@ -197,14 +193,14 @@ export default class aTemplate {
     const empties = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty -->/g);
     /* タッチブロック解決*/
     if (touchs) {
-      for (let k = 0, n = touchs.length; k < n; k++) {
+      for (let k = 0, n = touchs.length; k < n; k += 1) {
         let start = touchs[k];
         start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, '($1):touch#($2)');
         const end = start.replace(/BEGIN/, 'END');
         const reg = new RegExp(`${start}(([\\n\\r\\t]|.)*?)${end}`, 'g');
         html = html.replace(reg, (m, key2, val, next) => {
           const itemkey = typeof item[key2] === 'function' ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-          if (itemkey == val) {
+          if (`${itemkey}` === val) {
             return next;
           }
           return '';
@@ -213,7 +209,7 @@ export default class aTemplate {
     }
     /* タッチノットブロック解決*/
     if (touchnots) {
-      for (let k = 0, n = touchnots.length; k < n; k++) {
+      for (let k = 0, n = touchnots.length; k < n; k += 1) {
         let start = touchnots[k];
         start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, '($1):touchnot#($2)');
         const end = start.replace(/BEGIN/, 'END');
@@ -229,7 +225,7 @@ export default class aTemplate {
     }
     /* existブロックを解決*/
     if (exists) {
-      for (let k = 0, n = exists.length; k < n; k++) {
+      for (let k = 0, n = exists.length; k < n; k += 1) {
         let start = exists[k];
         start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist/, '($1):exist');
         const end = start.replace(/BEGIN/, 'END');
@@ -245,14 +241,14 @@ export default class aTemplate {
     }
     /* emptyブロックを解決*/
     if (empties) {
-      for (let k = 0, n = empties.length; k < n; k++) {
+      for (let k = 0, n = empties.length; k < n; k += 1) {
         let start = empties[k];
         start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty/, '($1):empty');
         const end = start.replace(/BEGIN/, 'END');
         const empty = new RegExp(`${start}(([\\n\\r\\t]|.)*?)${end}`, 'g');
         html = html.replace(empty, (m, key2, next) => {
           const itemkey = typeof item[key2] === 'function' ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-          if (!itemkey 　&& itemkey !== 0) {
+          if (!itemkey && itemkey !== 0) {
             return next;
           }
           return '';
@@ -307,7 +303,7 @@ export default class aTemplate {
 
   resolveWith(html) {
     const width = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->/g;
-    html = html.replace(width, (m, key, val) => {
+    html = html.replace(width, (m, key) => {
       m = m.replace(/data\-bind=['"](.*?)['"]/g, `data-bind='${key}.$1'`);
       return m;
     });
@@ -328,7 +324,7 @@ export default class aTemplate {
       }
       let ret = '';
       if (keys instanceof Array) {
-        for (let i = 0, n = keys.length; i < n; i++) {
+        for (let i = 0, n = keys.length; i < n; i += 1) {
           ret += that.resolveBlock(val, keys[i], i);
         }
       }
@@ -342,7 +338,7 @@ export default class aTemplate {
   removeData(arr) {
     const data = this.data;
     for (const i in data) {
-      for (let t = 0, n = arr.length; t < n; t++) {
+      for (let t = 0, n = arr.length; t < n; t += 1) {
         if (i === arr[t]) {
           delete data[i];
         }
@@ -391,12 +387,11 @@ export default class aTemplate {
   }
 
   update(renderWay = 'html', part) {
-    const html = this.getHtml();
     const templates = this.templates;
     if (this.beforeUpdated) {
       this.beforeUpdated();
     }
-    for (let i = 0, n = templates.length; i < n; i++) {
+    for (let i = 0, n = templates.length; i < n; i += 1) {
       const tem = templates[i];
       const query = `#${tem}`;
       const html = this.getHtml(tem);
@@ -434,7 +429,7 @@ export default class aTemplate {
 
   updateBindingData(part) {
     const templates = this.templates;
-    for (let i = 0, n = templates.length; i < n; i++) {
+    for (let i = 0, n = templates.length; i < n; i += 1) {
       const temp = templates[i];
       let template = selector(`[data-id='${temp}']`);
       if (part) {
@@ -457,10 +452,8 @@ export default class aTemplate {
     return this;
   }
 
-  applyMethod(method) {
-    const args = [].splice.call(arguments, 0);
-    args.shift();
-    return this.method[method].apply(this, args);
+  applyMethod(method, ...args) {
+    return this.method[method](...args);
   }
 
   getComputedProp(prop) {
