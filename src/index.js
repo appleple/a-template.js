@@ -1,6 +1,6 @@
 import { selector, on } from './util';
 const morphdom = require('morphdom');
-const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend';
+const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 const bindType = 'input change click';
 const dataAction = eventType.replace(/([a-z]+)/g,"[data-action-$1],") + "[data-action]";
 const find = require('array.prototype.find');
@@ -145,7 +145,7 @@ export default class aTemplate {
   }
 
   getDataFromObj(s,o){
-    s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1');  // convert indexes to properties
+    s = s.replace(/\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\]/g, '.$1');  // convert indexes to properties
     s = s.replace(/^\./, ''); // strip leading dot
     let a = s.split('.');
     while (a.length) {
@@ -189,15 +189,15 @@ export default class aTemplate {
 
   resolveBlock(html,item,i){
     let that = this;
-    let touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
-    let touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+) -->/g);
-    let exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):exist -->/g);
-    let empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):empty -->/g);
+    let touchs = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+) -->/g);
+    let touchnots = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+) -->/g);
+    let exists = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist -->/g);
+    let empties = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty -->/g);
     /*タッチブロック解決*/
     if(touchs){
       for(let k = 0,n = touchs.length; k < n; k++){
         let start = touchs[k];
-        start = start.replace(/([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+)/,"($1):touch#($2)");
+        start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/,"($1):touch#($2)");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
@@ -214,7 +214,7 @@ export default class aTemplate {
     if(touchnots){
       for(let k = 0,n = touchnots.length; k < n; k++){
         let start = touchnots[k];
-        start = start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/,"($1):touchnot#($2)");
+        start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/,"($1):touchnot#($2)");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,val,next){
@@ -231,7 +231,7 @@ export default class aTemplate {
     if(exists){
       for(let k = 0,n = exists.length; k < n; k++){
         let start = exists[k];
-        start = start.replace(/([a-zA-Z0-9._-]+):exist/,"($1):exist");
+        start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist/,"($1):exist");
         let end = start.replace(/BEGIN/,"END");
         let reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(reg,function(m,key2,next){
@@ -248,7 +248,7 @@ export default class aTemplate {
     if(empties){
       for(let k = 0,n = empties.length; k < n; k++){
         let start = empties[k];
-        start = start.replace(/([a-zA-Z0-9._-]+):empty/,"($1):empty");
+        start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty/,"($1):empty");
         let end = start.replace(/BEGIN/,"END");
         let empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
         html = html.replace(empty,function(m,key2,next){
@@ -262,7 +262,7 @@ export default class aTemplate {
       }
     }
     /*変数解決*/
-    html = html.replace(/{([a-zA-Z0-9._-]+)}(\[([a-zA-Z0-9._-]+)\])*/g,function(n,key3,key4,converter){
+    html = html.replace(/{([\w\-\.ぁ-んァ-ヶ亜-熙]+)}(\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\])*/g,function(n,key3,key4,converter){
       let data;
       if(key3 == "i"){
         data = i;
@@ -316,7 +316,7 @@ export default class aTemplate {
   }
 
   resolveWith(html){
-    let width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
+    let width = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->/g;
     html = html.replace(width,function(m,key,val){
       m = m.replace(/data\-bind=['"](.*?)['"]/g,"data-bind='"+key+".$1'");
       return m;
@@ -325,7 +325,7 @@ export default class aTemplate {
   }
 
   resolveLoop(html){
-    let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+    let loop = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->/g;
     let that = this;
     /*ループ文解決*/
     html = html.replace(loop,function(m,key,val){
@@ -362,7 +362,7 @@ export default class aTemplate {
   }
 
   hasLoop(txt){
-    let loop = /<!-- BEGIN (.+?):loop -->(([\n\r\t]|.)*?)<!-- END (.+?):loop -->/g;
+    let loop = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->/g;
     if(txt.match(loop)){
       return true;
     }else{
@@ -412,33 +412,35 @@ export default class aTemplate {
 			let query = "#"+tem;
 			let html = this.getHtml(tem);
 			const target = selector(`[data-id='${tem}']`);
-			if(!part || part == tem){
-				if(!target){
-          selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
-          if(renderWay === 'text') {
-            selector(`[data-id='${tem}']`).innerText = html;
-          } else {
-            selector(`[data-id='${tem}']`).innerHTML = html;
-          }
-				}else{
-					if(renderWay === 'text'){
-						target.innerText = html;
-					}else{
-						morphdom(target,`<div data-id='${tem}'>${html}</div>`);
-					}
-				}
-        const template = find(this.atemplate, (item) => {
-          return item.id === tem;
-        });
-        if (!template.binded) {
-          template.binded = true;
-          this.addDataBind(selector(`[data-id='${tem}']`));
-          this.addActionBind(selector(`[data-id='${tem}']`));
+      if(!target){
+        selector(query).insertAdjacentHTML('afterend',`<div data-id="${tem}"></div>`);
+        if(renderWay === 'text') {
+          selector(`[data-id='${tem}']`).innerText = html;
+        } else {
+          selector(`[data-id='${tem}']`).innerHTML = html;
         }
-				if(part){
-					break;
-				}
-			}
+      }else{
+        if(renderWay === 'text'){
+          target.innerText = html;
+        }else{
+          if (part) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const partHtml = doc.querySelector(part).outerHTML;
+            morphdom(target.querySelector(part), partHtml);
+          } else {
+            morphdom(target,`<div data-id='${tem}'>${html}</div>`);
+          }
+        }
+      }
+      const template = find(this.atemplate, (item) => {
+        return item.id === tem;
+      });
+      if (!template.binded) {
+        template.binded = true;
+        this.addDataBind(selector(`[data-id='${tem}']`));
+        this.addActionBind(selector(`[data-id='${tem}']`));
+      }
 		}
 		this.updateBindingData(part);
 		if(this.onUpdated){
