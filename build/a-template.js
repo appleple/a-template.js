@@ -2002,23 +2002,21 @@ var aTemplate = function () {
     }
   }, {
     key: 'setData',
-    value: function setData(val) {
-      for (var i in val) {
-        if (typeof val[i] !== 'function') {
-          this.data[i] = val[i];
+    value: function setData(opt) {
+      var _this4 = this;
+
+      Object.keys(opt).forEach(function (key) {
+        if (typeof opt[key] !== 'function') {
+          _this4.data[key] = opt[key];
         }
-      }
+      });
     }
   }, {
     key: 'loadData',
     value: function loadData(key) {
       var data = JSON.parse(localStorage.getItem(key));
       if (data) {
-        for (var i in data) {
-          if (typeof data[i] !== 'function') {
-            this.data[i] = data[i];
-          }
-        }
+        this.setData(data);
       }
     }
   }, {
@@ -2032,7 +2030,7 @@ var aTemplate = function () {
       var ret = '';
       var strings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       var length = strings.length;
-      for (var i = 0; i < limit; i++) {
+      for (var i = 0; i < limit; i += 1) {
         ret += strings.charAt(Math.floor(this.getRand(0, length)));
       }
       return ret;
@@ -2048,7 +2046,7 @@ var aTemplate = function () {
         if (n in o) {
           o = o[n];
         } else {
-          return;
+          return null;
         }
       }
       return o;
@@ -2094,14 +2092,14 @@ var aTemplate = function () {
       var empties = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty -->/g);
       /* タッチブロック解決*/
       if (touchs) {
-        for (var k = 0, n = touchs.length; k < n; k++) {
+        for (var k = 0, n = touchs.length; k < n; k += 1) {
           var start = touchs[k];
           start = start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touch#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, '($1):touch#($2)');
           var end = start.replace(/BEGIN/, 'END');
           var reg = new RegExp(start + '(([\\n\\r\\t]|.)*?)' + end, 'g');
           html = html.replace(reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === 'function' ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey == val) {
+            if ('' + itemkey === val) {
               return next;
             }
             return '';
@@ -2110,14 +2108,14 @@ var aTemplate = function () {
       }
       /* タッチノットブロック解決*/
       if (touchnots) {
-        for (var _k = 0, _n = touchnots.length; _k < _n; _k++) {
+        for (var _k = 0, _n = touchnots.length; _k < _n; _k += 1) {
           var _start = touchnots[_k];
           _start = _start.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+)/, '($1):touchnot#($2)');
           var _end = _start.replace(/BEGIN/, 'END');
           var _reg = new RegExp(_start + '(([\\n\\r\\t]|.)*?)' + _end, 'g');
           html = html.replace(_reg, function (m, key2, val, next) {
             var itemkey = typeof item[key2] === 'function' ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-            if (itemkey != val) {
+            if ('' + itemkey !== val) {
               return next;
             }
             return '';
@@ -2126,7 +2124,7 @@ var aTemplate = function () {
       }
       /* existブロックを解決*/
       if (exists) {
-        for (var _k2 = 0, _n2 = exists.length; _k2 < _n2; _k2++) {
+        for (var _k2 = 0, _n2 = exists.length; _k2 < _n2; _k2 += 1) {
           var _start2 = exists[_k2];
           _start2 = _start2.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist/, '($1):exist');
           var _end2 = _start2.replace(/BEGIN/, 'END');
@@ -2142,7 +2140,7 @@ var aTemplate = function () {
       }
       /* emptyブロックを解決*/
       if (empties) {
-        for (var _k3 = 0, _n3 = empties.length; _k3 < _n3; _k3++) {
+        for (var _k3 = 0, _n3 = empties.length; _k3 < _n3; _k3 += 1) {
           var _start3 = empties[_k3];
           _start3 = _start3.replace(/([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty/, '($1):empty');
           var _end3 = _start3.replace(/BEGIN/, 'END');
@@ -2159,7 +2157,7 @@ var aTemplate = function () {
       /* 変数解決*/
       html = html.replace(/{([\w\-\.ぁ-んァ-ヶ亜-熙]+)}(\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\])*/g, function (n, key3, key4, converter) {
         var data = void 0;
-        if (key3 == 'i') {
+        if ('' + key3 === 'i') {
           data = i;
         } else if (item[key3] || item[key3] === 0) {
           if (typeof item[key3] === 'function') {
@@ -2211,7 +2209,7 @@ var aTemplate = function () {
     key: 'resolveWith',
     value: function resolveWith(html) {
       var width = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+):with -->/g;
-      html = html.replace(width, function (m, key, val) {
+      html = html.replace(width, function (m, key) {
         m = m.replace(/data\-bind=['"](.*?)['"]/g, 'data-bind=\'' + key + '.$1\'');
         return m;
       });
@@ -2233,7 +2231,7 @@ var aTemplate = function () {
         }
         var ret = '';
         if (keys instanceof Array) {
-          for (var i = 0, n = keys.length; i < n; i++) {
+          for (var i = 0, n = keys.length; i < n; i += 1) {
             ret += that.resolveBlock(val, keys[i], i);
           }
         }
@@ -2247,13 +2245,13 @@ var aTemplate = function () {
     key: 'removeData',
     value: function removeData(arr) {
       var data = this.data;
-      for (var i in data) {
-        for (var t = 0, n = arr.length; t < n; t++) {
+      Object.keys(data).forEach(function (i) {
+        for (var t = 0, n = arr.length; t < n; t += 1) {
           if (i === arr[t]) {
             delete data[i];
           }
         }
-      }
+      });
       return this;
     }
   }, {
@@ -2267,16 +2265,16 @@ var aTemplate = function () {
     }
   }, {
     key: 'getHtml',
-    value: function getHtml(selector, row) {
+    value: function getHtml(query, row) {
       var template = find(this.atemplate, function (item) {
-        return item.id === selector;
+        return item.id === query;
       });
       var html = '';
       if (template && template.html) {
         html = template.html;
       }
       if (row) {
-        html = selector;
+        html = query;
       }
       if (!html) {
         return '';
@@ -2302,12 +2300,11 @@ var aTemplate = function () {
   }, {
     key: 'update',
     value: function update() {
-      var _this4 = this;
+      var _this5 = this;
 
       var renderWay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'html';
       var part = arguments[1];
 
-      var html = this.getHtml();
       var templates = this.templates;
       if (this.beforeUpdated) {
         this.beforeUpdated();
@@ -2316,7 +2313,7 @@ var aTemplate = function () {
       var _loop = function _loop(i, n) {
         var tem = templates[i];
         var query = '#' + tem;
-        var html = _this4.getHtml(tem);
+        var html = _this5.getHtml(tem);
         var target = (0, _util.selector)('[data-id=\'' + tem + '\']');
         if (!target) {
           (0, _util.selector)(query).insertAdjacentHTML('afterend', '<div data-id="' + tem + '"></div>');
@@ -2335,17 +2332,17 @@ var aTemplate = function () {
         } else {
           morphdom(target, '<div data-id=\'' + tem + '\'>' + html + '</div>');
         }
-        var template = find(_this4.atemplate, function (item) {
+        var template = find(_this5.atemplate, function (item) {
           return item.id === tem;
         });
         if (!template.binded) {
           template.binded = true;
-          _this4.addDataBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
-          _this4.addActionBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
+          _this5.addDataBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
+          _this5.addActionBind((0, _util.selector)('[data-id=\'' + tem + '\']'));
         }
       };
 
-      for (var i = 0, n = templates.length; i < n; i++) {
+      for (var i = 0, n = templates.length; i < n; i += 1) {
         _loop(i, n);
       }
       this.updateBindingData(part);
@@ -2357,10 +2354,10 @@ var aTemplate = function () {
   }, {
     key: 'updateBindingData',
     value: function updateBindingData(part) {
-      var _this5 = this;
+      var _this6 = this;
 
       var templates = this.templates;
-      for (var i = 0, n = templates.length; i < n; i++) {
+      for (var i = 0, n = templates.length; i < n; i += 1) {
         var temp = templates[i];
         var _template = (0, _util.selector)('[data-id=\'' + temp + '\']');
         if (part) {
@@ -2368,7 +2365,7 @@ var aTemplate = function () {
         }
         var binds = _template.querySelectorAll('[data-bind]');
         [].forEach.call(binds, function (item) {
-          var data = _this5.getDataByString(item.getAttribute('data-bind'));
+          var data = _this6.getDataByString(item.getAttribute('data-bind'));
           if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
             if (data === item.value) {
               item.checked = true;
@@ -2385,9 +2382,13 @@ var aTemplate = function () {
   }, {
     key: 'applyMethod',
     value: function applyMethod(method) {
-      var args = [].splice.call(arguments, 0);
-      args.shift();
-      return this.method[method].apply(this, args);
+      var _method2;
+
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return (_method2 = this.method)[method].apply(_method2, args);
     }
   }, {
     key: 'getComputedProp',

@@ -216,7 +216,7 @@ export default class aTemplate {
         const reg = new RegExp(`${start}(([\\n\\r\\t]|.)*?)${end}`, 'g');
         html = html.replace(reg, (m, key2, val, next) => {
           const itemkey = typeof item[key2] === 'function' ? item[key2].apply(that) : that.getDataFromObj(key2, item);
-          if (itemkey != val) {
+          if (`${itemkey}` !== val) {
             return next;
           }
           return '';
@@ -258,7 +258,7 @@ export default class aTemplate {
     /* 変数解決*/
     html = html.replace(/{([\w\-\.ぁ-んァ-ヶ亜-熙]+)}(\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\])*/g, (n, key3, key4, converter) => {
       let data;
-      if (key3 == 'i') {
+      if (`${key3}` === 'i') {
         data = i;
       } else if (item[key3] || item[key3] === 0) {
         if (typeof item[key3] === 'function') {
@@ -337,13 +337,13 @@ export default class aTemplate {
 
   removeData(arr) {
     const data = this.data;
-    for (const i in data) {
+    Object.keys(data).forEach((i) => {
       for (let t = 0, n = arr.length; t < n; t += 1) {
         if (i === arr[t]) {
           delete data[i];
         }
       }
-    }
+    });
     return this;
   }
 
@@ -355,14 +355,14 @@ export default class aTemplate {
     return false;
   }
 
-  getHtml(selector, row) {
-    const template = find(this.atemplate, item => item.id === selector);
+  getHtml(query, row) {
+    const template = find(this.atemplate, item => item.id === query);
     let html = '';
     if (template && template.html) {
       html = template.html;
     }
     if (row) {
-      html = selector;
+      html = query;
     }
     if (!html) {
       return '';
