@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.2.4
+ *   version: 0.3.2
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2370,25 +2370,23 @@ var aTemplate = function () {
       var templates = this.templates;
       for (var i = 0, n = templates.length; i < n; i++) {
         var temp = templates[i];
-        if (!part || part == temp) {
-          var template = (0, _util.selector)('[data-id=\'' + temp + '\']');
-          var binds = template.querySelectorAll('[data-bind]');
-          [].forEach.call(binds, function (item) {
-            var data = _this4.getDataByString(item.getAttribute("data-bind"));
-            if (item.getAttribute("type") === "checkbox" || item.getAttribute("type") === "radio") {
-              if (data == item.value) {
-                item.checked = true;
-              }
-            } else {
-              // if(item !== document.activeElement) {
-              item.value = data;
-              // }
-            }
-          });
-          if (part) {
-            break;
-          }
+        var template = (0, _util.selector)('[data-id=\'' + temp + '\']');
+        if (part) {
+          template = template.querySelector(part);
         }
+        var binds = template.querySelectorAll('[data-bind]');
+        [].forEach.call(binds, function (item) {
+          var data = _this4.getDataByString(item.getAttribute("data-bind"));
+          if (item.getAttribute("type") === "checkbox" || item.getAttribute("type") === "radio") {
+            if (data == item.value) {
+              item.checked = true;
+            }
+          } else {
+            // if(item !== document.activeElement) {
+            item.value = data;
+            // }
+          }
+        });
       }
       return this;
     }

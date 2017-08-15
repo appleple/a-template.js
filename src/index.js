@@ -449,27 +449,25 @@ export default class aTemplate {
 
   updateBindingData(part){
     let templates = this.templates;
-    for(let i = 0,n = templates.length; i < n; i++){
+    for (let i = 0, n = templates.length; i < n; i++) {
       let temp = templates[i];
-      if(!part || part == temp){
-        const template = selector(`[data-id='${temp}']`);
-        const binds = template.querySelectorAll('[data-bind]');
-        [].forEach.call(binds,(item) => {
-          let data = this.getDataByString(item.getAttribute("data-bind"));
-          if(item.getAttribute("type") === "checkbox" || item.getAttribute("type") === "radio"){
-            if(data == item.value){
-              item.checked = true;
-            }
-          }else{
-            // if(item !== document.activeElement) {
-              item.value = data;
-            // }
-          }
-        });
-        if(part){
-          break;
-        }
+      let template = selector(`[data-id='${temp}']`);
+      if (part) {
+        template = template.querySelector(part);
       }
+      const binds = template.querySelectorAll('[data-bind]');
+      [].forEach.call(binds, (item) => {
+        let data = this.getDataByString(item.getAttribute("data-bind"));
+        if(item.getAttribute("type") === "checkbox" || item.getAttribute("type") === "radio"){
+          if(data == item.value){
+            item.checked = true;
+          }
+        }else{
+          // if(item !== document.activeElement) {
+            item.value = data;
+          // }
+        }
+      });
     }
     return this;
   }
