@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.4.2
+ *   version: 0.4.3
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1884,9 +1884,11 @@ var aTemplate = function () {
     _classCallCheck(this, aTemplate);
 
     this.atemplate = [];
-    Object.keys(opt).forEach(function (key) {
-      _this[key] = opt[key];
-    });
+    if (opt) {
+      Object.keys(opt).forEach(function (key) {
+        _this[key] = opt[key];
+      });
+    }
     if (!this.data) {
       this.data = {};
     }

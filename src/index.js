@@ -11,9 +11,11 @@ export default class aTemplate {
 
   constructor(opt) {
     this.atemplate = [];
-    Object.keys(opt).forEach((key) => {
-      this[key] = opt[key];
-    });
+    if (opt) {
+      Object.keys(opt).forEach((key) => {
+        this[key] = opt[key];
+      });
+    }
     if (!this.data) {
       this.data = {};
     }
