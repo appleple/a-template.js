@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.4.3
+ *   version: 0.4.4
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -2368,6 +2368,19 @@ var aTemplate = function () {
         var binds = _template.querySelectorAll('[data-bind]');
         [].forEach.call(binds, function (item) {
           var data = _this6.getDataByString(item.getAttribute('data-bind'));
+          if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
+            if (data === item.value) {
+              item.checked = true;
+            }
+          } else {
+            // if(item !== document.activeElement) {
+            item.value = data;
+            // }
+          }
+        });
+        var onewaybinds = _template.querySelectorAll('[data-bind-oneway]');
+        [].forEach.call(onewaybinds, function (item) {
+          var data = _this6.getDataByString(item.getAttribute('data-bind-oneway'));
           if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
             if (data === item.value) {
               item.checked = true;

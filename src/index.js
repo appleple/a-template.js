@@ -450,6 +450,19 @@ export default class aTemplate {
           // }
         }
       });
+      const onewaybinds = template.querySelectorAll('[data-bind-oneway]');
+      [].forEach.call(onewaybinds, (item) => {
+        const data = this.getDataByString(item.getAttribute('data-bind-oneway'));
+        if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
+          if (data === item.value) {
+            item.checked = true;
+          }
+        } else {
+          // if(item !== document.activeElement) {
+          item.value = data;
+          // }
+        }
+      });
     }
     return this;
   }
