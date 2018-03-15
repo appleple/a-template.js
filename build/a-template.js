@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.5.0
+ *   version: 0.5.1
  *
  * array.prototype.find:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1873,7 +1873,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var morphdom = require('morphdom');
 var find = require('array.prototype.find');
 
-var eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
+var eventType = 'input paste copy click change keydown keyup keypress contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 var bindType = 'input change click';
 var dataAction = eventType.replace(/([a-z]+)/g, '[data-action-$1],') + '[data-action]';
 

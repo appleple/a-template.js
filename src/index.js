@@ -3,7 +3,7 @@ import { selector, on } from './util';
 const morphdom = require('morphdom');
 const find = require('array.prototype.find');
 
-const eventType = 'input paste copy click change keydown keyup contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
+const eventType = 'input paste copy click change keydown keyup keypress contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 const bindType = 'input change click';
 const dataAction = `${eventType.replace(/([a-z]+)/g, '[data-action-$1],')}[data-action]`;
 
