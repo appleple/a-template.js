@@ -408,8 +408,8 @@ export default class aTemplate {
       } else if (renderWay === 'text') {
         target.innerText = html;
       } else if (part) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
+        const doc = document.createElement('div');
+        doc.innerHTML = html;
         const partHtml = doc.querySelector(part).outerHTML;
         morphdom(target.querySelector(part), partHtml);
       } else {

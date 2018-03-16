@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script id="test" type="text/template">
+        <div id="partial1">partial1: <span>{test}</span></div>
+        <div id="partial2">partial2: <span>{test}</span></div>
+    </script>
+    <script src="../build/a-template.js"></script>
+    <script>
+        var test = new aTemplate({
+            templates:["test"],
+            data: {
+                test: 'hoge'
+            }
+        });
+        test.update();
+        test.data.test = 'hoge2';
+        test.update('html', '#partial2');
+    </script>
+</body>
+</html>
