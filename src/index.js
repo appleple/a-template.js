@@ -1,7 +1,6 @@
+import 'ie-array-find-polyfill';
+import morphdom from 'morphdom';
 import { selector, on } from './util';
-
-const morphdom = require('morphdom');
-const find = require('array.prototype.find');
 
 const eventType = 'input paste copy click change keydown keyup keypress contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 const bindType = 'input change click';
@@ -358,7 +357,7 @@ export default class aTemplate {
   }
 
   getHtml(query, row) {
-    const template = find(this.atemplate, item => item.id === query);
+    const template = this.atemplate.find(item => item.id === query);
     let html = '';
     if (template && template.html) {
       html = template.html;
@@ -415,7 +414,7 @@ export default class aTemplate {
       } else {
         morphdom(target, `<div data-id='${tem}'>${html}</div>`);
       }
-      const template = find(this.atemplate, item => item.id === tem);
+      const template = this.atemplate.find(item => item.id === tem);
       if (!template.binded) {
         template.binded = true;
         this.addDataBind(selector(`[data-id='${tem}']`));
