@@ -1,6 +1,6 @@
 import 'ie-array-find-polyfill';
 import morphdom from 'morphdom';
-import { selector, on } from './util';
+import { selector, on, off } from './util';
 
 const eventType = 'input paste copy click change keydown keyup keypress contextmenu mouseup mousedown mousemove touchstart touchend touchmove compositionstart compositionend focus';
 const bindType = 'input change click';
@@ -10,6 +10,7 @@ export default class aTemplate {
 
   constructor(opt) {
     this.atemplate = [];
+    this.events = [];
     if (opt) {
       Object.keys(opt).forEach((key) => {
         this[key] = opt[key];
@@ -51,6 +52,11 @@ export default class aTemplate {
         this.updateDataByString(data, value);
       }
     });
+    this.events.push({
+      element: ele,
+      selector: '[data-bind]',
+      event: bindType
+    });
   }
 
   addActionBind(ele) {
@@ -78,6 +84,17 @@ export default class aTemplate {
       } else if (this[method]) {
         this[method](...pts);
       }
+    });
+    this.events.push({
+      element: ele,
+      selector: dataAction,
+      event: bindType
+    });
+  }
+
+  removeTemplateEvents() {
+    this.events.forEach((event) => {
+      off(event.element, event.selector, event.event);
     });
   }
 

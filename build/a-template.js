@@ -5,7 +5,7 @@
  * a-template:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: steelydylan
- *   version: 0.5.3
+ *   version: 0.5.5
  *
  * ie-array-find-polyfill:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -774,6 +774,7 @@ var aTemplate = function () {
     _classCallCheck(this, aTemplate);
 
     this.atemplate = [];
+    this.events = [];
     if (opt) {
       Object.keys(opt).forEach(function (key) {
         _this[key] = opt[key];
@@ -821,6 +822,11 @@ var aTemplate = function () {
           _this2.updateDataByString(data, value);
         }
       });
+      this.events.push({
+        element: ele,
+        selector: '[data-bind]',
+        event: bindType
+      });
     }
   }, {
     key: 'addActionBind',
@@ -853,6 +859,18 @@ var aTemplate = function () {
         } else if (_this3[method]) {
           _this3[method].apply(_this3, _toConsumableArray(pts));
         }
+      });
+      this.events.push({
+        element: ele,
+        selector: dataAction,
+        event: bindType
+      });
+    }
+  }, {
+    key: 'removeTemplateEvents',
+    value: function removeTemplateEvents() {
+      this.events.forEach(function (event) {
+        (0, _util.off)(event.element, event.selector, event.event);
       });
     }
   }, {
@@ -1354,15 +1372,32 @@ var findAncestor = exports.findAncestor = function findAncestor(element, selecto
   return null;
 };
 
+var listenerList = [];
+
 var on = exports.on = function on(element, query, eventNames, fn) {
+  var capture = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
   var events = eventNames.split(' ');
   events.forEach(function (event) {
-    element.addEventListener(event, function (e) {
-      var target = e.target;
+    var listener = function listener(e) {
       var delegateTarget = findAncestor(e.target, query);
       if (delegateTarget) {
         e.delegateTarget = delegateTarget;
         fn(e);
+      }
+    };
+    listenerList.push({ listener: listener, element: element, query: query, event: event, capture: capture });
+    element.addEventListener(event, listener, capture);
+  });
+};
+
+var off = exports.off = function off(element, query, eventNames) {
+  var events = eventNames.split(' ');
+  events.forEach(function (event) {
+    listenerList.forEach(function (item, index) {
+      if (item.element === element && item.query === query && item.event === event) {
+        element.removeEventListener(event, item.listener, item.capture);
+        listenerList.splice(index, 1);
       }
     });
   });
