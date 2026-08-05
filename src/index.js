@@ -6,7 +6,6 @@ const bindType = 'input change click';
 const dataAction = `${eventType.replace(/([a-z]+)/g, '[data-action-$1],')}[data-action]`;
 
 export default class aTemplate {
-
   constructor(opt) {
     this.atemplate = [];
     this.events = [];
@@ -161,7 +160,7 @@ export default class aTemplate {
   }
 
   getDataFromObj(s, o) {
-    s = s.replace(/\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\]/g, '.$1');  // convert indexes to properties
+    s = s.replace(/\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\]/g, '.$1'); // convert indexes to properties
     s = s.replace(/^\./, ''); // strip leading dot
     const a = s.split('.');
     while (a.length) {
@@ -297,6 +296,7 @@ export default class aTemplate {
     });
     return html;
   }
+
   /* 絶対パス形式の変数を解決 */
   resolveAbsBlock(html) {
     const that = this;
@@ -337,12 +337,7 @@ export default class aTemplate {
     /* ループ文解決 */
     html = html.replace(loop, (m, key, val) => {
       const keyItem = that.getDataByString(key);
-      let keys = [];
-      if (typeof keyItem === 'function') {
-        keys = keyItem.apply(that);
-      } else {
-        keys = keyItem;
-      }
+      const keys = typeof keyItem === 'function' ? keyItem.apply(that) : keyItem;
       let ret = '';
       if (keys instanceof Array) {
         for (let i = 0, n = keys.length; i < n; i += 1) {

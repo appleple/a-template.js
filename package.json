@@ -7,7 +7,7 @@
   "scripts": {
     "test": "npm run lint && vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ./src/index.js --fix",
+    "lint": "eslint . --fix",
     "build": "tsup",
     "watch": "tsup --watch",
     "patch": "npm run lint && npm version patch && node ./tools/index.js",
@@ -29,12 +29,11 @@
     "build"
   ],
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "co": "^4.6.0",
-    "eslint": "^3.13.0",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-config-airbnb-base": "^11.0.1",
-    "eslint-plugin-import": "^2.2.0",
-    "fs-extra": "^2.1.2",
+    "eslint": "^10.8.0",
+    "globals": "^17.9.0",
     "jsdom": "^30.0.1",
     "node-cmd": "^2.0.0",
     "np": "^2.16.0",

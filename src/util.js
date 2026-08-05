@@ -1,8 +1,9 @@
-
 export const matches = (element, query) => {
   const matches = (element.document || element.ownerDocument).querySelectorAll(query);
   let i = matches.length;
-  while (--i >= 0 && matches.item(i) !== element) {}
+  while (--i >= 0 && matches.item(i) !== element) {
+    // 一致する要素が見つかるか、走査し尽くすまでインデックスを進めるだけ
+  }
   return i > -1;
 };
 

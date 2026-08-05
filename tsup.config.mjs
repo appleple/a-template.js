@@ -20,7 +20,7 @@ export default defineConfig([
     dts: false,
     // esbuild's cjs output keeps `export default` under `.default`;
     // unwrap it so `require('a-template')` returns the class directly.
-    footer: ctx => (ctx.format === 'cjs' ? { js: 'module.exports = module.exports.default;' } : undefined),
+    footer: ctx => (ctx.format === 'cjs' ? { js: 'module.exports = module.exports.default;' } : undefined)
   },
   {
     entry: { 'a-template': 'src/index.js' },
@@ -34,7 +34,7 @@ export default defineConfig([
     dts: false,
     banner: { js: banner },
     footer: { js: 'aTemplate = aTemplate.default;' },
-    outExtension: () => ({ js: '.js' }),
+    outExtension: () => ({ js: '.js' })
   },
   {
     entry: { 'a-template.min': 'src/index.js' },
@@ -48,6 +48,6 @@ export default defineConfig([
     dts: false,
     banner: { js: banner },
     footer: { js: 'aTemplate = aTemplate.default;' },
-    outExtension: () => ({ js: '.js' }),
-  },
+    outExtension: () => ({ js: '.js' })
+  }
 ]);
