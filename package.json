@@ -33,7 +33,7 @@
     "licensify": "^3.1.2",
     "node-cmd": "^2.0.0",
     "np": "^2.16.0",
-    "uglifyjs": "^2.4.10",
+    "uglifyjs": "2.4.10",
     "watch": "^1.0.1",
     "watchify": "^3.7.0"
   },

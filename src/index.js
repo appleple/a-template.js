@@ -210,7 +210,7 @@ export default class aTemplate {
     const touchnots = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):touchnot#([\w\-\.ぁ-んァ-ヶ亜-熙]+) -->/g);
     const exists = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):exist -->/g);
     const empties = html.match(/<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+):empty -->/g);
-    /* タッチブロック解決*/
+    /* タッチブロック解決 */
     if (touchs) {
       for (let k = 0, n = touchs.length; k < n; k += 1) {
         let start = touchs[k];
@@ -226,7 +226,7 @@ export default class aTemplate {
         });
       }
     }
-    /* タッチノットブロック解決*/
+    /* タッチノットブロック解決 */
     if (touchnots) {
       for (let k = 0, n = touchnots.length; k < n; k += 1) {
         let start = touchnots[k];
@@ -242,7 +242,7 @@ export default class aTemplate {
         });
       }
     }
-    /* existブロックを解決*/
+    /* existブロックを解決 */
     if (exists) {
       for (let k = 0, n = exists.length; k < n; k += 1) {
         let start = exists[k];
@@ -258,7 +258,7 @@ export default class aTemplate {
         });
       }
     }
-    /* emptyブロックを解決*/
+    /* emptyブロックを解決 */
     if (empties) {
       for (let k = 0, n = empties.length; k < n; k += 1) {
         let start = empties[k];
@@ -274,7 +274,7 @@ export default class aTemplate {
         });
       }
     }
-    /* 変数解決*/
+    /* 変数解決 */
     html = html.replace(/{([\w\-\.ぁ-んァ-ヶ亜-熙]+)}(\[([\w\-\.ぁ-んァ-ヶ亜-熙]+)\])*/g, (n, key3, key4, converter) => {
       let data;
       if (`${key3}` === 'i') {
@@ -298,7 +298,7 @@ export default class aTemplate {
     });
     return html;
   }
-  /* 絶対パス形式の変数を解決*/
+  /* 絶対パス形式の変数を解決 */
   resolveAbsBlock(html) {
     const that = this;
     html = html.replace(/{(.*?)}/g, (n, key3) => {
@@ -335,7 +335,7 @@ export default class aTemplate {
   resolveLoop(html) {
     const loop = /<!-- BEGIN ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->(([\n\r\t]|.)*?)<!-- END ([\w\-\.ぁ-んァ-ヶ亜-熙]+?):loop -->/g;
     const that = this;
-    /* ループ文解決*/
+    /* ループ文解決 */
     html = html.replace(loop, (m, key, val) => {
       const keyItem = that.getDataByString(key);
       let keys = [];
@@ -350,7 +350,7 @@ export default class aTemplate {
           ret += that.resolveBlock(val, keys[i], i);
         }
       }
-      /* エスケープ削除*/
+      /* エスケープ削除 */
       ret = ret.replace(/\\([^\\])/g, '$1');
       return ret;
     });
@@ -390,21 +390,21 @@ export default class aTemplate {
       return '';
     }
     const data = this.data;
-    /* インクルード解決*/
+    /* インクルード解決 */
     html = this.resolveInclude(html);
-    /* with解決*/
+    /* with解決 */
     html = this.resolveWith(html);
-    /* ループ解決*/
+    /* ループ解決 */
     while (this.hasLoop(html)) {
       html = this.resolveLoop(html);
     }
-    /* 変数解決*/
+    /* 変数解決 */
     html = this.resolveBlock(html, data);
-    /* エスケープ削除*/
+    /* エスケープ削除 */
     html = html.replace(/\\([^\\])/g, '$1');
-    /* 絶対パスで指定された変数を解決*/
+    /* 絶対パスで指定された変数を解決 */
     html = this.resolveAbsBlock(html);
-    /* 空行削除*/
+    /* 空行削除 */
     return html.replace(/^([\t ])*\n/gm, '');
   }
 
