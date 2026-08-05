@@ -22,9 +22,9 @@
     "build": "tsup",
     "watch": "tsup --watch",
     "prepack": "npm run lint:check && npm run test:ci && npm run build",
-    "patch": "npm version patch && git push --follow-tags",
-    "minor": "npm version minor && git push --follow-tags",
-    "major": "npm version major && git push --follow-tags"
+    "release:patch": "npm version patch && git push --follow-tags",
+    "release:minor": "npm version minor && git push --follow-tags",
+    "release:major": "npm version major && git push --follow-tags"
   },
   "main": "./lib/index.js",
   "module": "./lib/index.mjs",
