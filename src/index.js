@@ -165,7 +165,7 @@ export default class aTemplate {
     const a = s.split('.');
     while (a.length) {
       const n = a.shift();
-      if (n in o) {
+      if (o && typeof o === 'object' && n in o) {
         o = o[n];
       } else {
         return null;
