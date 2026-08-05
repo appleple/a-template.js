@@ -1,7 +1,7 @@
 {
   "name": "a-template",
   "version": "0.6.1",
-  "author": "steelydylan",
+  "author": "appleple",
   "description": "Simple Template Engine",
   "license": "MIT",
   "scripts": {
