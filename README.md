@@ -44,3 +44,14 @@ data:{
 }).update();
 </script>
 ```
+
+## セキュリティ上の注意 (XSS)
+
+a-template.js はテンプレートの描画に `innerHTML` / `insertAdjacentHTML` を使用しています。
+`{key}` に展開される値や `data` に渡す値は HTML としてそのまま挿入されるため、
+ユーザー入力など信頼できない文字列を **エスケープせずに** `data` へ渡すと XSS
+(クロスサイトスクリプティング) の原因になります。
+
+信頼できない値をテンプレートに渡す場合は、あらかじめ HTML エスケープするか、
+[DOMPurify](https://github.com/cure53/DOMPurify) 等のサニタイズライブラリを通してから
+`data` にセットしてください。
