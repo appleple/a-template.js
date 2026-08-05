@@ -11,11 +11,10 @@
     "lint": "eslint . --fix",
     "build": "tsup",
     "watch": "tsup --watch",
-    "prepublishOnly": "npm run build",
-    "patch": "npm run lint && npm version patch && node ./tools/index.js",
-    "minor": "npm run lint && npm version minor &&  node ./tools/index.js",
-    "major": "npm run lint && npm version major && node ./tools/index.js",
-    "deploy": "np --no-cleanup"
+    "prepack": "npm run build",
+    "patch": "npm test && npm version patch && git push --follow-tags",
+    "minor": "npm test && npm version minor && git push --follow-tags",
+    "major": "npm test && npm version major && git push --follow-tags"
   },
   "main": "./lib/index.js",
   "module": "./lib/index.mjs",
@@ -33,12 +32,9 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^4.1.10",
-    "co": "^4.6.0",
     "eslint": "^10.8.0",
     "globals": "^17.9.0",
     "jsdom": "^30.0.1",
-    "node-cmd": "^2.0.0",
-    "np": "^12.0.1",
     "tsup": "^8.5.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
