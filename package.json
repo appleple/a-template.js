@@ -5,7 +5,8 @@
   "description": "Simple Template Engine",
   "license": "MIT",
   "scripts": {
-    "test": "npm run lint",
+    "test": "npm run lint && vitest run",
+    "test:watch": "vitest",
     "lint": "eslint ./src/index.js --fix",
     "bundle": "browserify ./src/index.js -t babelify -p licensify --standalone aTemplate --outfile ./build/a-template.js",
     "minifyjs": "uglifyjs ./build/a-template.js --comments 'license' -o ./build/a-template.min.js",
@@ -30,10 +31,12 @@
     "eslint-config-airbnb-base": "^11.0.1",
     "eslint-plugin-import": "^2.2.0",
     "fs-extra": "^2.1.2",
+    "jsdom": "^30.0.1",
     "licensify": "^3.1.2",
     "node-cmd": "^2.0.0",
     "np": "^2.16.0",
     "uglifyjs": "2.4.10",
+    "vitest": "^4.1.10",
     "watch": "^1.0.1",
     "watchify": "^3.7.0"
   },
