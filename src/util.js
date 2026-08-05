@@ -6,6 +6,7 @@ export const matches = (element, query) => {
   return i > -1;
 };
 
+// document.querySelector と同様、一致する要素がなければ null を返す
 export const selector = selector => document.querySelector(selector);
 
 export const findAncestor = (element, selector) => {

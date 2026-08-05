@@ -26,7 +26,8 @@ export default class aTemplate {
     const length = templates.length;
     for (let i = 0, n = length; i < n; i += 1) {
       const template = this.templates[i];
-      const html = selector(`#${template}`).innerHTML;
+      const templateEl = selector(`#${template}`);
+      const html = templateEl ? templateEl.innerHTML : '';
       this.atemplate.push({ id: template, html, binded: false });
     }
   }
@@ -315,7 +316,10 @@ export default class aTemplate {
 
   resolveInclude(html) {
     const include = /<!-- #include id="(.*?)" -->/g;
-    html = html.replace(include, (m, key) => selector(`#${key}`).innerHTML);
+    html = html.replace(include, (m, key) => {
+      const el = selector(`#${key}`);
+      return el ? el.innerHTML : '';
+    });
     return html;
   }
 
@@ -413,13 +417,17 @@ export default class aTemplate {
       const tem = templates[i];
       const query = `#${tem}`;
       const html = this.getHtml(tem);
-      const target = selector(`[data-id='${tem}']`);
+      let target = selector(`[data-id='${tem}']`);
       if (!target) {
-        selector(query).insertAdjacentHTML('afterend', `<div data-id="${tem}"></div>`);
-        if (renderWay === 'text') {
-          selector(`[data-id='${tem}']`).innerText = html;
-        } else {
-          selector(`[data-id='${tem}']`).innerHTML = html;
+        const anchor = selector(query);
+        if (anchor) {
+          anchor.insertAdjacentHTML('afterend', `<div data-id="${tem}"></div>`);
+          target = selector(`[data-id='${tem}']`);
+          if (renderWay === 'text') {
+            target.innerText = html;
+          } else {
+            target.innerHTML = html;
+          }
         }
       } else if (renderWay === 'text') {
         target.innerText = html;
@@ -431,11 +439,13 @@ export default class aTemplate {
       } else {
         morphdom(target, `<div data-id='${tem}'>${html}</div>`);
       }
-      const template = this.atemplate.find(item => item.id === tem);
-      if (!template.binded) {
-        template.binded = true;
-        this.addDataBind(selector(`[data-id='${tem}']`));
-        this.addActionBind(selector(`[data-id='${tem}']`));
+      if (target) {
+        const template = this.atemplate.find(item => item.id === tem);
+        if (!template.binded) {
+          template.binded = true;
+          this.addDataBind(target);
+          this.addActionBind(target);
+        }
       }
     }
     this.updateBindingData(part);
@@ -450,35 +460,37 @@ export default class aTemplate {
     for (let i = 0, n = templates.length; i < n; i += 1) {
       const temp = templates[i];
       let template = selector(`[data-id='${temp}']`);
-      if (part) {
+      if (template && part) {
         template = template.querySelector(part);
       }
-      const binds = template.querySelectorAll('[data-bind]');
-      [].forEach.call(binds, (item) => {
-        const data = this.getDataByString(item.getAttribute('data-bind'));
-        if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
-          if (data === item.value) {
-            item.checked = true;
+      if (template) {
+        const binds = template.querySelectorAll('[data-bind]');
+        [].forEach.call(binds, (item) => {
+          const data = this.getDataByString(item.getAttribute('data-bind'));
+          if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
+            if (data === item.value) {
+              item.checked = true;
+            }
+          } else {
+            // if(item !== document.activeElement) {
+            item.value = data;
+            // }
           }
-        } else {
-          // if(item !== document.activeElement) {
-          item.value = data;
-          // }
-        }
-      });
-      const onewaybinds = template.querySelectorAll('[data-bind-oneway]');
-      [].forEach.call(onewaybinds, (item) => {
-        const data = this.getDataByString(item.getAttribute('data-bind-oneway'));
-        if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
-          if (data === item.value) {
-            item.checked = true;
+        });
+        const onewaybinds = template.querySelectorAll('[data-bind-oneway]');
+        [].forEach.call(onewaybinds, (item) => {
+          const data = this.getDataByString(item.getAttribute('data-bind-oneway'));
+          if (item.getAttribute('type') === 'checkbox' || item.getAttribute('type') === 'radio') {
+            if (data === item.value) {
+              item.checked = true;
+            }
+          } else {
+            // if(item !== document.activeElement) {
+            item.value = data;
+            // }
           }
-        } else {
-          // if(item !== document.activeElement) {
-          item.value = data;
-          // }
-        }
-      });
+        });
+      }
     }
     return this;
   }
