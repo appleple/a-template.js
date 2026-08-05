@@ -11,6 +11,7 @@
     "lint": "eslint . --fix",
     "build": "tsup",
     "watch": "tsup --watch",
+    "prepublishOnly": "npm run build",
     "patch": "npm run lint && npm version patch && node ./tools/index.js",
     "minor": "npm run lint && npm version minor &&  node ./tools/index.js",
     "major": "npm run lint && npm version major && node ./tools/index.js",
