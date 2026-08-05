@@ -4,6 +4,14 @@
   "author": "appleple",
   "description": "Simple Template Engine",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appleple/a-template.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appleple/a-template.js/issues"
+  },
+  "homepage": "https://github.com/appleple/a-template.js#readme",
   "scripts": {
     "test": "npm run lint && npm run test:ci",
     "test:ci": "vitest run",
