@@ -7,6 +7,7 @@
   "scripts": {
     "test": "npm run lint && vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --fix",
     "build": "tsup",
     "watch": "tsup --watch",
@@ -30,6 +31,7 @@
   ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.1.10",
     "co": "^4.6.0",
     "eslint": "^10.8.0",
     "globals": "^17.9.0",

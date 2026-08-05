@@ -47,6 +47,24 @@ describe('update: golden path', () => {
     at.update();
     expect(calls).toEqual(['before', 'after']);
   });
+
+  it('renderWay="text" は2回目以降の更新でも innerText を使い続ける', () => {
+    setTemplate('tpl', '<b>{name}</b>');
+    const at = new aTemplate({ templates: ['tpl'], data: { name: 'World' } });
+    at.update('text');
+    at.data.name = 'Again';
+    at.update('text');
+    expect(document.querySelector('[data-id="tpl"]').innerText).toBe('<b>Again</b>');
+  });
+
+  it('part を指定すると、既存要素の一部だけを morphdom で差分更新する', () => {
+    setTemplate('tpl', '<div class="wrap"><span class="content">{name}</span></div>');
+    const at = new aTemplate({ templates: ['tpl'], data: { name: 'World' } });
+    at.update();
+    at.data.name = 'Again';
+    at.update('html', '.content');
+    expect(document.querySelector('[data-id="tpl"] .content').textContent).toBe('Again');
+  });
 });
 
 describe('addDataBind: [data-bind] の双方向バインディング', () => {
@@ -64,12 +82,62 @@ describe('addDataBind: [data-bind] の双方向バインディング', () => {
     expect(at.data.name).toBe('たろう');
   });
 
+  it('addDataBind: href 属性を持つ要素では value から先頭の # を取り除いてから反映する', () => {
+    setTemplate('tpl', '<input href=\'#\' data-bind=\'tab\'>');
+    const at = new aTemplate({ templates: ['tpl'], data: { tab: '' } });
+    at.update();
+    const el = document.querySelector('[data-bind="tab"]');
+    el.value = '#profile';
+    el.dispatchEvent(new window.Event('click', { bubbles: true }));
+    expect(at.data.tab).toBe('profile');
+  });
+
+  it('addDataBind: checkbox は現状の実装では this.data に反映されない (既知の未実装分岐)', () => {
+    setTemplate('tpl', '<input type=\'checkbox\' data-bind=\'tags\' value=\'a\'>');
+    const at = new aTemplate({ templates: ['tpl'], data: { tags: [] } });
+    at.update();
+    const checkbox = document.querySelector('[data-bind="tags"]');
+    checkbox.checked = true;
+    expect(() => checkbox.dispatchEvent(new window.Event('click', { bubbles: true }))).not.toThrow();
+    expect(at.data.tags).toEqual([]);
+  });
+
   it('updateBindingData: this.data の値をフォーム要素に反映する (逆方向)', () => {
     setTemplate('tpl', '<input data-bind=\'name\'>');
     const at = new aTemplate({ templates: ['tpl'], data: { name: 'はじめ' } });
     at.update();
     const input = document.querySelector('[data-bind="name"]');
     expect(input.value).toBe('はじめ');
+  });
+
+  it('updateBindingData: checkbox/radio は値が一致すれば checked になる (data-bind / data-bind-oneway, part 指定あり)', () => {
+    setTemplate('tpl', [
+      '<div class="wrap">',
+      '<input type="checkbox" data-bind="agreed" value="yes">',
+      '<input type="checkbox" data-bind-oneway="subscribed" value="yes">',
+      '</div>'
+    ].join(''));
+    const at = new aTemplate({
+      templates: ['tpl'],
+      data: { agreed: 'yes', subscribed: 'yes' }
+    });
+    at.update('html', '.wrap');
+    expect(document.querySelector('[data-bind="agreed"]').checked).toBe(true);
+    expect(document.querySelector('[data-bind-oneway="subscribed"]').checked).toBe(true);
+  });
+
+  it('updateBindingData: checkbox/radio は値が一致しなければ checked にしない', () => {
+    setTemplate('tpl', '<input type=\'checkbox\' data-bind=\'agreed\' value=\'yes\'>');
+    const at = new aTemplate({ templates: ['tpl'], data: { agreed: 'no' } });
+    at.update();
+    expect(document.querySelector('[data-bind="agreed"]').checked).toBe(false);
+  });
+
+  it('updateBindingData: data-bind-oneway はテキスト系要素なら value に反映する', () => {
+    setTemplate('tpl', '<input data-bind-oneway=\'name\'>');
+    const at = new aTemplate({ templates: ['tpl'], data: { name: 'はじめ' } });
+    at.update();
+    expect(document.querySelector('[data-bind-oneway="name"]').value).toBe('はじめ');
   });
 });
 
@@ -89,6 +157,18 @@ describe('addActionBind: [data-action-*] のメソッドディスパッチ', () 
     at.update();
     document.querySelector('button').dispatchEvent(new window.Event('click', { bubbles: true }));
     expect(at.calledWith).toEqual(['1', '2']);
+  });
+
+  it('イベント種別に対応する data-action-* 属性がなければ何もしない', () => {
+    // data-action-mouseup は登録されているが、発火させるのは click なので
+    // どの event-suffix にも一致せず、bare な data-action も無いため早期 return する
+    setTemplate('tpl', '<button data-action-mouseup=\'onHover()\'>go</button>');
+    const calls = [];
+    const at = new aTemplate({ templates: ['tpl'], method: { onHover: () => calls.push(1) } });
+    at.update();
+    const button = document.querySelector('button');
+    expect(() => button.dispatchEvent(new window.Event('click', { bubbles: true }))).not.toThrow();
+    expect(calls).toEqual([]);
   });
 
   it('method オプションに登録した名前空間経由でも呼び出せる', () => {

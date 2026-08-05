@@ -98,6 +98,15 @@ describe('remove', () => {
   });
 });
 
+describe('getRand / getRandText', () => {
+  it('getRandText: 指定した文字数のランダムな英数字文字列を返す', () => {
+    const at = new aTemplate();
+    const text = at.getRandText(10);
+    expect(text).toHaveLength(10);
+    expect(text).toMatch(/^[A-Za-z0-9]{10}$/);
+  });
+});
+
 describe('applyMethod / getComputedProp', () => {
   it('applyMethod: method に登録した関数を実行して結果を返す', () => {
     const at = new aTemplate({ method: { double: x => x * 2 } });

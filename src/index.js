@@ -154,7 +154,7 @@ export default class aTemplate {
     const strings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = strings.length;
     for (let i = 0; i < limit; i += 1) {
-      ret += strings.charAt(Math.floor(this.getRand(0, length)));
+      ret += strings.charAt(Math.floor(this.getRand(0, length - 1)));
     }
     return ret;
   }

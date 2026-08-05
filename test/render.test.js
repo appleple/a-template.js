@@ -29,6 +29,11 @@ describe('resolveBlock: 変数解決', () => {
     const at = new aTemplate({ convert: { yen: v => `${v}円` } });
     expect(at.resolveBlock('{price}[yen]', { price: 100 })).toBe('100円');
   });
+
+  it('値が存在しなくても convert が定義されていれば空文字を変換関数に通す', () => {
+    const at = new aTemplate({ convert: { yen: v => `${v || 0}円` } });
+    expect(at.resolveBlock('{price}[yen]', {})).toBe('0円');
+  });
 });
 
 describe('resolveBlock: touch / touchnot ブロック', () => {
@@ -40,6 +45,11 @@ describe('resolveBlock: touch / touchnot ブロック', () => {
     expect(at.resolveBlock(html, { status: 'ok' })).toBe('OK');
   });
 
+  it('touch: 値が関数ならインスタンスを this にして実行した結果と比較する', () => {
+    const at = new aTemplate();
+    expect(at.resolveBlock(html, { status: () => 'ok' })).toBe('OK');
+  });
+
   it('touch: 値が一致しなければブロックを空にする', () => {
     const at = new aTemplate();
     expect(at.resolveBlock(html, { status: 'ng' })).toBe('');
@@ -48,6 +58,11 @@ describe('resolveBlock: touch / touchnot ブロック', () => {
   it('touchnot: 値が一致しなければブロックの中身を残す', () => {
     const at = new aTemplate();
     expect(at.resolveBlock(htmlNot, { status: 'ng' })).toBe('NG');
+  });
+
+  it('touchnot: 値が関数ならインスタンスを this にして実行した結果と比較する', () => {
+    const at = new aTemplate();
+    expect(at.resolveBlock(htmlNot, { status: () => 'ng' })).toBe('NG');
   });
 
   it('touchnot: 値が一致すればブロックを空にする', () => {
@@ -66,6 +81,11 @@ describe('resolveBlock: exist / empty ブロック', () => {
     expect(at.resolveBlock(existHtml, { name: 0 })).toBe('あり');
   });
 
+  it('exist: 値が関数ならインスタンスを this にして実行した結果で判定する', () => {
+    const at = new aTemplate();
+    expect(at.resolveBlock(existHtml, { name: () => 'x' })).toBe('あり');
+  });
+
   it('exist: 値が falsy (0 を除く) ならブロックを空にする', () => {
     const at = new aTemplate();
     expect(at.resolveBlock(existHtml, { name: '' })).toBe('');
@@ -75,6 +95,11 @@ describe('resolveBlock: exist / empty ブロック', () => {
   it('empty: 値が falsy (0 を除く) ならブロックを残す', () => {
     const at = new aTemplate();
     expect(at.resolveBlock(emptyHtml, {})).toBe('なし');
+  });
+
+  it('empty: 値が関数ならインスタンスを this にして実行した結果で判定する', () => {
+    const at = new aTemplate();
+    expect(at.resolveBlock(emptyHtml, { name: () => '' })).toBe('なし');
   });
 
   it('empty: 値が truthy か 0 ならブロックを空にする', () => {
@@ -97,6 +122,23 @@ describe('resolveAbsBlock', () => {
     const at = new aTemplate({ data: {} });
     expect(at.resolveAbsBlock('{not.exist}')).toBe('null');
   });
+
+  it('値が関数ならインスタンスを this にして実行した結果を使う', () => {
+    const at = new aTemplate({
+      data: {
+        user: {
+          getName() { return this.data.user.name; },
+          name: 'たろう'
+        }
+      }
+    });
+    expect(at.resolveAbsBlock('{user.getName}')).toBe('たろう');
+  });
+
+  it('値が明示的に undefined ならプレースホルダをそのまま残す', () => {
+    const at = new aTemplate({ data: { user: { name: undefined } } });
+    expect(at.resolveAbsBlock('{user.name}')).toBe('{user.name}');
+  });
 });
 
 describe('resolveWith', () => {
@@ -118,6 +160,16 @@ describe('hasLoop / resolveLoop', () => {
     const at = new aTemplate({ data: { list: [{ name: 'a' }, { name: 'b' }] } });
     const html = '<!-- BEGIN list:loop --><li>{name}</li><!-- END list:loop -->';
     expect(at.resolveLoop(html)).toBe('<li>a</li><li>b</li>');
+  });
+
+  it('resolveLoop: データが関数の場合は実行結果 (配列) を使ってループする', () => {
+    const at = new aTemplate({
+      data: {
+        list() { return [{ name: 'a' }]; }
+      }
+    });
+    const html = '<!-- BEGIN list:loop --><li>{name}</li><!-- END list:loop -->';
+    expect(at.resolveLoop(html)).toBe('<li>a</li>');
   });
 
   it('resolveLoop: 配列以外 (undefined 等) の場合は空文字になる', () => {
