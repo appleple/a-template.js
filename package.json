@@ -5,13 +5,15 @@
   "description": "Simple Template Engine",
   "license": "MIT",
   "scripts": {
-    "test": "npm run lint && vitest run",
+    "test": "npm run lint && npm run test:ci",
+    "test:ci": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --fix",
+    "lint:check": "eslint .",
     "build": "tsup",
     "watch": "tsup --watch",
-    "prepack": "npm run build",
+    "prepack": "npm run lint:check && npm run test:ci && npm run build",
     "patch": "npm test && npm version patch && git push --follow-tags",
     "minor": "npm test && npm version minor && git push --follow-tags",
     "major": "npm test && npm version major && git push --follow-tags"
