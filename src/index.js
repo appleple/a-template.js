@@ -5,6 +5,10 @@ const eventType = 'input paste copy click change keydown keyup keypress contextm
 const bindType = 'input change click';
 const dataAction = `${eventType.replace(/([a-z]+)/g, '[data-action-$1],')}[data-action]`;
 
+// Symbol.dispose 未実装の実行環境向けフォールバック。
+// TypeScript / core-js のポリフィルも同じ Symbol.for キーを使うため互換になる
+const disposeSymbol = typeof Symbol.dispose === 'symbol' ? Symbol.dispose : Symbol.for('Symbol.dispose');
+
 export default class aTemplate {
   constructor(opt) {
     this.atemplate = [];
@@ -30,8 +34,17 @@ export default class aTemplate {
     }
   }
 
+  // 登録と「解除用の記録」を必ず同じ引数で行うための唯一の入口。
+  // on() と this.events.push() を別々に書くと片方だけ修正した際に解除漏れが生まれ、
+  // listenerList が element を掴んだまま detached DOM がリークする
+  listen(target, selector, eventNames, fn, capture = false) {
+    on(target, selector, eventNames, fn, capture);
+    this.events.push({ element: target, selector, event: eventNames });
+    return this;
+  }
+
   addDataBind(ele) {
-    on(ele, '[data-bind]', bindType, (e) => {
+    this.listen(ele, '[data-bind]', bindType, (e) => {
       const target = e.delegateTarget;
       const data = target.getAttribute('data-bind');
       const attr = target.getAttribute('href');
@@ -51,15 +64,10 @@ export default class aTemplate {
         this.updateDataByString(data, value);
       }
     });
-    this.events.push({
-      element: ele,
-      selector: '[data-bind]',
-      event: bindType
-    });
   }
 
   addActionBind(ele) {
-    on(ele, dataAction, eventType, (e) => {
+    this.listen(ele, dataAction, eventType, (e) => {
       const target = e.delegateTarget;
       const events = eventType.split(' ');
       let action = 'action';
@@ -84,17 +92,40 @@ export default class aTemplate {
         this[method](...pts);
       }
     });
-    this.events.push({
-      element: ele,
-      selector: dataAction,
-      event: bindType
-    });
   }
 
   removeTemplateEvents() {
     this.events.forEach((event) => {
       off(event.element, event.selector, event.event);
     });
+    this.events = [];
+    // binded を残すと update() しても addDataBind/addActionBind が再実行されず、
+    // 「DOM はあるのにイベントだけ死んでいる」状態が復旧できなくなる
+    this.atemplate.forEach((template) => {
+      template.binded = false;
+    });
+    return this;
+  }
+
+  // 後片付けの責務は「自分が生やしたもの」に限定する。
+  // サブクラス側が作ったラッパー要素・タイマー・body のスタイルなどはここでは触れないため、
+  // サブクラスは destroy() をオーバーライドして super.destroy() と組み合わせる
+  destroy() {
+    this.removeTemplateEvents();
+    this.templates.forEach((tem) => {
+      const target = selector(`[data-id='${tem}']`);
+      if (target && target.parentNode) {
+        target.parentNode.removeChild(target);
+      }
+    });
+    // 最後に処理したイベント経由で DOM ツリーを掴み続けないようにする
+    this.e = null;
+    return this;
+  }
+
+  // using 宣言でスコープを抜けるときに destroy() が走るようにする
+  [disposeSymbol]() {
+    this.destroy();
   }
 
   addTemplate(id, html) {

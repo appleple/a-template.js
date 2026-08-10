@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import aTemplate from '../src/index';
+import { listenerCount } from '../src/util';
 
 function setTemplate(id, html) {
   document.body.innerHTML = `<script type="text/template" id="${id}">${html}</script><div id="${id}"></div>`;
@@ -201,5 +202,84 @@ describe('addTemplate / removeTemplateEvents', () => {
     at.removeTemplateEvents();
     document.querySelector('button').dispatchEvent(new window.Event('click', { bubbles: true }));
     expect(calls).toEqual([]);
+  });
+
+  it('removeTemplateEvents: click 以外の data-action 系イベント (keydown) も解除される', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-action-keydown=\'onKey()\'>');
+    const calls = [];
+    const at = new aTemplate({ templates: ['tpl'], method: { onKey: () => calls.push(1) } });
+    at.update();
+    at.removeTemplateEvents();
+    document.querySelector('input').dispatchEvent(new window.Event('keydown', { bubbles: true }));
+    expect(calls).toEqual([]);
+  });
+
+  it('removeTemplateEvents: data-action 系イベントを全種類解除する', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-action-focus=\'onFocus()\' data-action-mousemove=\'onMove()\' data-action-touchstart=\'onTouch()\' data-action-compositionend=\'onComp()\'>');
+    const calls = [];
+    const at = new aTemplate({
+      templates: ['tpl'],
+      method: {
+        onFocus: () => calls.push('focus'),
+        onMove: () => calls.push('mousemove'),
+        onTouch: () => calls.push('touchstart'),
+        onComp: () => calls.push('compositionend')
+      }
+    });
+    at.update();
+    at.removeTemplateEvents();
+    const input = document.querySelector('input');
+    ['focus', 'mousemove', 'touchstart', 'compositionend'].forEach((type) => {
+      input.dispatchEvent(new window.Event(type, { bubbles: true }));
+    });
+    expect(calls).toEqual([]);
+  });
+
+  it('removeTemplateEvents: 解除後に内部リスナーリストへ登録が残らない', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-bind=\'name\' data-action-keydown=\'onKey()\'>');
+    const before = listenerCount();
+    const at = new aTemplate({ templates: ['tpl'], data: { name: '' }, method: { onKey: () => {} } });
+    at.update();
+    expect(listenerCount()).toBeGreaterThan(before);
+    at.removeTemplateEvents();
+    expect(listenerCount()).toBe(before);
+  });
+
+  it('removeTemplateEvents: 2回呼んでも例外を投げない (冪等)', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-action-keydown=\'onKey()\'>');
+    const at = new aTemplate({ templates: ['tpl'], method: { onKey: () => {} } });
+    at.update();
+    at.removeTemplateEvents();
+    expect(() => at.removeTemplateEvents()).not.toThrow();
+  });
+
+  // SmartPhoto の destroy() は [data-id] を DOM から外したあとに
+  // removeTemplateEvents() を呼ぶ。この順序でも listenerList が element への参照を
+  // 手放さないと、切り離した DOM ツリー全体が GC されずに残る
+  it('removeTemplateEvents: DOM から切り離した後に呼んでも内部リスナーリストが空になる', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-bind=\'name\' data-action-keydown=\'onKey()\'>');
+    const before = listenerCount();
+    const at = new aTemplate({ templates: ['tpl'], data: { name: '' }, method: { onKey: () => {} } });
+    at.update();
+    document.querySelector('[data-id="tpl"]').remove();
+    at.removeTemplateEvents();
+    expect(listenerCount()).toBe(before);
+  });
+
+  it('removeTemplateEvents: 解除後に update() し直すとバインドが復活する', () => {
+    document.body.innerHTML = '';
+    setTemplate('tpl', '<input data-action-keydown=\'onKey()\'>');
+    const calls = [];
+    const at = new aTemplate({ templates: ['tpl'], method: { onKey: () => calls.push(1) } });
+    at.update();
+    at.removeTemplateEvents();
+    at.update();
+    document.querySelector('input').dispatchEvent(new window.Event('keydown', { bubbles: true }));
+    expect(calls).toEqual([1]);
   });
 });

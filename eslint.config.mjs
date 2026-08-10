@@ -27,6 +27,9 @@ export default [
   {
     files: ['test/**/*.js'],
     languageOptions: {
+      // src は tsup で es2020 / es2017 まで落とすため 2022 に据え置くが、
+      // テストは Node でしか動かないので using 宣言などの新しい構文を許可する
+      ecmaVersion: 'latest',
       globals: {
         ...globals.node
       }

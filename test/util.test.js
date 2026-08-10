@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  selector, matches, findAncestor, on, off
+  selector, matches, findAncestor, on, off, listenerCount
 } from '../src/util';
 
 describe('selector', () => {
@@ -94,5 +94,52 @@ describe('on / off (イベント委譲)', () => {
     off(list, '.item', 'click');
     item.dispatchEvent(new window.Event('click', { bubbles: true }));
     expect(calls).toEqual([]);
+  });
+
+  it('off: 同じ element/query/event に複数回登録していても全て解除される', () => {
+    const list = document.getElementById('list');
+    const item = document.querySelector('.item');
+    const calls = [];
+    on(list, '.item', 'click', () => calls.push('first'));
+    on(list, '.item', 'click', () => calls.push('second'));
+    off(list, '.item', 'click');
+    item.dispatchEvent(new window.Event('click', { bubbles: true }));
+    expect(calls).toEqual([]);
+  });
+
+  it('off: 複数イベントを一度に登録・解除できる', () => {
+    const list = document.getElementById('list');
+    const item = document.querySelector('.item');
+    const calls = [];
+    on(list, '.item', 'click keydown focus', e => calls.push(e.type));
+    off(list, '.item', 'click keydown focus');
+    ['click', 'keydown', 'focus'].forEach((type) => {
+      item.dispatchEvent(new window.Event(type, { bubbles: true }));
+    });
+    expect(calls).toEqual([]);
+  });
+
+  it('off: 解除したリスナーは内部リストに残らない (detached DOM のリーク防止)', () => {
+    const list = document.getElementById('list');
+    const before = listenerCount();
+    on(list, '.item', 'click keydown', () => {});
+    expect(listenerCount()).toBe(before + 2);
+    off(list, '.item', 'click keydown');
+    expect(listenerCount()).toBe(before);
+  });
+
+  it('off: 対象外の element/query/event のリスナーは解除しない', () => {
+    document.body.innerHTML = '<ul id="list"><li class="item">a</li></ul><ul id="other"><li class="item">b</li></ul>';
+    const list = document.getElementById('list');
+    const other = document.getElementById('other');
+    const calls = [];
+    on(list, '.item', 'click', () => calls.push('list'));
+    on(other, '.item', 'click', () => calls.push('other'));
+    on(list, '.item', 'keydown', () => calls.push('list-keydown'));
+    off(list, '.item', 'click');
+    document.querySelector('#list .item').dispatchEvent(new window.Event('click', { bubbles: true }));
+    document.querySelector('#list .item').dispatchEvent(new window.Event('keydown', { bubbles: true }));
+    document.querySelector('#other .item').dispatchEvent(new window.Event('click', { bubbles: true }));
+    expect(calls).toEqual(['list-keydown', 'other']);
   });
 });
