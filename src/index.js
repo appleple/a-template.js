@@ -5,6 +5,16 @@ const eventType = 'input paste copy click change keydown keyup keypress contextm
 const bindType = 'input change click';
 const dataAction = `${eventType.replace(/([a-z]+)/g, '[data-action-$1],')}[data-action]`;
 
+// data-bind / data-action / JSON 由来のキーでプロトタイプ連鎖に到達されないようにする。
+// 該当キーは「エラー」ではなく「存在しない」として扱い、イベントハンドラ内で例外を投げない
+const unsafeKeys = ['__proto__', 'constructor', 'prototype'];
+const isUnsafeKey = key => unsafeKeys.indexOf(key) !== -1;
+const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+
+// data-action から呼べる組み込みメソッド。HTML は信頼できない入力になりうるため、
+// aTemplate.prototype の内部メソッド(updateDataByString, destroy 等)は update のみに限定する
+const publicActions = ['update'];
+
 // Symbol.dispose 未実装の実行環境向けフォールバック。
 // TypeScript / core-js のポリフィルも同じ Symbol.for キーを使うため互換になる
 const disposeSymbol = typeof Symbol.dispose === 'symbol' ? Symbol.dispose : Symbol.for('Symbol.dispose');
@@ -86,12 +96,27 @@ export default class aTemplate {
       const parameter = string.replace(/(.*?)\((.*?)\);?/, '$2');
       const pts = parameter.split(',');// 引き数
       this.e = e;
-      if (this.method && this.method[method]) {
-        this.method[method](...pts);
-      } else if (this[method]) {
-        this[method](...pts);
+      const fn = this.resolveAction(method);
+      if (fn) {
+        fn.apply(this.method && fn === this.method[method] ? this.method : this, pts);
       }
     });
+  }
+
+  // 継承プロパティ・組み込みメソッドを除外した「HTML から呼んでよい関数」だけを返す。
+  // 型・命名ではなく allowlist(method オプション / サブクラスの独自メソッド / publicActions)で判定する
+  resolveAction(name) {
+    if (isUnsafeKey(name) || name in Object.prototype) {
+      return null;
+    }
+    if (this.method && typeof this.method[name] === 'function') {
+      return this.method[name];
+    }
+    const builtin = hasOwn(aTemplate.prototype, name);
+    if (builtin && publicActions.indexOf(name) === -1) {
+      return null;
+    }
+    return typeof this[name] === 'function' ? this[name] : null;
   }
 
   removeTemplateEvents() {
@@ -163,7 +188,7 @@ export default class aTemplate {
 
   setData(opt) {
     Object.keys(opt).forEach((key) => {
-      if (typeof opt[key] !== 'function') {
+      if (!isUnsafeKey(key) && typeof opt[key] !== 'function') {
         this.data[key] = opt[key];
       }
     });
@@ -196,7 +221,7 @@ export default class aTemplate {
     const a = s.split('.');
     while (a.length) {
       const n = a.shift();
-      if (o && typeof o === 'object' && n in o) {
+      if (o && typeof o === 'object' && !isUnsafeKey(n) && n in o) {
         o = o[n];
       } else {
         return null;
@@ -213,6 +238,9 @@ export default class aTemplate {
   updateDataByString(path, newValue) {
     let object = this.data;
     const stack = path.split('.');
+    if (stack.some(isUnsafeKey)) {
+      return;
+    }
     while (stack.length > 1) {
       object = object[stack.shift()];
     }
@@ -222,6 +250,9 @@ export default class aTemplate {
   removeDataByString(path) {
     let object = this.data;
     const stack = path.split('.');
+    if (stack.some(isUnsafeKey)) {
+      return;
+    }
     while (stack.length > 1) {
       object = object[stack.shift()];
     }
@@ -531,6 +562,9 @@ export default class aTemplate {
   remove(path) {
     let object = this.data;
     const stack = path.split('.');
+    if (stack.some(isUnsafeKey)) {
+      return this;
+    }
     while (stack.length > 1) {
       object = object[stack.shift()];
     }

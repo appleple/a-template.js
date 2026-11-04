@@ -45,7 +45,9 @@ data:{
 </script>
 ```
 
-## セキュリティ上の注意 (XSS)
+## Security notes
+
+### XSS
 
 a-template.js はテンプレートの描画に `innerHTML` / `insertAdjacentHTML` を使用しています。
 `{key}` に展開される値や `data` に渡す値は HTML としてそのまま挿入されるため、
@@ -55,3 +57,12 @@ a-template.js はテンプレートの描画に `innerHTML` / `insertAdjacentHTM
 信頼できない値をテンプレートに渡す場合は、あらかじめ HTML エスケープするか、
 [DOMPurify](https://github.com/cure53/DOMPurify) 等のサニタイズライブラリを通してから
 `data` にセットしてください。
+
+### data-action で呼び出せるメソッド
+
+`data-action` から呼び出せるのは、`method` オプションに登録した関数、サブクラスで定義した独自メソッド、`update` のみです。
+`updateDataByString` / `destroy` など aTemplate 組み込みの内部メソッドや、`constructor` / `__proto__` などの名前は呼べません。
+
+### プロトタイプ汚染対策
+
+`data-bind` などのパスに `__proto__` / `constructor` / `prototype` が含まれる場合は無視されます。
